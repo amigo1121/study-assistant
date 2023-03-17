@@ -3,23 +3,30 @@ services:
   db:
     image: postgres:15-alpine
     restart: always
-    env_file:
-      - ./server/env/db.env
+    environment:
+      - POSTGRES_USER=${POSTGRES_USER:?err}
+      - POSTGRES_PASSWORD=${POSTGRES_PASSWORD:?err}
+      - POSTGRES_DB=${POSTGRES_DB:?err}
+    healthcheck:
+      test: pg_isready -q -d $POSTGRES_DB -U $POSTGRES_USER
+      interval: 5s
+      timeout: 30s
+      retries: 3
     
   server: 
-    build: ./server/logic
+    build: ./server/app
     volumes:
       - ./server/app:/server
+    environment:
+      - DB_USER=${POSTGRES_USER:?err}
+      - DB_HOST=${POSTGRES_HOST:?err}
+      - DB_PASSWORD=${POSTGRES_PASSWORD:?err}
+      - DB_PORT=${POSTGRES_PORT}
+      - DB_DATABASE=${POSTGRES_DB:?err}
     ports:
       - '80:80'
     depends_on:
-      - db
-    
-  client:
-    build: ./client
-    volumes:
-      - ./client:/app 
-    ports:
-      - '8080:8080'
+      db:
+        condition: service_healthy
   
   
