@@ -40,15 +40,3 @@ services:
     
     depends_on:
       - server
-
-  npm:
-    image: node:18-alpine
-    working_dir: /app
-    volumes:
-      - ./client:/app
-
-    ports:
-      - '3000:3000'
-    stdin_open: true
-    tty: true
-  
