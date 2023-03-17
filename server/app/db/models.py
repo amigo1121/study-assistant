@@ -1,4 +1,5 @@
-from sqlalchemy import Boolean, Column, ForeignKey, Integer, String
+from sqlalchemy import Boolean, Column, ForeignKey, Integer, String, DateTime
+from datetime import datetime
 from sqlalchemy.orm import relationship
 
 from .database import Base
@@ -14,6 +15,8 @@ class User(Base):
 
     items = relationship("Item", back_populates="owner")
 
+    tickets = relationship("Ticket", back_populates="owner")
+
 class Item(Base):
     __tablename__ = "items"
 
@@ -23,3 +26,31 @@ class Item(Base):
     owner_id = Column(Integer, ForeignKey("users.id"))
 
     owner = relationship("User", back_populates="items")
+
+
+class Task(Base):
+    __tablename__ = 'tasks'
+
+    id = Column(Integer, primary_key=True)
+    title = Column(String)
+    description = Column(String)
+    created_at = Column(DateTime, default=datetime.utcnow)
+    modified_at = Column(DateTime, default=datetime.utcnow, onupdate=datetime.utcnow)
+    due_date = Column(DateTime)
+    priority = Column(String)
+    credit = Column(Integer)
+    subtasks = relationship('Subtask', back_populates='task')
+
+class Subtask(Base):
+    __tablename__ = 'subtasks'
+
+    id = Column(Integer, primary_key=True)
+    title = Column(String)
+    description = Column(String)
+    created_at = Column(DateTime, default=datetime.utcnow)
+    modified_at = Column(DateTime, default=datetime.utcnow, onupdate=datetime.utcnow)
+    due_date = Column(DateTime)
+    priority = Column(String)
+    credit = Column(Integer)
+    task_id = Column(Integer, ForeignKey('tasks.id'))
+    task = relationship('Task', back_populates='subtasks')
