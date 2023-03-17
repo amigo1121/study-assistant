@@ -1,0 +1,25 @@
+version: '3.8'
+services:
+  db:
+    image: postgres:15-alpine
+    restart: always
+    env_file:
+      - ./server/env/db.env
+    
+  server: 
+    build: ./server/logic
+    volumes:
+      - ./server/app:/server
+    ports:
+      - '80:80'
+    depends_on:
+      - db
+    
+  client:
+    build: ./client
+    volumes:
+      - ./client:/app 
+    ports:
+      - '8080:8080'
+  
+  
