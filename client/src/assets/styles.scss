@@ -1,0 +1,14 @@
+//theme
+@import "primevue/resources/themes/lara-light-blue/theme.css";     
+    
+//core
+@import "primevue/resources/primevue.min.css";
+
+@import 'primeflex/primeflex.scss';
+
+//icons
+@import "primeicons/primeicons.css";
+
+
+// Path: client/src/assets/layout.scss
+@import "@/assets/styles/layout/layout.scss";
