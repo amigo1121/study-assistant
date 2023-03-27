@@ -10,10 +10,18 @@
     "type-check": "vue-tsc --noEmit"
   },
   "dependencies": {
+    "@tinymce/tinymce-vue": "^5.0.1",
+    "@vueup/vue-quill": "^1.1.1",
+    "lodash": "^4.17.21",
     "pinia": "^2.0.33",
+    "primeflex": "^3.3.0",
+    "primeicons": "^6.0.1",
+    "primevue": "^3.26.0",
     "sass": "^1.60.0",
+    "tinymce": "^6.4.0",
     "vue": "^3.2.47",
-    "vue-router": "^4.1.6"
+    "vue-router": "^4.1.6",
+    "vue-uuid": "^3.0.0"
   },
   "devDependencies": {
     "@types/node": "^18.14.2",
