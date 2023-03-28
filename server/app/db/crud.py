@@ -1,4 +1,5 @@
 from sqlalchemy.orm import Session
+from sqlalchemy import and_, or_
 from . import models, schemas
 
 def get_user(db: Session, user_id: int):
@@ -10,6 +11,9 @@ def get_user_by_email(db: Session, email: str):
 
 def get_user_by_username(db: Session, username:str):
     return db.query(models.User).filter(models.User.username == username).first()
+
+def get_user_by_username_or_email(db: Session, credential:str):
+    return db.query(models.User).filter(or_(models.User.username == credential, models.User.email == credential)).first()
 
 
 def get_users(db: Session, skip: int = 0, limit: int = 100):
