@@ -44,7 +44,6 @@ export default defineComponent({
             let {id, title , importance, description, dueDate, dueTime} = assignment;
             assignment.dueDate= formatDate(dueDate);
             assignment.dueTime= formatTime(dueTime);
-            // console.log(assignment.dueTime)
             console.log(assignment)
             assignmentStore.modifyAssignment(assignment.id, assignment);
         }
