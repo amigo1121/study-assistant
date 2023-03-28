@@ -1,6 +1,7 @@
 from sqlalchemy.orm import Session
 from sqlalchemy import and_, or_
 from . import models, schemas
+from utils.auth import hash_password, verify_password
 
 def get_user(db: Session, user_id: int):
     return db.query(models.User).filter(models.User.id == user_id).first()
@@ -21,8 +22,8 @@ def get_users(db: Session, skip: int = 0, limit: int = 100):
 
 
 def create_user(db: Session, user: schemas.UserCreate):
-    fake_hashed_password = user.password
-    db_user = models.User(email=user.email, hashed_password=fake_hashed_password, username=user.username)
+    hashed_password = hash_password(user.password)
+    db_user = models.User(email=user.email, hashed_password=hashed_password, username=user.username)
     db.add(db_user)
     db.commit()
     db.refresh(db_user)

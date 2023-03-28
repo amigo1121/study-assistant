@@ -6,6 +6,7 @@ from sqlalchemy.orm import Session
 
 from . import crud, models, schemas
 from .database import SessionLocal, engine
+from utils.auth import verify_password
 
 
 app = FastAPI()
@@ -53,7 +54,7 @@ def register(user: schemas.UserCreate, db: Session = Depends(get_db)):
 @app.post("/login", response_model=schemas.User)
 def login(user: schemas.UserLogin, db: Session = Depends(get_db)):
     db_user = crud.get_user_by_username_or_email(db, credential=user.userIdentifier)
-    if db_user and db_user.hashed_password == user.password:
+    if db_user and verify_password(user.password,db_user.hashed_password):
         return db_user
     raise HTTPException(status_code=400, detail="Wrong username or password!")
 
