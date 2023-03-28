@@ -7,3 +7,4 @@ databases
 psycopg2-binary
 alembic
 python-dotenv
+argon2-cffi
