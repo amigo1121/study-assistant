@@ -4,8 +4,8 @@ start:
 stop:
 	docker compose down -v
 
-server-it:
+server:
 	docker compose exec -it server sh
 
-client_it:
+client:
 	docker compose exec -it client sh
