@@ -7,6 +7,8 @@ services:
       - POSTGRES_USER=${POSTGRES_USER:?err}
       - POSTGRES_PASSWORD=${POSTGRES_PASSWORD:?err}
       - POSTGRES_DB=${POSTGRES_DB:?err}
+    ports:
+      - '5433:5432'
     healthcheck:
       test: pg_isready -q -d $POSTGRES_DB -U $POSTGRES_USER
       interval: 5s
