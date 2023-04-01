@@ -6,7 +6,7 @@ const API_URL = 'http://localhost';
 class AuthService {
     login(user: {identifier: string, password: string}): Promise<any> {
         return axios
-        .post(API_URL+'/login',{
+        .post(API_URL+'/users/login',{
             userIdentifier: user.identifier,
             password: user.password,
         }).then(response=>{if (response.data.accessToken){
@@ -21,33 +21,13 @@ class AuthService {
     }
 
     register(user: {username: string, email: string, password: string}): Promise<any> {
-        return axios.post(API_URL + '/register',{
+        return axios.post(API_URL + '/users/register',{
             email: user.email,
             username: user.username,
             password: user.password,
         })
     }
 
-    // test(): Promise<any> {
-    //     // return fetch( API_URL + '/register', {
-    //     //     method: 'POST',
-    //     //     headers: {
-    //     //         'Content-Type': 'application/json',
-    //     //     },
-    //     //     body: JSON.stringify({
-    //     //         username: 'test',
-    //     //         password: 'test',
-    //     //         email: 'test'}
-    //     //         )
-    //     //     })
-
-    //     return axios.post(API_URL +'/register',{
-    //         username: 'test2',
-    //         email: 'test2',
-    //         password: 'test2',
-    //     })
-
-    // }
 
     getCurrentUser(): any {
         const user = localStorage.getItem('user');
