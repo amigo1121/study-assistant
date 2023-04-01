@@ -1,12 +1,9 @@
-from sqlalchemy import Boolean, Column, ForeignKey, Integer, String, DateTime
-from datetime import datetime
-from sqlalchemy.orm import relationship
+from sqlalchemy import Boolean, Column, Integer, String, DateTime
 from sqlalchemy.sql import func
 
-from .database import Base
+from app.db.base_class import Base
 
 class User(Base):
-    __tablename__ = "users"
 
     id=Column(Integer, primary_key=True, index=True)
     email = Column(String, unique=True, index=True)
