@@ -14,8 +14,8 @@ services:
       interval: 5s
       timeout: 30s
       retries: 3
-    
-  server: 
+
+  server:
     build: ./server/app
     volumes:
       - ./server/app:/server
@@ -30,7 +30,8 @@ services:
     depends_on:
       db:
         condition: service_healthy
-  
+    command: sh -c "uvicorn app.main:app --reload --host 0.0.0.0 --port 80 --reload"
+
   client:
     build:
       context: .
