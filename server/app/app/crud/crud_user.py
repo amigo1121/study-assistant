@@ -1,8 +1,8 @@
 from sqlalchemy.orm import Session
 from sqlalchemy import and_, or_
 from datetime import datetime
-from . import models, schemas
-from utils.auth import hash_password, verify_password
+from app import models, schemas
+from utils.auth import hash_password
 
 def get_user(db: Session, user_id: int):
     return db.query(models.User).filter(models.User.id == user_id).first()
