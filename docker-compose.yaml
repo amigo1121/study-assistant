@@ -9,11 +9,6 @@ services:
       - POSTGRES_DB=${POSTGRES_DB:?err}
     ports:
       - '5433:5432'
-    healthcheck:
-      test: pg_isready -q -d $POSTGRES_DB -U $POSTGRES_USER
-      interval: 5s
-      timeout: 30s
-      retries: 3
 
   server:
     build: ./server/app
@@ -28,9 +23,8 @@ services:
     ports:
       - '80:80'
     depends_on:
-      db:
-        condition: service_healthy
-    command: sh -c "uvicorn app.main:app --reload --host 0.0.0.0 --port 80 --reload"
+      - db
+    command: sh -c "sh prestart.sh && uvicorn app.main:app --reload --host 0.0.0.0 --port 80 --reload"
 
   client:
     build:
