@@ -1,16 +1,22 @@
 import axios from 'axios';
 import jwtDecode from 'jwt-decode';
+import {useAuthStore} from '@/stores/auth';
 
 const API_URL = 'http://localhost';
 
+type LoginData = {
+    identifier: string,
+    password: string
+}
 class AuthService {
     login(user: {identifier: string, password: string}): Promise<any> {
+        const authStore = useAuthStore()
+        const loginData: LoginData = {...user}
         return axios
-        .post(API_URL+'/users/login',{
-            userIdentifier: user.identifier,
-            password: user.password,
-        }).then(response=>{if (response.data.accessToken){
-            localStorage.setItem('user',JSON.stringify(response.data));
+        .post(API_URL+'/oauth/token',loginData).then(response=>{
+            if (response.data.access_token){
+            localStorage.setItem('accessToken',response.data.access_token);
+            authStore.loadTokenFromLocalStorage('accessToken')
         }
         return response.data;
     });
@@ -28,29 +34,5 @@ class AuthService {
         })
     }
 
-
-    getCurrentUser(): any {
-        const user = localStorage.getItem('user');
-        if (user){
-            return JSON.parse(user);
-        }
-    }
-
-    getToken(){
-        const user = this.getCurrentUser();
-        if (user && user.accessToken){
-            const decodedToken: any = jwtDecode(user.accessToken);
-            const currentDate = new Date ();
-
-            if (decodedToken.exp * 1000 < currentDate.getTime()){
-                this.logout();
-                window.location.reload();
-            }
-            else {
-                return user.accessToken;
-            }
-        }
-        return null;
-    }
 }
 export default new AuthService();
