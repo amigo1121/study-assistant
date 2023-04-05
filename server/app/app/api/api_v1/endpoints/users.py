@@ -5,7 +5,9 @@ from app.api import deps
 from app.crud import crud_user
 from app import schemas
 from app.core import security
+
 router = APIRouter()
+
 
 @router.post("/", response_model=schemas.User)
 def create_user(user: schemas.UserCreate, db: Session = Depends(deps.get_db)):
@@ -14,22 +16,24 @@ def create_user(user: schemas.UserCreate, db: Session = Depends(deps.get_db)):
         raise HTTPException(status_code=400, detail="Email already registered")
     return crud_user.create_user(db=db, user=user)
 
+
 @router.post("/register", response_model=schemas.User)
 def register(user: schemas.UserCreate, db: Session = Depends(deps.get_db)):
     db_user = crud_user.get_user_by_email(db, email=user.email)
     if db_user:
         raise HTTPException(status_code=400, detail="Email already registered")
 
-    db_user = crud_user.get_user_by_username(db, username= user.username)
+    db_user = crud_user.get_user_by_username(db, username=user.username)
     if db_user:
         raise HTTPException(status_code=400, detail="Username already registered")
-    
+
     return crud_user.create_user(db=db, user=user)
+
 
 @router.post("/login", response_model=schemas.User)
 def login(user: schemas.UserLogin, db: Session = Depends(deps.get_db)):
-    db_user = crud_user.get_user_by_username_or_email(db, credential=user.userIdentifier)
-    if db_user and security.verify_password(user.password,db_user.hashed_password):
+    db_user = crud_user.get_user_by_username_or_email(db, credential=user.identifier)
+    if db_user and security.verify_password(user.password, db_user.hashed_password):
         return db_user
     raise HTTPException(status_code=400, detail="Wrong username or password!")
 
