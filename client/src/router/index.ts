@@ -9,6 +9,7 @@ const router = createRouter({
       path: "/home",
       name: "home",
       component: AppLayout,
+      meta: { requiresAuth: true },
       children: [
         {
           path: "dashboard",
@@ -25,37 +26,46 @@ const router = createRouter({
     {
       path: "/login",
       name: "login",
+      meta: { requiresAuth: false },
       component: () => import("@/views/Login.vue"),
     },
     {
       path: "/register",
       name: "register",
+      meta: { requiresAuth: false },
       component: () => import("@/views/Register.vue"),
     },
     {
       path: "/",
       name: "welcome",
+      meta: { requiresAuth: true },
       component: () => import("@/views/Welcome.vue"),
     },
   ],
 });
 
-router.beforeEach(async (to, from) => {
-  let isAuthenticated = false;
-  const authStore = useAuthStore()
+router.beforeEach(async (to, from, next) => {
+  const authStore = useAuthStore();
   // make authenticate request
-  try {
-    const response =  await authStore.tryAuthenticate()
-    const {username, email} = response.data
-    authStore.setEmail(email);
-    authStore.setUsername(username);
-    console.log(response)
-    isAuthenticated = response.status == 200
-  } catch (error) {
-    console.log(error)
-  }
-  if (!isAuthenticated) {
-    if (to.name !== "login" && to.name !== "register") return { name: "login" };
+  if (to.meta.requiresAuth) {
+    try{
+      await authStore.tryAuthenticate();
+      next();
+    }catch(error){
+      next({name: "login"});
+    }
+  }else{
+    if (to.name==="login"||to.name==="register")
+    {
+      try{
+        await authStore.tryAuthenticate();
+        next({name: "welcome"});
+      }
+      catch(error){
+        next();
+      }
+    }
+    else next();
   }
 });
 

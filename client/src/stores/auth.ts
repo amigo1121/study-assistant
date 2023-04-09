@@ -1,49 +1,128 @@
-import {defineStore} from 'pinia'
-import axios from 'axios';
-import router from '@/router';
+import { defineStore } from "pinia";
+import axios from "axios";
+import router from "@/router";
 
+type LoginData = {
+  identifier: string;
+  password: string;
+};
 export const useAuthStore = defineStore({
-    id: 'auth',
-    state: () => {
-        return {
-            accessToken: null,
-            refreshToken: null,
-            username: null,
-            email: null,
-        }
+  id: "auth",
+  state: () => {
+    return {
+      accessToken: null,
+      refreshToken: null,
+      username: null,
+      email: null,
+      API_URL: "http://localhost",
+    };
+  },
+  getters: {
+    getAccessToken(state): string | null {
+      return state.accessToken;
     },
-    getters:{
-        getAccessToken(state): string | null{
-            return state.accessToken;
-        },
-        getRefresshToken(state): string | null{
-            return state.refreshToken;
-        }
+    getRefresshToken(state): string | null {
+      return state.refreshToken;
     },
-    actions:{
-        loadTokenFromLocalStorage(tokenKey: string){
-            const accessToken = localStorage.getItem(tokenKey);
-            if (accessToken)
-                this[tokenKey] = accessToken
-        },
-        tryRefreshToken(){
-            const refreshToken = this.refreshToken
-            return axios.post('/api/refreshtoken', {refresh_token: refreshToken})
-        },
-        tryAuthenticate(){
-            const accessToken = this.accessToken? this.accessToken : ""
-            return axios.post('http://localhost/oauth/authorize', {access_token: accessToken, token_type: 'bearer'})
-        },
-        setUsername(username: string){
-            this.username = username
-        },
-        setEmail(email: string){
-            this.email = email
-        },
-        logout(){
-            localStorage.removeItem("accessToken");
-            router.go()
+  },
+  actions: {
+    loadTokenFromLocalStorage(tokenKey: string) {
+      const accessToken = localStorage.getItem(tokenKey);
+      if (accessToken) this[tokenKey] = accessToken;
+    },
+    async tryRefreshToken() {
+      const refreshToken = this.refreshToken || "";
+      try {
+        const response = await axios.post(this.API_URL+"/oauth/refreshtoken", {
+          refresh_token: refreshToken,
+          token_type: "bearer"
+        });
+        if (response.status === 200) {
+          const data = await response.data;
+          localStorage.setItem("accessToken", data.access_token)
+          this.loadTokenFromLocalStorage("accessToken");
+          console.log("Refresh token success")
+        } else {
+          throw new Error("Failed to refresh access token");
         }
+        return response;
+      } catch (error) {
+        console.error(error);
+        throw new Error("Failed to refresh access token");
+      }
+    },
 
-    }
-})
+    async tryAuthenticate() {
+      const accessToken = this.accessToken || "";
+
+      try {
+        const response = await axios.post(this.API_URL + "/oauth/authorize", {
+          access_token: accessToken,
+          token_type: "bearer",
+        });
+        if (response.status !== 200) {
+          throw new Error("Failed to authenticate with access token");
+        }
+        this.setEmail(response.data.email)
+        this.setUsername(response.data.username)
+        return response;
+      } catch (error) {
+        console.error(error);
+        try {
+          await this.tryRefreshToken();
+          const response = await axios.post(this.API_URL + "/oauth/authorize", {
+            access_token: this.accessToken,
+            token_type: "bearer",
+          });
+          if (response.status !== 200) {
+            throw new Error("Failed to authenticate with refreshed access token");
+          }
+          return response;
+        } catch (error) {
+          console.error(error);
+          throw new Error("Failed to authenticate");
+        }
+      }
+    },
+
+    setUsername(username: string) {
+      this.username = username;
+    },
+    setEmail(email: string) {
+      this.email = email;
+    },
+    logout() {
+      localStorage.removeItem("accessToken");
+      localStorage.removeItem("refreshToken");
+      router.go();
+    },
+    async login(user: { identifier: string; password: string }): Promise<any> {
+      const authStore = useAuthStore();
+      const loginData: LoginData = { ...user };
+      return axios
+        .post(this.API_URL + "/oauth/token", loginData)
+        .then((response) => {
+          if (response.data.access_token) {
+            localStorage.setItem("accessToken", response.data.access_token);
+            authStore.loadTokenFromLocalStorage("accessToken");
+          }
+          if(response.data.refresh_token){
+            localStorage.setItem("refreshToken", response.data.refresh_token);
+            authStore.loadTokenFromLocalStorage("refreshToken");
+          }
+          return response.data;
+        });
+    },
+    async register(user: {
+      username: string;
+      email: string;
+      password: string;
+    }): Promise<any> {
+      return axios.post(this.API_URL + "/users/register", {
+        email: user.email,
+        username: user.username,
+        password: user.password,
+      });
+    },
+  },
+});
