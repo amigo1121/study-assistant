@@ -1,36 +1,3 @@
-<script setup lang="ts">
-import { defineComponent, ref } from 'vue';
-import AuthService from '@/services/AuthService';
-
-const username= ref('');    
-const email= ref('');
-const password= ref('');
-
-const register = async () => {
-    try {
-        const res = await AuthService.register({username: username.value, email: email.value, password: password.value});
-        console.log(res);
-        console.log('Registered successfully');
-    } catch (error) {
-        console.log(error);
-        console.log('Invalid credentials');
-    }
-}
-
-const test = async () => {
-    try {
-        const res = await AuthService.test();
-        console.log(res);
-        console.log('Tested successfully');
-    } catch (error) {
-        console.log(error);
-        console.log('Invalid credentials');
-    }
-}
-
-</script>
-<style lang="scss" scoped>
-</style>
 <template>
     <h3>register</h3>
     <form>
@@ -40,5 +7,29 @@ const test = async () => {
         <button type="button" @click="register">Register</button>
     </form>
 
-    <button type="button" @click="test">TEst</button>
+    <button type="button" @click="test">Test</button>
 </template>
+
+<script setup lang="ts">
+import { ref } from 'vue';
+import type { Ref } from 'vue';
+import { useAuthStore } from '@/stores/auth';
+
+const username: Ref<string> = ref('');
+const email: Ref<string> = ref('');
+const password: Ref<string> = ref('');
+const authStore = useAuthStore();
+
+const register = async () => {
+    try {
+        const res = await authStore.register({ username: username.value, email: email.value, password: password.value });
+        console.log(res);
+        console.log('Registered successfully');
+    } catch (error) {
+        console.log(error);
+        console.log('Invalid credentials');
+    }
+};
+</script>
+
+<style lang="scss" scoped></style>

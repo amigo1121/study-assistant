@@ -1,5 +1,5 @@
 from fastapi import APIRouter, Depends, HTTPException, status
-from fastapi.security import OAuth2PasswordBearer, OAuth2PasswordRequestForm
+from fastapi.security import OAuth2PasswordBearer, OAuth2PasswordRequestForm, OAuth2
 from typing import Annotated
 from sqlalchemy.orm import Session
 from datetime import datetime, timedelta
@@ -8,7 +8,7 @@ from app.core.security import verify_password, hash_password
 from app.api import deps
 from app.crud import crud_user
 from app import schemas
-from jose import JWTError, jwt
+from jose import JWTError, jwt, ExpiredSignatureError
 from app import models
 
 import logging
@@ -18,15 +18,21 @@ router = APIRouter()
 logging.basicConfig(level=logging.INFO)
 logger = logging.getLogger(__name__)
 
-oauth2_scheme = OAuth2PasswordBearer(tokenUrl="oauth/token")
 
 SECRET_KEY = "3d50f0988eefe6bff4637a593e9d2ae35d4fe2386937ee450f20c67a84129ddb"
 ALGORITHM = "HS256"
-ACCESS_TOKEN_EXPIRE_MINUTES = 30
+ACCESS_TOKEN_EXPIRE_MINUTES = 1
+REFRESH_TOKEN_EXPIRE_DAYS = 7
+REFRESH_TOKEN_EXPIRE_MINUTES = 5
 
 
 class Token(BaseModel):
     access_token: str = None
+    token_type: str
+
+
+class RefreshToken(BaseModel):
+    refresh_token: str = None
     token_type: str
 
 
@@ -65,7 +71,7 @@ def create_access_token(data: dict, expire_delta: timedelta | None = None) -> st
     return encoded_jwt
 
 
-def get_current_user(token: Annotated[str, Depends(oauth2_scheme)]):
+def get_current_user(token: str, token_type: str = "access token"):
     credentials_exception = HTTPException(
         status_code=status.HTTP_401_UNAUTHORIZED,
         detail="Could not validate credentials",
@@ -78,6 +84,12 @@ def get_current_user(token: Annotated[str, Depends(oauth2_scheme)]):
         if username is None:
             raise credentials_exception
         token_data = TokenData(username=username)
+    except ExpiredSignatureError:
+        raise HTTPException(
+            status_code=status.HTTP_401_UNAUTHORIZED,
+            detail=f"{token_type} has expired",
+            headers={"WWW-Authenticate": "Bearer"},
+        )
     except JWTError:
         raise credentials_exception
     user = get_user(identifier=token_data.username)
@@ -98,8 +110,14 @@ async def login_for_access_token(login_data: schemas.UserLogin):
             headers={"WWW-Authenticate": "Bearer"},
         )
     access_token_expire = timedelta(minutes=ACCESS_TOKEN_EXPIRE_MINUTES)
+    refresh_token_expire = timedelta(days=REFRESH_TOKEN_EXPIRE_DAYS)
     access_token = create_access_token({"sub": user.username}, access_token_expire)
-    return {"access_token": access_token, "token_type": "bearer"}
+    refresh_token = create_access_token({"sub": user.username}, refresh_token_expire)
+    return {
+        "access_token": access_token,
+        "refresh_token": refresh_token,
+        "token_type": "bearer",
+    }
 
 
 @router.get("/me", response_model=schemas.User)
@@ -110,3 +128,12 @@ async def read_user_me(user: Annotated[schemas.User, Depends(get_current_user)])
 @router.post("/authorize", response_model=schemas.User)
 async def authorize(token: Token):
     return get_current_user(token=token.access_token)
+
+
+# re-generate access token from refresh token
+@router.post("/refreshtoken")
+async def refresh_access_token(token: RefreshToken):
+    user = get_current_user(token=token.refresh_token, token_type="refresh token")
+    access_token_expire = timedelta(minutes=ACCESS_TOKEN_EXPIRE_MINUTES)
+    new_access_token = create_access_token({"sub": user.username}, access_token_expire)
+    return {"access_token": new_access_token, "token_type": "bearer"}

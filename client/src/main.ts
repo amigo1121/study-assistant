@@ -16,9 +16,7 @@ app.use(pinia);
 app.use(PrimeVue);
 app.component('QuillEditor', QuillEditor);
 app.component('Dialog', Dialog);
-const authStore = useAuthStore();
-authStore.loadTokenFromLocalStorage('accessToken');
-authStore.loadTokenFromLocalStorage('refreshToken');
+
 
 
 app.mount('#app');

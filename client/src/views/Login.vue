@@ -1,13 +1,14 @@
 <script setup lang="ts">
 import { defineComponent, ref } from 'vue';
-import AuthService from '@/services/AuthService';
 import router from '@/router';
+import { useAuthStore } from '@/stores/auth';
 
 const identifier= ref<string>('');
 const password= ref<string>('');
+const  authStore = useAuthStore();
 
 const login = () => {
-    AuthService.login({identifier: identifier.value, password: password.value}).then((response)=> {
+    authStore.login({identifier: identifier.value, password: password.value}).then((response)=> {
         console.log(response);
         console.log("Logged in successfully")
         router.push({name: 'welcome'})
