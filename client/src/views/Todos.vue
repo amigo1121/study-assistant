@@ -10,37 +10,42 @@ import TaskForm from '@/components/Form/TaskForm.vue';
 import { useAssignmentsStore } from '@/stores/assignments';
 import { useTasksStore } from '@/stores/tasks';
 import { storeToRefs } from 'pinia';
-import {ref} from 'vue';
+import { ref, onMounted } from 'vue';
+import { userItemStore } from '@/stores/items';
+const itemStore = userItemStore();
 
+const { items } = storeToRefs(itemStore)
+const textContent = ref("")
+const print = () => {
 
-const store = useAssignmentsStore();
-const assignments  = store.assignments;
-const taskStore = useTasksStore();
-const {tasks} = storeToRefs(taskStore);
+    itemStore.addItem({
+        content: textContent.value
+    })
 
-const handleSubmit = (assignment) => {
-    store.addAssignment(assignment);
+        ; textContent.value = ""
 }
 
-const addTask = (task) => {
-    taskStore.addTask(task);
-}
-
+onMounted(() => {
+    console.log("todo mounted")
+    itemStore.fetchItems()
+})
 </script>
 <style lang="scss" scoped>
-    li {
-        list-style: none;
-        margin-bottom: 1rem;
-    }
+li {
+    list-style: none;
+    margin-bottom: 1rem;
+}
 </style>
 <template>
     <div class="todos">
-        <!-- <FormTask></FormTask> -->
         <ul>
-            <li v-for="task in tasks" :key="task.id">
-                <TaskCard v-bind="task">
-                </TaskCard>
-            </li>
+            <li v-for="(item, index) in items" :key="index">{{ item.content }}</li>
         </ul>
+
+        <form @submit.prevent="print">
+            <label for="content">Content</label>
+            <input type="text" id="content" v-model="textContent">
+            <button type="submit">Submit</button>
+        </form>
     </div>
 </template>

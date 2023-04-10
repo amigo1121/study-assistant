@@ -1,4 +1,4 @@
-from fastapi import APIRouter, Depends, HTTPException, status
+from fastapi import APIRouter, Depends, HTTPException, status, Header
 from fastapi.security import OAuth2PasswordBearer, OAuth2PasswordRequestForm, OAuth2
 from typing import Annotated
 from sqlalchemy.orm import Session
@@ -21,7 +21,7 @@ logger = logging.getLogger(__name__)
 
 SECRET_KEY = "3d50f0988eefe6bff4637a593e9d2ae35d4fe2386937ee450f20c67a84129ddb"
 ALGORITHM = "HS256"
-ACCESS_TOKEN_EXPIRE_MINUTES = 1
+ACCESS_TOKEN_EXPIRE_MINUTES = 15
 REFRESH_TOKEN_EXPIRE_DAYS = 7
 REFRESH_TOKEN_EXPIRE_MINUTES = 5
 
@@ -71,7 +71,33 @@ def create_access_token(data: dict, expire_delta: timedelta | None = None) -> st
     return encoded_jwt
 
 
-def get_current_user(token: str, token_type: str = "access token"):
+def get_token_header(authorization: str = Header(...)):
+    if not authorization:
+        raise HTTPException(status_code=401, detail="Authorization header is missing")
+
+    parts = authorization.split()
+
+    if parts[0].lower() != "bearer":
+        raise HTTPException(
+            status_code=401, detail="Authorization header must start with Bearer"
+        )
+
+    if len(parts) == 1:
+        raise HTTPException(status_code=401, detail="Token is missing")
+
+    if len(parts) > 2:
+        raise HTTPException(
+            status_code=401, detail="Authorization header must be Bearer token"
+        )
+
+    token = parts[1]
+
+    return token
+
+
+def get_current_user(
+    token: str = Depends(get_token_header), token_type: str = "access token"
+):
     credentials_exception = HTTPException(
         status_code=status.HTTP_401_UNAUTHORIZED,
         detail="Could not validate credentials",
@@ -125,15 +151,15 @@ async def read_user_me(user: Annotated[schemas.User, Depends(get_current_user)])
     return user
 
 
-@router.post("/authorize", response_model=schemas.User)
-async def authorize(token: Token):
-    return get_current_user(token=token.access_token)
+@router.get("/authorize", response_model=schemas.User)
+async def authorize(user=Depends(get_current_user)):
+    return user
 
 
 # re-generate access token from refresh token
-@router.post("/refreshtoken")
-async def refresh_access_token(token: RefreshToken):
-    user = get_current_user(token=token.refresh_token, token_type="refresh token")
+@router.get("/refreshtoken")
+async def refresh_access_token(token=Depends(get_token_header)):
+    user = get_current_user(token=token, token_type="refresh token")
     access_token_expire = timedelta(minutes=ACCESS_TOKEN_EXPIRE_MINUTES)
     new_access_token = create_access_token({"sub": user.username}, access_token_expire)
     return {"access_token": new_access_token, "token_type": "bearer"}
