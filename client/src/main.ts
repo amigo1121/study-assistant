@@ -16,7 +16,7 @@ app.use(pinia);
 app.use(PrimeVue);
 app.component('QuillEditor', QuillEditor);
 app.component('Dialog', Dialog);
-
+console.log("init");
 
 
 app.mount('#app');

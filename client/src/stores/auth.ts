@@ -1,6 +1,7 @@
 import { defineStore } from "pinia";
 import axios from "axios";
 import router from "@/router";
+import { API_URL, refreshTokenIntervalInMinutes} from "@/utils/config";
 
 type LoginData = {
   identifier: string;
@@ -14,7 +15,6 @@ export const useAuthStore = defineStore({
       refreshToken: null,
       username: null,
       email: null,
-      API_URL: "http://localhost",
     };
   },
   getters: {
@@ -32,11 +32,13 @@ export const useAuthStore = defineStore({
     },
     async tryRefreshToken() {
       const refreshToken = this.refreshToken || "";
+      const config = {
+        headers: {
+          Authorization: `Bearer ${refreshToken}`,
+        },
+      };
       try {
-        const response = await axios.post(this.API_URL+"/oauth/refreshtoken", {
-          refresh_token: refreshToken,
-          token_type: "bearer"
-        });
+        const response = await axios.get(API_URL+"/oauth/refreshtoken", config);
         if (response.status === 200) {
           const data = await response.data;
           localStorage.setItem("accessToken", data.access_token)
@@ -54,12 +56,13 @@ export const useAuthStore = defineStore({
 
     async tryAuthenticate() {
       const accessToken = this.accessToken || "";
-
+      const config = {
+        headers: {
+          Authorization: `Bearer ${accessToken}`,
+        },
+      };
       try {
-        const response = await axios.post(this.API_URL + "/oauth/authorize", {
-          access_token: accessToken,
-          token_type: "bearer",
-        });
+        const response = await axios.get(API_URL + "/oauth/authorize", config);
         if (response.status !== 200) {
           throw new Error("Failed to authenticate with access token");
         }
@@ -70,10 +73,7 @@ export const useAuthStore = defineStore({
         console.error(error);
         try {
           await this.tryRefreshToken();
-          const response = await axios.post(this.API_URL + "/oauth/authorize", {
-            access_token: this.accessToken,
-            token_type: "bearer",
-          });
+          const response = await axios.get(API_URL + "/oauth/authorize", config);
           if (response.status !== 200) {
             throw new Error("Failed to authenticate with refreshed access token");
           }
@@ -100,7 +100,7 @@ export const useAuthStore = defineStore({
       const authStore = useAuthStore();
       const loginData: LoginData = { ...user };
       return axios
-        .post(this.API_URL + "/oauth/token", loginData)
+        .post(API_URL + "/oauth/token", loginData)
         .then((response) => {
           if (response.data.access_token) {
             localStorage.setItem("accessToken", response.data.access_token);
@@ -118,11 +118,16 @@ export const useAuthStore = defineStore({
       email: string;
       password: string;
     }): Promise<any> {
-      return axios.post(this.API_URL + "/users/register", {
+      return axios.post(API_URL + "/users/register", {
         email: user.email,
         username: user.username,
         password: user.password,
       });
     },
+    startRefreshToken(){
+      setInterval(()=>{
+        this.tryRefreshToken()
+      },60*1000)
+    }
   },
 });

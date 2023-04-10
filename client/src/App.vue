@@ -4,6 +4,7 @@ import { useAuthStore } from './stores/auth';
 const authStore = useAuthStore();
 authStore.loadTokenFromLocalStorage('accessToken');
 authStore.loadTokenFromLocalStorage('refreshToken');
+authStore.startRefreshToken()
 </script>
 
 <template>
