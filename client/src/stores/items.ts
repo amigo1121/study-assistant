@@ -36,8 +36,7 @@ export const userItemStore = defineStore({
           Authorization: `Bearer ${authStore.getAccessToken}`,
         },
       };
-      const response = await axios.post(API_URL + "/items", item, config);
-      this.items.push(response.data);
+      return await axios.post(API_URL + "/items", item, config);
     },
     async deleteItem(itemId) {
       await axios.delete(`${API_URL}/items/${itemId}`);
