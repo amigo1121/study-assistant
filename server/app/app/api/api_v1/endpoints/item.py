@@ -1,18 +1,30 @@
 from fastapi import APIRouter, Depends, HTTPException
 from sqlalchemy.orm import Session
 from typing import List
+import json
+import logging
 
+logging.basicConfig(
+    filename="example.log",
+    level=logging.DEBUG,
+    format="%(asctime)s %(levelname)s: %(message)s",
+)
 from app.api import deps
 from app import schemas
 from app.crud import crud_item
 from app.api.api_v1.endpoints import security
+from app.sockets import sio_server
 
 
 router = APIRouter()
 
 
+def on_message_processed(response):
+    print("response:", response)
+
+
 @router.post("/", response_model=schemas.Item)
-def create_item(
+async def create_item(
     item: schemas.ItemBase,
     db: Session = Depends(deps.get_db),
     user=Depends(security.get_current_user),
@@ -20,7 +32,13 @@ def create_item(
     db_item = crud_item.create_item(
         db=db, item=schemas.ItemCreate(content=item.content, owner_id=user.id)
     )
-    return db_item
+    try:
+        await sio_server.emit(
+            "new_item", data={"content": db_item.content}, room=user.username
+        )
+        return db_item
+    except Exception as e:
+        logging.error(f"Exception: {e}")
 
 
 @router.get("/{item_id}", response_model=schemas.Item)

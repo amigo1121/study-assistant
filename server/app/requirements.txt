@@ -1,5 +1,5 @@
 fastapi
-uvicorn
+uvicorn[standard]
 SQLAlchemy
 pydantic
 psycopg2
@@ -12,3 +12,6 @@ cryptography
 python-jose[cryptography]
 tenacity
 python-multipart
+python-socketio
+websockets
+asyncio

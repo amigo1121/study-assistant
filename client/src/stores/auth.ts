@@ -127,7 +127,7 @@ export const useAuthStore = defineStore({
     startRefreshToken(){
       setInterval(()=>{
         this.tryRefreshToken()
-      },60*1000)
+      },refreshTokenIntervalInMinutes*60*1000)
     }
   },
 });
