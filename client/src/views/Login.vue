@@ -42,8 +42,8 @@ const login = () => {
                                 <Checkbox v-model="isRemember" id="rememberme1" binary class="mr-2"></Checkbox>
                                 <label for="rememberme1">Remember me</label>
                             </div>
-                            <a class="font-medium no-underline ml-2 text-right cursor-pointer"
-                                style="color: var(--primary-color)">Forgot password?</a>
+                            <router-link class="font-medium no-underline ml-2 text-right cursor-pointer"
+                                style="color: var(--primary-color)" to="register">Register</router-link>
                         </div>
                         <Button label="Sign In" class="w-full p-3 text-xl" @click="login"></Button>
                     </div>
