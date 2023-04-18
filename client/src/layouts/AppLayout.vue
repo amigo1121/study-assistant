@@ -14,7 +14,7 @@ import { RouterView } from 'vue-router';
 
 <template>
     <div class="app-layout">
-        <AppTopbar></AppTopbar>
+        <AppTopbar class="fixed z-5 min-w-full"></AppTopbar>
         <div class="app-main-display">
             <RouterView />
         </div>
