@@ -1,2 +1,1 @@
-from .user import User, UserCreate, UserLogin  # noqa
-from .item import *
+from .user import User, UserCreate, UserLogin, UserChangePassword

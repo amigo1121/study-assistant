@@ -38,6 +38,19 @@ def login(user: schemas.UserLogin, db: Session = Depends(deps.get_db)):
     raise HTTPException(status_code=400, detail="Wrong username or password!")
 
 
+@router.post("/changepw", response_model=int)
+def change_passowrd(
+    user: schemas.UserChangePassword, db: Session = Depends(deps.get_db)
+):
+    db_user = crud_user.get_user_by_username(db, username=user.username)
+    if db_user and security.verify_password(user.old_password, db_user.hashed_password):
+        updated_user_count = crud_user.change_user_password(db, user=user)
+        return updated_user_count
+    raise HTTPException(
+        status_code=400, detail="User not exists or old passowrd is wrong"
+    )
+
+
 @router.get("/", response_model=List[schemas.User])
 def read_users(skip: int = 0, limit: int = 100, db: Session = Depends(deps.get_db)):
     users = crud_user.get_users(db, skip=skip, limit=limit)

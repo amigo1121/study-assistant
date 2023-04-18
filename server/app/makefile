@@ -1,11 +1,11 @@
-alembic:
+rev:
 ifndef m
 	$(error m is requied)
 endif
 	alembic revision --autogenerate -m "$(m)"
 
-alembic_up:
+up:
 	alembic upgrade head
 
-alembic_down:
+down:
 	alembic downgrade base
