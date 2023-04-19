@@ -14,6 +14,10 @@ import InputText from 'primevue/inputtext';
 import Toast from 'primevue/toast';
 import Password from 'primevue/password';
 import Menu from 'primevue/menu';
+import DataTable from 'primevue/datatable';
+import Column from 'primevue/column';
+import ColumnGroup from 'primevue/columngroup';
+import Row from 'primevue/row';
 
 
 import { useAuthStore } from './stores/auth';
@@ -35,6 +39,10 @@ app.component('InputText', InputText);
 app.component('Menu', Menu);
 app.component('Checkbox', Checkbox);
 app.component('Password', Password);
+app.component('DataTable', DataTable);
+app.component('Column', Column);
+app.component('ColumnGroup', ColumnGroup);
+app.component('Row',Row);
 
 
 console.log("init");

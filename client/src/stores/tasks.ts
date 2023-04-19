@@ -5,59 +5,76 @@ type Task = {
   title: string;
   description: string;
   dueDate: string;
-  dueTime: string;
-  importance: string;
-  estHours: number;
+  priority: string;
+  hours: number;
   assignmentId: string;
   dependencies: string[]; // id of denpendent tasks
 };
 
-const tasks: Task[] = [
+const tasks = [
   {
-    id: "1",
-    title: "Finish Project Report",
-    description: "Write up and submit the final project report",
-    dueDate: "2023-04-01",
-    dueTime: "23:59",
-    importance: "High",
-    estHours: 10,
-    assignmentId: "123",
-    dependencies: [],
+    id: 't001',
+    title: 'Task 1',
+    description: 'Description of Task 1',
+    dueDate: '2023-05-01',
+    priority: 'high',
+    hours: 5,
+    assignmentId: 'a001',
+    dependencies: ['t002']
   },
   {
-    id: "2",
-    title: "Prepare for Interview",
-    description: "Research the company, practice interview questions",
-    dueDate: "2023-03-30",
-    dueTime: "10:00",
-    importance: "Medium",
-    estHours: 3,
-    assignmentId: "456",
-    dependencies: ["1"],
+    id: 't002',
+    title: 'Task 2',
+    description: 'Description of Task 2',
+    dueDate: '2023-05-02',
+    priority: 'medium',
+    hours: 8,
+    assignmentId: 'a001',
+    dependencies: []
   },
   {
-    id: "3",
-    title: "Buy Groceries",
-    description: "Buy milk, eggs, bread, and vegetables",
-    dueDate: "2023-03-28",
-    dueTime: "18:00",
-    importance: "Low",
-    estHours: 1,
-    assignmentId: "789",
-    dependencies: ["2"],
+    id: 't003',
+    title: 'Task 3',
+    description: 'Description of Task 3',
+    dueDate: '2023-05-03',
+    priority: 'low',
+    hours: 3,
+    assignmentId: 'a002',
+    dependencies: ['t001', 't002']
   },
   {
-    id: "4",
-    title: "Finish Coding Project",
-    description: "Complete the coding tasks and submit the final project",
-    dueDate: "2023-04-15",
-    dueTime: "23:59",
-    importance: "High",
-    estHours: 15,
-    assignmentId: "321",
-    dependencies: ["2", "3"],
+    id: 't004',
+    title: 'Task 4',
+    description: 'Description of Task 4',
+    dueDate: '2023-05-04',
+    priority: 'high',
+    hours: 7,
+    assignmentId: 'a002',
+    dependencies: ['t001']
   },
+  {
+    id: 't005',
+    title: 'Task 5',
+    description: 'Description of Task 5',
+    dueDate: '2023-05-05',
+    priority: 'medium',
+    hours: 4,
+    assignmentId: 'a003',
+    dependencies: ['t003']
+  },
+  {
+    id: 't006',
+    title: 'Task 6',
+    description: 'Description of Task 6',
+    dueDate: '2023-05-06',
+    priority: 'low',
+    hours: 6,
+    assignmentId: 'a003',
+    dependencies: ['t002', 't004']
+  }
 ];
+
+
 
 export const useTasksStore = defineStore({
     id: "tasks",

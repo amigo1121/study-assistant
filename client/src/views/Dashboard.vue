@@ -5,26 +5,32 @@ const sidebarItems=ref([
     {
         // Statistic of Assignments, Tasks, etc
         label: 'Overview',
+        name: 'overview'
     },
     {
         // Calendar of events, classes
-        label: 'Calendar'
+        label: 'Calendar',
+        name: 'calendar'
     },
     {
         // Show a list of task that need to do today
-        label: 'My day'
+        label: 'My day',
+        name: 'my-day'
     },
     {
         // List of assignments, create new, etc
-        label: 'Assignment'
+        label: 'Assignment',
+        name: 'assignments'
     },
     {
         // list of classes, crud
-        label: 'Classes'
+        label: 'Classes',
+        name: 'classes'
     },
     {
         // List of groups
-        label: 'Groups'
+        label: 'Groups',
+        name: 'groups'
     }
 ]);
 </script>
@@ -39,17 +45,21 @@ const sidebarItems=ref([
     overflow-y: auto;
 }
 .dashboard{
-    display: flex;
-    gap: 1rem;
 
     .dashboard__sidebar{
+        position: fixed;
         height: 100vh;
         max-width: 20rem;
+        width: 15rem;
         padding: 1rem;
+        z-index: 4;
     }
 
     .dashboard__content{
-
+        width: 100%;
+        padding-left: 17rem;
+        padding-top: 1rem;
+        padding-right: 1rem;
     }
 }
 

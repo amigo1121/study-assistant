@@ -13,8 +13,41 @@ const router = createRouter({
       children: [
         {
           path: "dashboard",
+          redirect: "/home/dashboard/overview" ,
           name: "dashboard",
           component: () => import("@/views/Dashboard.vue"),
+          children: [
+            {
+              path: "overview",
+              name: "overview",
+              component : () => import("@/views/Overview.vue")
+            },
+            {
+              path: "calendar",
+              name: "calendar",
+              component: () => import("@/views/Calendar.vue")
+            },
+            {
+              path: "assignments",
+              name: "assignments",
+              component: () => import('@/views/Assignments.vue')
+            },
+            {
+              path: "groups",
+              name: "groups",
+              component: () =>  import('@/views/Groups.vue')
+            },
+            {
+              path: "my-day",
+              name: "my-day",
+              component: () => import('@/views/MyDay.vue')
+            },
+            {
+              path: "classes",
+              name: "classes",
+              component: () => import('@/views/Classes.vue')
+            }
+          ]
         },
         {
           path: "todos",
