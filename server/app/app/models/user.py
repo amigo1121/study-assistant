@@ -15,3 +15,4 @@ class User(Timestamp, Base):
     hashed_password = Column(String)
     is_active = Column(Boolean, default=True)
     type = Column(Enum(UserType), nullable=False)
+    events = relationship("Event", back_populates="owner")
