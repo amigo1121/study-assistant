@@ -40,7 +40,7 @@ import { ref } from 'vue';
 import type { Ref } from 'vue';
 import { useAuthStore } from '@/stores/auth';
 import { useToast } from "primevue/usetoast";
-
+import router from '@/router'
 const username: Ref<string> = ref('');
 const email: Ref<string> = ref('');
 const password: Ref<string> = ref('');
@@ -52,6 +52,7 @@ const register = async () => {
         const res = await authStore.register({ username: username.value, email: email.value, password: password.value });
         console.log(res);
         console.log('Registered successfully');
+        router.push({name: 'login'});
     } catch (error) {
         console.log(error);
         console.log('Invalid credentials');
