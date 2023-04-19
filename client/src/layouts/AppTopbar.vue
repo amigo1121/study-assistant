@@ -7,11 +7,11 @@ const authStore = useAuthStore()
 const nestedMenuItem = ref([
     {
         label: 'Dashboard',
-        to: 'dashboard'
+        to: '/home/dashboard'
     },
     {
         label: 'Chats',
-        to: 'todos'
+        to: '/home/todos'
     },
     {
         label: 'Groups'
@@ -35,7 +35,7 @@ const toggleUserMenu = (event) => {
 </style>
 <template>
     <div class="layout-topbar">
-        <Menubar :model="nestedMenuItem" class="h-5rem">
+        <Menubar :model="nestedMenuItem" class="h-5rem text-lg">
             <template #end>
                 <Button icon="pi pi-user" severity="info" text rounded aria-label="User" @click="toggleUserMenu" />
                 <Menu :model="userMenuItems" popup ref="userMenu">

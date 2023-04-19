@@ -1,5 +1,6 @@
 <script setup lang="ts">
 import { ref, defineProps } from "vue";
+import {useRoute} from 'vue-router';
 const props = defineProps(['model'])
 </script>
 <style scoped lang="scss">
@@ -12,7 +13,7 @@ ul {
         width: 100%;
         margin-bottom: 1rem;
         list-style: none;
-        font-size: 1.2rem;
+        text-decoration: none;
         cursor: pointer;
         &:hover{
             background: rgba($color: #000000, $alpha: 0.1);
@@ -21,11 +22,11 @@ ul {
 }
 </style>
 <template>
-    <ul class="font-medium">
+    <ul class="font-medium text-xl">
         <template v-for="(item, index) in model" :key="index">
-            <li>
-                <a>{{ item.label }}</a>
-            </li>
+                <router-link :to="'/home/dashboard/'+item.name" class="text-50">
+                    <li>  {{ item.label }} </li>
+                </router-link>
         </template>
     </ul>
 </template>
