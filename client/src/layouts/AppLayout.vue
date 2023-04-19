@@ -6,8 +6,8 @@ import { RouterView } from 'vue-router';
 .app-layout{
     height: 100%;
     width: 100%;
-    .app-main-display {
-        padding: 7rem 2rem 2rem;
+    .app-main-display{
+        padding-top: 5rem;
     }
 }
 </style>

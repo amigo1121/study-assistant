@@ -1,7 +1,9 @@
 <script setup lang="ts">
 import Menubar from 'primevue/menubar';
 import { RouterLink } from 'vue-router'
+import { useAuthStore } from '@/stores/auth';
 import { ref } from 'vue'
+const authStore = useAuthStore()
 const nestedMenuItem = ref([
     {
         label: 'Dashboard',
@@ -15,11 +17,47 @@ const nestedMenuItem = ref([
         label: 'Groups'
     }
 ])
+const userMenu = ref()
+const userMenuItems = ref([
+    { separator: true },
+    { label: 'Profile', icon: 'pi pi-fw pi-user' },
+    { label: 'Settings', icon: 'pi pi-fw pi-cog' },
+    { separator: true }
+])
+const toggleUserMenu = (event) => {
+    userMenu.value.toggle(event);
+}
 </script>
 <style lang="scss" scoped>
+.p-menubar{
+    border-radius: 0px;
+}
 </style>
 <template>
     <div class="layout-topbar">
-      <Menubar :model="nestedMenuItem" class="h-5rem"></Menubar>
+        <Menubar :model="nestedMenuItem" class="h-5rem">
+            <template #end>
+                <Button icon="pi pi-user" severity="info" text rounded aria-label="User" @click="toggleUserMenu" />
+                <Menu :model="userMenuItems" popup ref="userMenu">
+                    <template #start>
+                        <button @click=""
+                            class="w-full p-link flex align-items-center p-2 pl-3 text-color hover:surface-200 border-noround">
+                            <div class="flex flex-column align">
+                                <span class="font-bold">{{authStore.username}}</span>
+                                <span class="text-sm">{{authStore.email}}</span>
+                            </div>
+                        </button>
+                    </template>
+                    <template #end>
+                        <button
+                            @click="authStore.logout()"
+                            class="w-full p-link flex align-items-center p-2 pl-4 text-color hover:surface-200 border-noround">
+                            <i class="pi pi-sign-out" />
+                            <span class="ml-2">Log Out</span>
+                        </button>
+                    </template>
+                </Menu>
+            </template>
+        </Menubar>
     </div>
 </template>

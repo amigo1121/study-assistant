@@ -1,26 +1,32 @@
 <script lang="ts" setup>
-import List from '@/components/List.vue';
-import { useTasksStore } from '@/stores/tasks';
-import { useAssignmentsStore } from '@/stores/assignments';
-import TaskCard from '@/components/Card/TaskCard.vue';
-import AssignmentCard from '@/components/Card/AssignmentCard.vue';
-import TaskForm from '@/components/Form/TaskForm.vue';
-import AssignmentForm from '@/components/Form/AssignmentForm.vue';
-import { storeToRefs } from 'pinia';
-const taskStore = useTasksStore();
-const { tasks } = storeToRefs(taskStore);
-const assignmentStore = useAssignmentsStore();
-const { assignments } = storeToRefs(assignmentStore);
-
-const addAssignment = (assignment) => {
-    assignmentStore.addAssignment(assignment);
-}
-
-const addTask = (task) => {
-    taskStore.addTask(task);
-}
-
-
+import DashboardSidebar from '@/layouts/DashboardSidebar.vue';
+import {ref} from 'vue';
+const sidebarItems=ref([
+    {
+        // Statistic of Assignments, Tasks, etc
+        label: 'Overview',
+    },
+    {
+        // Calendar of events, classes
+        label: 'Calendar'
+    },
+    {
+        // Show a list of task that need to do today
+        label: 'My day'
+    },
+    {
+        // List of assignments, create new, etc
+        label: 'Assignment'
+    },
+    {
+        // list of classes, crud
+        label: 'Classes'
+    },
+    {
+        // List of groups
+        label: 'Groups'
+    }
+]);
 </script>
 <style lang="scss" scoped>
 .dashboard {
@@ -32,31 +38,29 @@ const addTask = (task) => {
     height: 50vh;
     overflow-y: auto;
 }
+.dashboard{
+    display: flex;
+    gap: 1rem;
+
+    .dashboard__sidebar{
+        height: 100vh;
+        max-width: 20rem;
+        padding: 1rem;
+    }
+
+    .dashboard__content{
+
+    }
+}
+
 </style>
 <template>
-    <div class="dashboard p-fluid formgrid grid">
-        <div class="task-list card col-6">
-            <ul>
-                <li v-for="task in tasks" :key="task.id" class="mb-3">
-                    <TaskCard v-bind="task">
-                    </TaskCard>
-                </li>
-            </ul>
+    <div class="dashboard">
+        <div class="dashboard__sidebar bg-primary">
+            <DashboardSidebar :model="sidebarItems"/>
         </div>
-
-        <div class="assignment-list card col-6">
-            <ul>
-                <li v-for="assignment in assignments" :key="assignment.id" class="mb-3">
-                    <AssignmentCard v-bind="assignment">
-                    </AssignmentCard>
-                </li>
-            </ul>
-        </div>
-        <div class="card field col-6 p-3">
-            <TaskForm @add-task="addTask"></TaskForm>
-        </div>
-        <div class="card field col-6 p-3">
-            <AssignmentForm @add-assignment="addAssignment"></AssignmentForm>
+        <div class="dashboard__content">
+            <router-view></router-view>
         </div>
     </div>
 </template>

@@ -12,7 +12,7 @@ const login = () => {
     authStore.login({ identifier: identifier.value, password: password.value }).then((response) => {
         console.log(response);
         console.log("Logged in successfully")
-        router.push({ name: 'welcome' })
+        router.push({ name: 'dashboard' })
     }).catch((error) => {
         console.log(error);
         console.log('Invalid credentials');

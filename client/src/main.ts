@@ -13,6 +13,7 @@ import Dialog from 'primevue/dialog';
 import InputText from 'primevue/inputtext';
 import Toast from 'primevue/toast';
 import Password from 'primevue/password';
+import Menu from 'primevue/menu';
 
 
 import { useAuthStore } from './stores/auth';
@@ -31,6 +32,7 @@ app.component('QuillEditor', QuillEditor);
 app.component('Dialog', Dialog);
 app.component('Toast', Toast);
 app.component('InputText', InputText);
+app.component('Menu', Menu);
 app.component('Checkbox', Checkbox);
 app.component('Password', Password);
 
