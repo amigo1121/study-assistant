@@ -4,13 +4,15 @@ import dayGridPlugin from '@fullcalendar/daygrid'
 import timeGridPlugin from '@fullcalendar/timegrid'
 import interactionPlugin from '@fullcalendar/interaction'
 import { INITIAL_EVENTS, createEventId } from '@/utils/event'
-import { ref } from 'vue';
+import { useEventStore } from '@/stores/events'
+import { ref, onMounted } from 'vue';
+const eventStore = useEventStore();
 
 const currentEvents = ref([])
 const handleWeekendsToggle = () => {
   calendarOptions.weekends = calendarOptions.weekends // update a property
 }
-const handleDateSelect = (selectInfo) => {
+const handleDateSelect = async (selectInfo) => {
   console.log(selectInfo)
   let title = prompt('Please enter a new title for your event')
   let calendarApi = selectInfo.view.calendar
@@ -18,14 +20,15 @@ const handleDateSelect = (selectInfo) => {
   calendarApi.unselect() // clear date selection
 
   if (title) {
-    calendarApi.addEvent({
-      id: createEventId(),
-      title,
+    const inputEvent = {
+      title: title,
       start: selectInfo.startStr,
       end: selectInfo.endStr,
-      allDay: selectInfo.allDay
-    })
+    }
 
+    const response = await eventStore.createEvent(inputEvent);
+
+    calendarApi.addEvent(response)
 
   }
 }
@@ -40,6 +43,9 @@ const handleEvents = (events) => {
 
 }
 
+onMounted(()=>{
+  eventStore.fetchEvents();
+})
 
 
 const calendarOptions = ref({
@@ -54,7 +60,7 @@ const calendarOptions = ref({
     right: 'dayGridMonth,timeGridWeek,timeGridDay'
   },
   initialView: 'dayGridMonth',
-  initialEvents: INITIAL_EVENTS, // alternatively, use the `events` setting to fetch from a feed
+  initialEvents: eventStore.events, // alternatively, use the `events` setting to fetch from a feed
   editable: true,
   selectable: true,
   selectMirror: true,
