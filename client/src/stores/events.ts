@@ -4,21 +4,28 @@ import { API_URL } from "@/utils/config";
 import { useAuthStore } from "./auth";
 
 type EventCreate = {
-    title: String
-    start: String
-    end: String
-}
+  title: String;
+  start: String;
+  end: String;
+};
 
-type Event = EventCreate & {id: Number}
-
+type Event = EventCreate & { id: Number, owner_id: Number };
 
 const authStore = useAuthStore();
-
+let todayStr = new Date().toISOString().replace(/T.*$/, '')
 export const useEventStore = defineStore({
   id: "event",
   state: () => {
     return {
-      events: [] as Event[],
+      events: [
+        {
+          id: 99,
+          owner_id: 60,
+          title: "Timed event",
+          start: todayStr + "T12:00:00",
+          end: todayStr + "T20:00:00",
+        },
+      ] as Event[],
       currentEvent: {} as Event,
     };
   },
@@ -43,6 +50,7 @@ export const useEventStore = defineStore({
       };
       const response = await axios.post(API_URL + "/events", event, config);
       this.events.push(response.data);
+      return response.data
     },
     async updateEvent(event: Event) {
       const config = {
@@ -62,11 +70,11 @@ export const useEventStore = defineStore({
           Authorization: `Bearer ${authStore.getAccessToken}`,
         },
       };
-      console.log(eventId)
+      console.log(eventId);
       await axios.delete(`${API_URL}/events/${eventId}`, config);
       this.events = this.events.filter((event) => event.id !== eventId);
     },
   },
 });
 
-export default useEventStore
+export default useEventStore;

@@ -3,10 +3,11 @@ import {useEventStore} from '@/stores/events'
 import {onMounted, ref} from 'vue';
 const eventStore = useEventStore()
 const id = ref(0)
+const title = ref("")
 
 const test = () => {
     const mock = {
-        title: "test",
+        title: title.value,
         start: "start",
         end: "end"
     }
@@ -30,10 +31,12 @@ onMounted(() => {
             Classes
         </h3>
 
-        <p v-for="(event, index) in eventStore.events" :key="index"> {{event.id}}</p>
-        <Button @click="test">read events</Button>
+        <p v-for="(event, index) in eventStore.events" :key="index"> {{event.id}} - {{ event.title }}</p>
+
+        <input type="text" v-model="title">
+        <Button @click="test">add events</Button>
         <input type="number" v-model="id">
-        <Button @click="del">del events</Button>
+        <Button @click="del">delete events</Button>
 
     </div>
 </template>
