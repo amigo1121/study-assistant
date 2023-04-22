@@ -68,6 +68,7 @@ export const useAuthStore = defineStore({
         }
         this.setEmail(response.data.email)
         this.setUsername(response.data.username)
+        console.log("Authenticate successful")
         return response;
       } catch (error) {
         console.error(error);

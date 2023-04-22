@@ -1,43 +1,52 @@
 import io from "socket.io-client";
+import type { Socket } from "socket.io-client";
 import { API_URL } from "./config";
-import { userItemStore } from "@/stores/items";
 import { useAuthStore } from "@/stores/auth";
-const authStore = useAuthStore()
-class Socket {
-  static instance: any = null;
-  private socket: any;
-  private itemStore: any;
-  constructor(){
-    this.socket = io(API_URL, { path: '/sio/socket/', auth: { token: authStore.getAccessToken } });
-    this.itemStore = userItemStore();
+
+type EventHandler = (data: any) => void;
+
+export class BaseSocket {
+  static instance: BaseSocket | null = null;
+
+  private socket: Socket;
+
+  constructor(token: string) {
+    this.socket = io(API_URL, {
+      path: "/sio/socket/",
+      auth: { token },
+    });
+    this.socket.on("connect", () => {
+      console.log("Connected to server");
+    });
+    this.socket.on("disconnect", () => {
+      console.log("Disconnected from server");
+    });
   }
-  static getInstance() {
-    if(!Socket.instance){
-        Socket.instance = new Socket();
+
+  static getInstance(token: string): BaseSocket {
+    if (!BaseSocket.instance) {
+      BaseSocket.instance = new BaseSocket(token);
     }
-    return Socket.instance;
+    return BaseSocket.instance;
   }
-  start(){
-    this.socket.on('connect', () => {
-        console.log('Connected to server');
-    });
-    this.socket.on('disconnect', () => {
-        console.log('Disconnected from server');
-    });
-    this.socket.on('new_message', (data) => {
-        console.log('Received new message:', data);
-    });
-    this.socket.on('new_item', (item)=>{
-        console.log('Add new item:', item)
-        this.itemStore.items.push(item)
-    })
-  }
-  emit(event: string, data: Record<string,any>){
+
+  emit(event: string, data: Record<string, any>) {
     this.socket.emit(event, data);
   }
-  disconnect(){
+
+  on(event: string, handler: EventHandler) {
+    this.socket.on(event, handler);
+  }
+
+  disconnect() {
     this.socket.disconnect();
+  }
+  protected subscribe(
+    event: string,
+    handle: (data: Record<string, any>) => void
+  ) {
+    this.socket.on(event, (data) => handle(data));
   }
 }
 
-export const socket = Socket.getInstance()
+export default BaseSocket
