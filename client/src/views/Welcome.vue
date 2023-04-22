@@ -4,7 +4,7 @@ const authStore = useAuthStore()
 
 
 </script>
-<style lang="scss">
+<style lang="scss" scoped>
 
 </style>
 <template>
