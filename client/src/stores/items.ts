@@ -9,7 +9,7 @@ type Item = {
 
 const authStore = useAuthStore();
 
-export const userItemStore = defineStore({
+export const useItemStore = defineStore({
   id: "item",
   state: () => {
     return {
