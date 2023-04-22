@@ -12,7 +12,7 @@ onMounted(()=>{
 
 
 </script>
-<style></style>
+<style scoped></style>
 <template>
 
     <div class="grid">
