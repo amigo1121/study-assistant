@@ -1,16 +1,22 @@
 from typing import List
-from fastapi import APIRouter, Depends, HTTPException
+from fastapi import APIRouter, Depends, HTTPException, status
 from sqlalchemy.orm import Session
 from app.api import deps
 from app.crud import crud_event
 from app import schemas
 from .security import get_current_user
+from app import sio_server
+import logging
 
 router = APIRouter()
+logging.basicConfig(
+    level=logging.DEBUG,
+    format="%(asctime)s - %(levelname)s: %(message)s",
+)
 
 
 @router.post("/", response_model=schemas.Event)
-def create_event(
+async def create_event(
     event: schemas.EventCreate,
     current_user: schemas.User = Depends(get_current_user),
     db: Session = Depends(deps.get_db),
@@ -20,7 +26,21 @@ def create_event(
             status_code=403, detail="Only the owner can create an event"
         )
     event.owner_id = current_user.id
-    return crud_event.create_event(db=db, event=event)
+    response = crud_event.create_event(db=db, event=event)
+    try:
+        await sio_server.emit(
+            "event/add",
+            data={
+                "title": response.title,
+                "start": response.start,
+                "end": response.end,
+                "id": response.id,
+            },
+            room=current_user.username,
+        )
+        return response
+    except Exception as e:
+        logging.error(f"Error emitting new_message event: {e}")
 
 
 @router.get("/{event_id}", response_model=schemas.Event)
@@ -80,7 +100,7 @@ def update_event(
 
 
 @router.delete("/{event_id}", response_model=schemas.Event)
-def delete_event(
+async def delete_event(
     event_id: int,
     current_user: schemas.User = Depends(get_current_user),
     db: Session = Depends(deps.get_db),
@@ -96,4 +116,20 @@ def delete_event(
         raise HTTPException(
             status_code=403, detail="Not authorized to delete this event"
         )
-    return crud_event.delete_event(db=db, event_id=event_id)
+    try:
+        response = crud_event.delete_event(db=db, event_id=event_id)
+        await sio_server.emit(
+            "event/remove",
+            data={
+                "title": response.title,
+                "start": response.start,
+                "end": response.end,
+                "id": response.id,
+            },
+            room=current_user.username,
+        )
+        return response
+    except Exception as e:
+        raise HTTPException(
+            status_code=status.HTTP_404_NOT_FOUND, detail="Event not found"
+        )
