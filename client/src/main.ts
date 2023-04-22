@@ -19,8 +19,6 @@ import Column from 'primevue/column';
 import ColumnGroup from 'primevue/columngroup';
 import Row from 'primevue/row';
 
-
-import { useAuthStore } from './stores/auth';
 import ToastService from 'primevue/toastservice';
 
 const app = createApp(App);

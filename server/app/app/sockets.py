@@ -3,9 +3,8 @@ import logging
 from app.api.api_v1.endpoints.security import get_current_user
 
 logging.basicConfig(
-    filename="example.log",
     level=logging.DEBUG,
-    format="%(asctime)s %(levelname)s: %(message)s",
+    format="%(asctime)s - %(levelname)s: %(message)s",
 )
 
 sio_server = socketio.AsyncServer(async_mode="asgi", cors_allowed_origins=[])
