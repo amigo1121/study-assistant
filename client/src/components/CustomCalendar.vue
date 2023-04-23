@@ -3,17 +3,13 @@ import FullCalendar from '@fullcalendar/vue3'
 import dayGridPlugin from '@fullcalendar/daygrid'
 import timeGridPlugin from '@fullcalendar/timegrid'
 import interactionPlugin from '@fullcalendar/interaction'
-import { INITIAL_EVENTS, createEventId } from '@/utils/event'
+import { INITIAL_EVENTS, createEventId , createMockEvent, getNewEvent} from '@/utils/event'
 import { useEventStore } from '@/stores/events'
-import { ref, onMounted } from 'vue';
+import { ref, onMounted, onBeforeMount, computed} from 'vue';
 const eventStore = useEventStore();
 
 const currentEvents = ref([])
-const handleWeekendsToggle = () => {
-  calendarOptions.weekends = calendarOptions.weekends // update a property
-}
 const handleDateSelect = async (selectInfo) => {
-  console.log(selectInfo)
   let title = prompt('Please enter a new title for your event')
   let calendarApi = selectInfo.view.calendar
 
@@ -26,16 +22,13 @@ const handleDateSelect = async (selectInfo) => {
       end: selectInfo.endStr,
     }
 
-    const response = await eventStore.createEvent(inputEvent);
-
-    calendarApi.addEvent(response)
-
+    await eventStore.createEvent(inputEvent);
   }
 }
-const handleEventClick = (clickInfo) => {
+const handleEventClick = async (clickInfo) => {
   // modify event of delete it
   if (confirm(`Are you sure you want to delete the event '${clickInfo.event.title}'`)) {
-    clickInfo.event.remove()
+    await eventStore.deleteEvent(clickInfo.event.id);
   }
 }
 const handleEvents = (events) => {
@@ -43,9 +36,10 @@ const handleEvents = (events) => {
 
 }
 
-onMounted(()=>{
-  eventStore.fetchEvents();
-})
+const handleDrop = (dropInfor)=>{
+  const updateEvent = getNewEvent(dropInfor.event)
+  eventStore.updateEvent(updateEvent)
+}
 
 
 const calendarOptions = ref({
@@ -60,21 +54,34 @@ const calendarOptions = ref({
     right: 'dayGridMonth,timeGridWeek,timeGridDay'
   },
   initialView: 'dayGridMonth',
-  initialEvents: eventStore.events, // alternatively, use the `events` setting to fetch from a feed
+  events: eventStore.events, // alternatively, use the `events` setting to fetch from a feed
   editable: true,
   selectable: true,
   selectMirror: true,
   dayMaxEvents: true,
   weekends: true,
+  navLinks: true,
   select: handleDateSelect,
   eventClick: handleEventClick,
-  eventsSet: handleEvents
+  eventsSet: handleEvents,
+  eventDrop: handleDrop,
+  eventResize: handleDrop
   /* you can update a remote database when these fire:
   eventAdd:
   eventChange:
   eventRemove:
   */
 })
+
+onBeforeMount(async()=>{
+try {
+  await eventStore.fetchEvents();
+  calendarOptions.value.events = eventStore.events;
+} catch (error) {
+  console.log(error)
+}
+})
+
 
 
 

@@ -13,6 +13,7 @@ const socket = BaseSocket.getInstance(authStore.getAccessToken);
 
 eventStore.register(socket, "event/add", (event)=>{eventStore.addEvent(event)})
 eventStore.register(socket, "event/remove", (event)=>{eventStore.removeEvent(event)})
+eventStore.register(socket, "event/update", (event)=>{eventStore.modifyEvent(event)})
 </script>
 
 <template>

@@ -78,7 +78,7 @@ def read_events(
 
 
 @router.put("/{event_id}", response_model=schemas.Event)
-def update_event(
+async def update_event(
     event_id: int,
     event: schemas.EventUpdate,
     current_user: schemas.User = Depends(get_current_user),
@@ -96,7 +96,23 @@ def update_event(
         raise HTTPException(
             status_code=403, detail="Not authorized to update this event"
         )
-    return crud_event.update_event(db=db, event=event, event_id=event_id)
+    try:
+        response = crud_event.update_event(db=db, event=event, event_id=event_id)
+        await sio_server.emit(
+            "event/update",
+            data={
+                "title": response.title,
+                "start": response.start,
+                "end": response.end,
+                "id": response.id,
+            },
+            room=current_user.username,
+        )
+        return response
+    except Exception as e:
+        raise HTTPException(
+            status_code=status.HTTP_404_NOT_FOUND, detail="Cannot update event"
+        )
 
 
 @router.delete("/{event_id}", response_model=schemas.Event)
