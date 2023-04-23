@@ -5,12 +5,19 @@ import {ref} from 'vue';
 import type {Socket} from 'socket.io-client';
 
 type EventCreate = {
-  title: String;
-  start: String;
-  end: String;
+  title: string;
+  start: string;
+  end: string;
 };
 
-type Event = EventCreate & { id: Number; owner_id: Number };
+type Event = EventCreate & { id: number; owner_id?: number };
+
+type EventUpdate ={
+  title?: string
+  start?: string
+  end?: string
+  id: number
+}
 
 import { useAuthStore } from "./auth";
 
@@ -57,17 +64,15 @@ export const useEventStore = defineStore('event',()=>{
       }
     }
 
-    async function updateEvent(event: Event) {
+    async function updateEvent(event: EventUpdate) {
       const config = {
         headers: {
           Authorization: `Bearer ${authStore.getAccessToken}`,
         },
       };
-      await axios.put(`${API_URL}/events/${event.id}`, event, config);
-      const index = events.value.findIndex((e: { id: Number; }) => e.id === event.id);
-      if (index !== -1) {
-        events.value.splice(index, 1, event);
-      }
+      const {id,..._event} = event
+      await axios.put(`${API_URL}/events/${event.id}`, _event, config);
+
     }
 
     async function deleteEvent(eventId: number) {
@@ -91,14 +96,24 @@ export const useEventStore = defineStore('event',()=>{
     }
 
     function removeEvent(_event: Event){
-      events.value = events.value.filter((event: { id: number; }) => event.id !== _event.id);
+      const index = events.value.findIndex((e: { id: number; }) => e.id === _event.id);
+      if (index !== -1) {
+        events.value.splice(index, 1);
+      }
+    }
+
+    function modifyEvent(event: Event){
+      const index = events.value.findIndex((e: { id: number; }) => e.id === event.id);
+      if (index !== -1) {
+        events.value.splice(index, 1, event);
+      }
     }
 
     function register(socket: any, event: string, action: (...args: any[])=> void){
       socket.on(event, action)
     }
 
-    return { events, currentEvent, fetchEvents, setCurrentEvent, createEvent, updateEvent, deleteEvent, addEvent, register, removeEvent }
+    return { events, currentEvent, fetchEvents, setCurrentEvent, createEvent, updateEvent, deleteEvent, addEvent, register, removeEvent, modifyEvent }
 })
 
 export default useEventStore;
