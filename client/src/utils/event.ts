@@ -1,33 +1,26 @@
 
-
-export const INITIAL_EVENTS = [
-  {
-    id: createEventId(),
-    title: 'All-day event',
-    start: todayStr
-  },
-  {
-    id: createEventId(),
-    title: 'Timed event',
-    start: todayStr + 'T12:00:00',
-    end: todayStr + 'T20:00:00'
-  }
-]
-
-export function createEventId() {
-  return String(eventGuid++)
-}
-
-export function getDay(date: string){
-  return date.replace(/T.*$/, '')
-}
+import moment from 'moment';
 
 export function getNewEvent(event: any){
-  let start = event.startStr;
-  let end = event.endStr;
+  let start = moment(event.startStr);
+  let end = moment(event.endStr);
   if(event.allDay){
-    start = getDay(start)
-    end = getDay(end)
+    if(!end.isValid())
+    {
+      end = moment(start)
+      end.add(1,"days")
+    }
+    start = start.format("YYYY-MM-DD")
+    end = end.format("YYYY-MM-DD")
+  }
+  else{
+    if(!end.isValid())
+    {
+      end = moment(start)
+      end.add(1,"hours")
+    }
+    start = start.format()
+    end = end.format()
   }
   let owner_id = event.owner_id? event.owner_id: null
 

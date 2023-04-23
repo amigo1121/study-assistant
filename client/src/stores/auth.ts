@@ -43,7 +43,8 @@ export const useAuthStore = defineStore({
           const data = await response.data;
           localStorage.setItem("accessToken", data.access_token)
           this.loadTokenFromLocalStorage("accessToken");
-          console.log("Refresh token success")
+          console.log("Refresh token success");
+          setTimeout(this.tryRefreshToken,refreshTokenIntervalInMinutes*60*1000);
         } else {
           throw new Error("Failed to refresh access token");
         }
@@ -111,6 +112,7 @@ export const useAuthStore = defineStore({
             localStorage.setItem("refreshToken", response.data.refresh_token);
             authStore.loadTokenFromLocalStorage("refreshToken");
           }
+          setTimeout(this.tryRefreshToken,refreshTokenIntervalInMinutes*60*1000);
           return response.data;
         });
     },
@@ -124,11 +126,6 @@ export const useAuthStore = defineStore({
         username: user.username,
         password: user.password,
       });
-    },
-    startRefreshToken(){
-      setInterval(()=>{
-        this.tryRefreshToken()
-      },refreshTokenIntervalInMinutes*60*1000)
     }
   },
 });
