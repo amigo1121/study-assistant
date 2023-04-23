@@ -119,7 +119,7 @@ def get_current_user(
     except JWTError:
         raise credentials_exception
     user = get_user(identifier=token_data.username)
-    if user is None:
+    if not user:
         raise credentials_exception
     return user
 
@@ -159,7 +159,13 @@ async def authorize(user=Depends(get_current_user)):
 # re-generate access token from refresh token
 @router.get("/refreshtoken")
 async def refresh_access_token(token=Depends(get_token_header)):
-    user = get_current_user(token=token, token_type="refresh token")
-    access_token_expire = timedelta(minutes=ACCESS_TOKEN_EXPIRE_MINUTES)
-    new_access_token = create_access_token({"sub": user.username}, access_token_expire)
-    return {"access_token": new_access_token, "token_type": "bearer"}
+    try:
+        user = get_current_user(token=token, token_type="refresh token")
+        if user:
+            access_token_expire = timedelta(minutes=ACCESS_TOKEN_EXPIRE_MINUTES)
+            new_access_token = create_access_token(
+                {"sub": user.username}, access_token_expire
+            )
+            return {"access_token": new_access_token, "token_type": "bearer"}
+    except Exception as e:
+        raise e

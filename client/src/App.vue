@@ -8,7 +8,6 @@ const eventStore = useEventStore();
 
 authStore.loadTokenFromLocalStorage('accessToken');
 authStore.loadTokenFromLocalStorage('refreshToken');
-authStore.startRefreshToken()
 const socket = BaseSocket.getInstance(authStore.getAccessToken);
 
 eventStore.register(socket, "event/add", (event)=>{eventStore.addEvent(event)})
