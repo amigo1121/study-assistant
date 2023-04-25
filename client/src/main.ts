@@ -21,13 +21,15 @@ import Row from 'primevue/row';
 
 import ToastService from 'primevue/toastservice';
 
-const app = createApp(App);
 const pinia = createPinia();
+const app = createApp(App);
 
 app.use(router);
 app.use(pinia);
 app.use(PrimeVue);
 app.use(ToastService);
+
+
 
 app.component('Button', Button);
 app.component('QuillEditor', QuillEditor);
