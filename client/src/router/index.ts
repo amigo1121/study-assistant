@@ -77,28 +77,30 @@ const router = createRouter({
   ],
 });
 
-router.beforeEach(async (to, from, next) => {
+router.beforeEach(async (to, from) => {
   const authStore = useAuthStore();
   // make authenticate request
   if (to.meta.requiresAuth) {
     try{
       await authStore.tryAuthenticate();
-      next();
+      return;
     }catch(error){
-      next({name: "login"});
+      if(authStore.accessToken)
+      return ({name: "login",query: { sessionExpired: true }});
+      else return ({name:"login"})
     }
   }else{
     if (to.name==="login"||to.name==="register")
     {
       try{
         await authStore.tryAuthenticate();
-        next({name: "welcome"});
+        return ({name: "welcome"});
       }
       catch(error){
-        next();
+        return;
       }
     }
-    else next();
+    else return;
   }
 });
 
