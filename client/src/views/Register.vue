@@ -56,7 +56,6 @@ import { ref, reactive } from 'vue';
 import type { Ref } from 'vue';
 import { useAuthStore } from '@/stores/auth';
 import { useToast } from "primevue/usetoast";
-import InlineMessage from 'primevue/inlinemessage';
 import router from '@/router'
 const username: Ref<string> = ref('');
 const email: Ref<string> = ref('');
