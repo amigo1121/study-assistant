@@ -4,6 +4,7 @@ import dayGridPlugin from '@fullcalendar/daygrid'
 import timeGridPlugin from '@fullcalendar/timegrid'
 import interactionPlugin from '@fullcalendar/interaction'
 import listPlugin from '@fullcalendar/list';
+import ModifyEventForm from '@/components/Form/ModifyEventForm.vue';
 import CreateEventForm from '@/components/Form/CreateEventForm.vue';
 import { getNewEvent } from '@/utils/event';
 import { useEventStore } from '@/stores/events'
@@ -13,16 +14,22 @@ import { useToast } from "primevue/usetoast";
 const toast = useToast();
 const eventStore = useEventStore();
 const currentEvents = ref([]);
-const openDialog = ref<boolean>(false);
+const openCreateDialog = ref<boolean>(false);
+const openModifyDialog = ref<boolean>(false);
 const createEventProps = reactive({start:"", end:"", allDay: false})
-
+const modifyEventProps = reactive({title:"",start:"", end:"", allDay: false})
 const show = () => {
     toast.add({ severity: 'info', summary: 'Info', detail: 'Message Content' });
 };
 
 const submitSuccess = ()=>{
-  openDialog.value = false
+  openCreateDialog.value = false
   toast.add({ severity: 'success', summary: 'Success', detail: 'New event added', life: 2000});
+}
+
+const modifySuccess = (message) => {
+  toast.add({ severity: 'success', summary: 'Success', detail: `${message} Success`, life: 2000});
+  openModifyDialog.value = false
 }
 
 const handleDateSelect = async (selectInfo) => {
@@ -43,13 +50,22 @@ const handleDateSelect = async (selectInfo) => {
   createEventProps.start = selectInfo.startStr;
   createEventProps.end = selectInfo.endStr;
   createEventProps.allDay = selectInfo.allDay;
-  openDialog.value = true
+  openCreateDialog.value = true
 }
 const handleEventClick = async (clickInfo) => {
   // modify event of delete it
-  if (confirm(`Are you sure you want to delete the event '${clickInfo.event.title}'`)) {
-    await eventStore.deleteEvent(clickInfo.event.id);
-  }
+  // if (confirm(`Are you sure you want to delete the event '${clickInfo.event.title}'`)) {
+  //   await eventStore.deleteEvent(clickInfo.event.id);
+  // }
+
+  modifyEventProps.title = clickInfo.event.title
+  modifyEventProps.start = clickInfo.event.startStr
+  modifyEventProps.end = clickInfo.event.endStr
+  modifyEventProps.allDay = clickInfo.event.allDay
+  modifyEventProps.id = Number(clickInfo.event.id);
+
+  // console.log(modifyEventProps)
+  openModifyDialog.value = true
 }
 const handleEvents = (events) => {
   currentEvents.value = events
@@ -118,8 +134,11 @@ onBeforeMount(async () => {
         </template>
       </FullCalendar>
     </div>
-    <Dialog v-model:visible="openDialog" modal :style="{ width: '30rem' }" header="Create event">
+    <Dialog v-model:visible="openCreateDialog" modal :style="{ width: '40rem' }" header="Create event">
         <CreateEventForm :start="createEventProps.start" :end="createEventProps.end" :allDay="createEventProps.allDay" @submit="submitSuccess"></CreateEventForm>
+    </Dialog>
+    <Dialog v-model:visible="openModifyDialog" modal :style="{ width: '40rem' }" header="Modify event">
+       <ModifyEventForm :id="modifyEventProps.id" :title="modifyEventProps.title" :start="modifyEventProps.start" :end="modifyEventProps.end" :allDay="modifyEventProps.allDay" @submit="modifySuccess"></ModifyEventForm>
     </Dialog>
   </div>
 </template>
