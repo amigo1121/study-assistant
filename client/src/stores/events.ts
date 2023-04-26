@@ -2,7 +2,6 @@ import { defineStore } from "pinia";
 import axios from "axios";
 import { API_URL } from "@/utils/config";
 import {ref} from 'vue';
-import type {Socket} from 'socket.io-client';
 
 type EventCreate = {
   title: string;
@@ -109,11 +108,7 @@ export const useEventStore = defineStore('event',()=>{
       }
     }
 
-    function register(socket: any, event: string, action: (...args: any[])=> void){
-      socket.on(event, action)
-    }
-
-    return { events, currentEvent, fetchEvents, setCurrentEvent, createEvent, updateEvent, deleteEvent, addEvent, register, removeEvent, modifyEvent }
+    return { events, currentEvent, fetchEvents, setCurrentEvent, createEvent, updateEvent, deleteEvent, addEvent, removeEvent, modifyEvent }
 })
 
 export default useEventStore;
