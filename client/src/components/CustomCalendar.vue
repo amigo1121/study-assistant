@@ -4,34 +4,46 @@ import dayGridPlugin from '@fullcalendar/daygrid'
 import timeGridPlugin from '@fullcalendar/timegrid'
 import interactionPlugin from '@fullcalendar/interaction'
 import listPlugin from '@fullcalendar/list';
+import CreateEventForm from '@/components/Form/CreateEventForm.vue';
 import { getNewEvent } from '@/utils/event';
 import { useEventStore } from '@/stores/events'
-import { ref, onBeforeMount } from 'vue';
+import { ref, onBeforeMount, reactive } from 'vue';
 import { useToast } from "primevue/usetoast";
 
 const toast = useToast();
 const eventStore = useEventStore();
-const currentEvents = ref([])
+const currentEvents = ref([]);
+const openDialog = ref<boolean>(false);
+const createEventProps = reactive({start:"", end:"", allDay: false})
 
 const show = () => {
     toast.add({ severity: 'info', summary: 'Info', detail: 'Message Content' });
 };
 
+const submitSuccess = ()=>{
+  openDialog.value = false
+  toast.add({ severity: 'success', summary: 'Success', detail: 'New event added', life: 2000});
+}
+
 const handleDateSelect = async (selectInfo) => {
-  let title = prompt('Please enter a new title for your event')
-  let calendarApi = selectInfo.view.calendar
+  // let title = prompt('Please enter a new title for your event')
+  // let calendarApi = selectInfo.view.calendar
 
-  calendarApi.unselect() // clear date selection
+  // calendarApi.unselect() // clear date selection
 
-  if (title) {
-    const inputEvent = {
-      title: title,
-      start: selectInfo.startStr,
-      end: selectInfo.endStr,
-    }
+  // if (title) {
+  //   const inputEvent = {
+  //     title: title,
+  //     start: selectInfo.startStr,
+  //     end: selectInfo.endStr,
+  //   }
 
-    await eventStore.createEvent(inputEvent);
-  }
+  //   await eventStore.createEvent(inputEvent);
+  // }
+  createEventProps.start = selectInfo.startStr;
+  createEventProps.end = selectInfo.endStr;
+  createEventProps.allDay = selectInfo.allDay;
+  openDialog.value = true
 }
 const handleEventClick = async (clickInfo) => {
   // modify event of delete it
@@ -106,6 +118,9 @@ onBeforeMount(async () => {
         </template>
       </FullCalendar>
     </div>
+    <Dialog v-model:visible="openDialog" modal :style="{ width: '30rem' }" header="Create event">
+        <CreateEventForm :start="createEventProps.start" :end="createEventProps.end" :allDay="createEventProps.allDay" @submit="submitSuccess"></CreateEventForm>
+    </Dialog>
   </div>
 </template>
 
