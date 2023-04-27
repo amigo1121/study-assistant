@@ -10,8 +10,8 @@ class Course(Base):
     id = Column(Integer, primary_key=True)
     code = Column(String(50), unique=True, nullable=False)
     name = Column(String(255), nullable=False)
-    startDate = Column(Date, nullable=False)
-    endDate = Column(Date, nullable=False)
+    start_date = Column(Date, nullable=False)
+    end_date = Column(Date, nullable=False)
     credits = Column(Integer, nullable=False)
 
     def __repr__(self):
