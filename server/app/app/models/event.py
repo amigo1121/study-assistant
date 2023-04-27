@@ -5,9 +5,13 @@ from app.db.base_class import Base
 
 
 class Event(Base):
-    id = Column(Integer, primary_key=True, index=True, unique=True)
+    __tablename__ = "events"
+
+    id = Column(Integer, primary_key=True, index=True, unique=True, nullable=False)
     title = Column(String, nullable=False)
-    owner_id = Column(Integer, ForeignKey("user.id"), nullable=False)
+    owner_id = Column(
+        Integer, ForeignKey("users.id", ondelete="CASCADE"), nullable=False
+    )
     start = Column(String, nullable=False)
     end = Column(String, nullable=False)
     owner = relationship("User", back_populates="events")
