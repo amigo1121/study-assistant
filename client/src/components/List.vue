@@ -6,11 +6,13 @@ const props = defineProps ({
     },
     height: {
         type: String,
-        required: true
+        required: true,
+        default: "20rem"
     },
     width : {
         type: String,
-        required: true
+        required: true,
+        default: "100%"
     }
 })
 </script>
@@ -24,19 +26,10 @@ const props = defineProps ({
     padding: 1rem;
     overflow: scroll;
     position:absolute;
-    ul{
-        height: 100%;
-        width: 100%;
-        list-style: none;
-    }
 }
 </style>
 <template>
     <div class="list" :style="{ height:height, width:width }">
-        <ul>
-            <li v-for="item in items" :key="item.id">
-                {{ item.name }}
-            </li>
-        </ul>
+
     </div>
 </template>

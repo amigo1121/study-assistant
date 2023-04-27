@@ -28,6 +28,10 @@ const sidebarItems=ref([
         name: 'classes'
     },
     {
+        label: 'Courses',
+        name: 'courses'
+    },
+    {
         // List of groups
         label: 'Groups',
         name: 'groups'
