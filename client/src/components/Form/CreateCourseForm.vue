@@ -5,6 +5,7 @@ import axios from 'axios'
 import { ref } from "vue"
 import { useAuthStore } from '@/stores/auth';
 import { API_URL } from "@/utils/config";
+import router from '@/router'
 const authStore = useAuthStore()
 const name = ref("");
 const code = ref("");
@@ -38,6 +39,7 @@ const schedule = ref({
         to: ""
     }
 });
+const emit = defineEmits(['submit'])
 
 const extractHour = (d: Date) => {
     return moment(d).format("HH:mm")
@@ -69,7 +71,11 @@ const submit = async () => {
         },
     };
     try {
-        await axios.post(API_URL + "/course", inputForm, config)
+        const response = await axios.post(API_URL + "/course", inputForm, config)
+        if(response.status!=200)
+            throw new Error("Cannot create new course")
+        emit('submit')
+        router.go()
     } catch (error) {
         console.log(error)
     }

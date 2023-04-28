@@ -29,6 +29,10 @@ const toggleUserMenu = (event) => {
     userMenu.value.toggle(event);
 }
 const openAddCourseDialog = ref(false)
+
+const handleSubmit = ()=>{
+    openAddCourseDialog.value=false
+}
 onMounted(() => {
     if (authStore.type == 2) {
         nestedMenuItem.value.push({
@@ -69,7 +73,7 @@ onMounted(() => {
             </template>
         </Menubar>
         <Dialog v-model:visible="openAddCourseDialog" modal :style="{ width: '40rem' }" header="Create course">
-            <CreateCourseForm></CreateCourseForm>
+            <CreateCourseForm @submit="handleSubmit"></CreateCourseForm>
         </Dialog>
     </div>
 </template>

@@ -21,6 +21,21 @@ def get_courses(db: Session, skip: int = 0, limit: int = 100):
     return db.query(models.Course).offset(skip).limit(limit).all()
 
 
+def get_courses_by_teacher_id(
+    db: Session,
+    teacher_id: int,
+    skip: int = 0,
+    limit: int = 100,
+):
+    return (
+        db.query(models.Course)
+        .filter(models.Course.teacher_id == teacher_id)
+        .offset(skip)
+        .limit(limit)
+        .all()
+    )
+
+
 def create_course_schedule(
     db: Session, schedule: schemas.course.CourseScheduleBase, course_id: int
 ):

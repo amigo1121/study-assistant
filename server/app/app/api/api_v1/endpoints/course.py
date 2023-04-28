@@ -30,6 +30,21 @@ def read_courses(skip: int = 0, limit: int = 100, db: Session = Depends(deps.get
     return courses
 
 
+@router.get("/my-courses", response_model=List[schemas.CourseWithStudent])
+def read_courses(
+    skip: int = 0,
+    limit: int = 100,
+    db: Session = Depends(deps.get_db),
+    current_user: schemas.User = Depends(get_current_user),
+):
+    if not current_user or current_user.type != UserType.TEACHER:
+        raise HTTPException(status_code=403, detail="Only the teacher can read courses")
+    courses = crud_course.get_courses_by_teacher_id(
+        db, skip=skip, limit=limit, teacher_id=current_user.id
+    )
+    return courses
+
+
 @router.get("/{course_id}", response_model=schemas.CourseWithStudent)
 def read_course(course_id: int, db: Session = Depends(deps.get_db)):
     db_course = crud_course.get_course(db, course_id=course_id)
