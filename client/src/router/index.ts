@@ -48,15 +48,21 @@ const router = createRouter({
               component: () => import('@/views/Classes.vue')
             },
             {
-              path: "courses",
-              name: "courses",
+              path: "available-courses",
+              name: "available-courses",
               component: () => import ('@/views/Courses.vue')
             },
             {
               path: "my-classes",
               name: "my-classes",
               component: () => import ('@/views/MyClasses.vue')
+            },
+            {
+              path: "registered-courses",
+              name: "registered-courses",
+              component: () => import('@/views/RegisteredCourses.vue')
             }
+
 
           ]
         },
