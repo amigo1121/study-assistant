@@ -4,13 +4,24 @@ from sqlalchemy.orm import Session
 from app import schemas
 from app.crud import crud_course
 from app.api import deps
+from .security import get_current_user
+from app.utils.commons import UserType
+
 
 router = APIRouter()
 
 
-@router.post("/", response_model=schemas.user.CourseRead)
-def create_course(course: schemas.CourseCreate, db: Session = Depends(deps.get_db)):
-    return crud_course.create_course(db=db, course=course)
+@router.post("/", response_model=schemas.CourseRead)
+def create_course(
+    course: schemas.CourseCreate,
+    current_user: schemas.User = Depends(get_current_user),
+    db: Session = Depends(deps.get_db),
+):
+    if not current_user or current_user.type != UserType.TEACHER:
+        raise HTTPException(
+            status_code=403, detail="Only the teacher can create a course"
+        )
+    return crud_course.create_course(db=db, course=course, teacher_id=current_user.id)
 
 
 @router.get("/", response_model=List[schemas.CourseWithStudent])

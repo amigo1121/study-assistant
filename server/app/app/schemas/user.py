@@ -3,7 +3,6 @@ from datetime import date
 from datetime import datetime
 from typing import List, Optional
 from ..utils.commons import UserType
-from .course import CourseRead
 
 
 class UserBase(BaseModel):
