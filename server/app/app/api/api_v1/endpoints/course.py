@@ -2,7 +2,7 @@ from typing import List
 from fastapi import APIRouter, Depends, HTTPException
 from sqlalchemy.orm import Session
 from app import schemas
-from app.crud import crud_course
+from app.crud import crud_course, crud_user
 from app.api import deps
 from .security import get_current_user
 from app.utils.commons import UserType
@@ -22,6 +22,19 @@ def create_course(
             status_code=403, detail="Only the teacher can create a course"
         )
     return crud_course.create_course(db=db, course=course, teacher_id=current_user.id)
+
+
+@router.get("/registered-courses", response_model=schemas.StudentWithCourse)
+def get_registered_courses(
+    skip: int = 0,
+    limit: int = 100,
+    db: Session = Depends(deps.get_db),
+    student: schemas.User = Depends(get_current_user),
+):
+    db_user = crud_user.get_user(db, user_id=student.id)
+    if db_user is None:
+        raise HTTPException(status_code=404, detail="User not found")
+    return db_user
 
 
 @router.get("/", response_model=List[schemas.CourseWithStudent])

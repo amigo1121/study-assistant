@@ -1,10 +1,10 @@
 <script lang="ts" setup>
 import { reactive, defineProps, onBeforeMount, ref } from 'vue'
+import { useAuthStore } from '@/stores/auth';
 import { API_URL } from '@/utils/config';
+const authStore = useAuthStore()
 import axios from 'axios'
 import CourseCard from '@/components/Card/CoursesCard.vue'
-import { useAuthStore } from '@/stores/auth';
-const authStore = useAuthStore();
 const state = reactive({
     coursesSeach: ""
 })
@@ -14,9 +14,14 @@ const courses = ref([])
 onBeforeMount(async () => {
 
     try {
-        const response = await axios.get(API_URL + "/course")
+        let config = {
+                headers: {
+                    Authorization: `Bearer ${authStore.accessToken}`,
+                },
+            };
+        const response = await axios.get(API_URL + "/course/registered-courses",config)
         if (response.status === 200) {
-            courses.value = response.data
+            courses.value = response.data.registered_courses
             console.log(courses.value)
         }
         else throw new Error("Can't fetch courses")
@@ -28,10 +33,6 @@ onBeforeMount(async () => {
 <style scoped></style>
 <template>
     <h1>Courses</h1>
-    <span class="p-input-icon-left">
-        <i class="pi pi-search" />
-        <InputText v-model="state.coursesSeach" placeholder="Search for courses" />
-    </span>
     <div class="card max-h-full p-3 overflow-scroll mt-3">
 
         <CourseCard v-for="(course, index) in courses" :key="index" :name="course.name" :code="course.code"

@@ -2,16 +2,17 @@ from pydantic import BaseModel
 
 
 class RegisterCourse(BaseModel):
-    student_id: int
-    course_id: int
+    course_code: str
 
 
 class LeaveCourse(RegisterCourse):
     pass
 
 
-class StudentCourseInfo(RegisterCourse):
+class StudentCourseInfo(BaseModel):
     id: int
+    student_id: int
+    course_id: int
 
     class Config:
         orm_mode = True

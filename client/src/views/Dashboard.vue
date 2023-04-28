@@ -29,13 +29,16 @@ const sidebarItems=ref([
         name: 'classes'
     },
     {
-        label: 'Courses',
-        name: 'courses'
+        label: 'Available Courses',
+        name: 'available-courses'
     },
     {
         // List of groups
         label: 'Groups',
         name: 'groups'
+    },{
+        label: 'Registered courses',
+        name: 'registered-courses'
     }
 ]);
 
