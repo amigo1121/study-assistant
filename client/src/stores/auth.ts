@@ -15,6 +15,7 @@ export const useAuthStore = defineStore({
       refreshToken: null,
       username: null,
       email: null,
+      type: null,
       timeoutID: null
     };
   },
@@ -68,8 +69,10 @@ export const useAuthStore = defineStore({
         if (response.status !== 200) {
           throw new Error("Failed to authenticate with access token");
         }
+        console.log(response.data)
         this.setEmail(response.data.email)
         this.setUsername(response.data.username)
+        this.setType(response.data.type)
         console.log("Authenticate successful")
         if(this.timeoutID)
         {
@@ -96,6 +99,7 @@ export const useAuthStore = defineStore({
           }
           this.setEmail(response.data.email)
           this.setUsername(response.data.username)
+          this.setType(response.data.type)
           console.log("Authenticate successful with refreshed access token");
           return response;
         } catch (error) {
@@ -110,6 +114,9 @@ export const useAuthStore = defineStore({
     },
     setEmail(email: string) {
       this.email = email;
+    },
+    setType(type: number){
+      this.type = type;
     },
     logout() {
       localStorage.removeItem("accessToken");
