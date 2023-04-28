@@ -45,7 +45,7 @@ onBeforeMount(async () => {
         <AssignmentCard v-for="(assignment, index) in assignments" :key="index"
             :id="assignment.id"
             :title="assignment.title"
-            :importance="assignment.importance"
+            :priority="assignment.priority"
             :description="assignment.description"
             :dueDate="assignment.due_date"
         ></AssignmentCard>
