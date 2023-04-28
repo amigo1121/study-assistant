@@ -38,6 +38,12 @@
                             <div class="error-msg" v-if="error.confirmPassword">Confirm password is invalid</div>
                         </div>
 
+                        <div class="field">
+                            <label for="code" class="block text-900 font-medium text-xl">Teacher Code</label>
+                            <InputText id="code" type="text" placeholder="Code" class="w-full " style="padding: 1rem"
+                                v-model="code" :class="{ 'p-invalid': !registerSuccessful}" />
+                        </div>
+
                         <Button label="Sign up" class="w-full p-3 text-xl mt-2" @click="register"></Button>
                         <div class="w-100 flex align-items-center justify-content-center mt-3">
                             <router-link to="login" class="font-medium no-underline ml-2 text-right cursor-pointer"
@@ -62,6 +68,7 @@ const email: Ref<string> = ref('');
 const password: Ref<string> = ref('');
 const confirmPassword: Ref<string> = ref('');
 const authStore = useAuthStore();
+const code: Ref<string> = ref('');
 const registerSuccessful = ref<boolean>(true)
 const error = reactive({
     username: false,
@@ -73,14 +80,14 @@ const error = reactive({
 const register = async () => {
     if (validate())
         try {
-            const res = await authStore.register({ username: username.value, email: email.value, password: password.value });
+            const res = await authStore.register({ username: username.value, email: email.value, password: password.value , code: code.value });
             console.log(res);
             console.log('Registered successfully');
             registerSuccessful.value = true
             router.push({ name: 'login', query: {status: 'registered'} });
         } catch (error) {
             registerSuccessful.value = false
-            toast.add({severity: 'error', summary: 'Error', detail: 'User already exists', life: 2000})
+            toast.add({severity: 'error', summary: 'Error', detail: error.response.data.detail , life: 2000})
             console.log(error);
             console.log('Invalid credentials');
         }

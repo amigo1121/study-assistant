@@ -11,6 +11,7 @@ class UserBase(BaseModel):
 class UserCreate(UserBase):
     password: str
     type: UserType = UserType.STUDENT
+    code: str
 
 
 class UserLogin(BaseModel):
