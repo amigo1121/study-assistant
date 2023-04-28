@@ -1,6 +1,7 @@
 from datetime import date
 from typing import List, Optional
 from pydantic import BaseModel
+from .assignment import Assignment
 
 
 class CourseScheduleBase(BaseModel):
@@ -42,6 +43,7 @@ class CourseRead(BaseModel):
     end_date: date
     credits: int
     schedules: List[CourseSchedule]
+    assignments: List[Assignment]
     teacher_id: int
 
     class Config:

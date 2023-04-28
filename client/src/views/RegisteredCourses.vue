@@ -5,6 +5,7 @@ import { API_URL } from '@/utils/config';
 const authStore = useAuthStore()
 import axios from 'axios'
 import CourseCard from '@/components/Card/CoursesCard.vue'
+import AssignmentCard from '@/components/Card/AssignmentCard.vue';
 const state = reactive({
     coursesSeach: ""
 })

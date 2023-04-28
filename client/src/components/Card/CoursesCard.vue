@@ -1,5 +1,6 @@
 <script lang="ts" setup>
 import { defineProps, withDefaults, ref } from "vue";
+import AssignmentFormVue from "../Form/AssignmentForm.vue";
 import { useAuthStore } from "@/stores/auth";
 import { API_URL } from "@/utils/config";
 import axios from 'axios'
@@ -40,7 +41,7 @@ const handleRegister = async () => {
                     Authorization: `Bearer ${authStore.accessToken}`,
                 },
             };
-            const response = await axios.post(API_URL + "/course-action/register-course",{course_code: props.code}, config)
+            const response = await axios.post(API_URL + "/course-action/register-course", { course_code: props.code }, config)
 
             if (response.status !== 200)
                 throw new Error("Something wrong, cannot register for course")
@@ -54,7 +55,7 @@ const handleRegister = async () => {
     }
 
 }
-const handleDrop = async () =>{
+const handleDrop = async () => {
     if (confirm("Confirm course deregistration")) {
         try {
 
@@ -63,7 +64,7 @@ const handleDrop = async () =>{
                     Authorization: `Bearer ${authStore.accessToken}`,
                 },
             };
-            const response = await axios.post(API_URL + "/course-action/drop-course",{course_code: props.code}, config)
+            const response = await axios.post(API_URL + "/course-action/drop-course", { course_code: props.code }, config)
 
             if (response.status !== 200)
                 throw new Error("Something wrong, cannot deregister for course")
@@ -82,6 +83,28 @@ const handleClick = () => {
         createNewAssignment()
     else
         registerOrLeaveCourse()
+}
+const addAssignment = async (assignmentData) => {
+    try {
+        let config = {
+            headers: {
+                Authorization: `Bearer ${authStore.accessToken}`,
+            },
+        }
+        try {
+            assignmentData.course_code = props.code
+            const response = await axios.post(API_URL + "/assignments", assignmentData, config)
+            if (response.status != 201)
+                throw new Error("Cannot create new course")
+            router.go()
+        } catch (error) {
+            console.log(error)
+        }
+
+
+    } catch (error) {
+
+    }
 }
 </script>
 <style lang="scss" scoped></style>
@@ -107,11 +130,12 @@ const handleClick = () => {
         </h4>
         <div class="flex gap-3" v-if="authStore.type == 1">
             <Button label="Register" severity="info" @click="handleRegister" />
-            <Button label="Drop" severity="danger"  @click="handleDrop"/>
+            <Button label="Drop" severity="danger" @click="handleDrop" />
         </div>
     </div>
 
-    <Dialog v-model:visible="openCreateNewAssignment" modal :style="{ width: '40rem' }" header="Create new Assignment">
-
+    <Dialog v-model:visible="openCreateNewAssignment" modal :style="{ width: '60rem', height: '100%' }"
+        header="Create new Assignment">
+        <AssignmentFormVue @addAssignment="addAssignment"></AssignmentFormVue>
     </Dialog>
 </template>

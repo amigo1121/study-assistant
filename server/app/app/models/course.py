@@ -7,6 +7,7 @@ from sqlalchemy import (
     ForeignKey,
     Table,
     UniqueConstraint,
+    DateTime,
 )
 from sqlalchemy.orm import relationship
 
@@ -53,6 +54,21 @@ class Course(Base):
     )
     teacher = relationship("User", back_populates="teaching_courses")
     schedules = relationship("CourseSchedule", back_populates="course")
+    assignments = relationship("Assignment", back_populates="course")
 
     def __repr__(self):
         return f"<Course(code='{self.code}', name='{self.name}', startDate='{self.startDate}', endDate='{self.endDate}', credit={self.credits})>"
+
+
+class Assignment(Base):
+    __tablename__ = "assignments"
+
+    id = Column(Integer, primary_key=True, index=True)
+    title = Column(String, nullable=False)
+    priority = Column(String, nullable=False)
+    description = Column(String, nullable=False)
+    due_date = Column(DateTime, nullable=False)
+    course_id = Column(
+        Integer, ForeignKey("courses.id", ondelete="CASCADE"), nullable=False
+    )
+    course = relationship("Course", back_populates="assignments")

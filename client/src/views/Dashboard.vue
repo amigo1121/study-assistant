@@ -24,19 +24,10 @@ const sidebarItems=ref([
         name: 'assignments'
     },
     {
-        // list of classes, crud
-        label: 'Classes',
-        name: 'classes'
-    },
-    {
         label: 'Available Courses',
         name: 'available-courses'
     },
     {
-        // List of groups
-        label: 'Groups',
-        name: 'groups'
-    },{
         label: 'Registered courses',
         name: 'registered-courses'
     }
