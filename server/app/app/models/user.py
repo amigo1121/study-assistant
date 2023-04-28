@@ -21,3 +21,4 @@ class User(Timestamp, Base):
     registered_courses = relationship(
         "Course", secondary=student_course, back_populates="students"
     )
+    teaching_courses = relationship("Course", back_populates="teacher")

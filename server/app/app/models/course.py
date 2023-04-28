@@ -22,6 +22,20 @@ student_course = Table(
 )
 
 
+class CourseSchedule(Base):
+
+    __tablename__ = "coursechedules"
+
+    id = Column(Integer, primary_key=True)
+    day = Column(String, nullable=False)
+    start = Column(String, nullable=False)
+    end = Column(String, nullable=False)
+    course_id = Column(
+        Integer, ForeignKey("courses.id", ondelete="CASCADE"), nullable=False
+    )
+    course = relationship("Course", back_populates="schedules")
+
+
 class Course(Base):
     __tablename__ = "courses"
 
@@ -34,6 +48,11 @@ class Course(Base):
     students = relationship(
         "User", secondary=student_course, back_populates="registered_courses"
     )
+    teacher_id = Column(
+        Integer, ForeignKey("users.id", ondelete="CASCADE"), nullable=False
+    )
+    teacher = relationship("User", back_populates="teaching_courses")
+    schedules = relationship("CourseSchedule", back_populates="course")
 
     def __repr__(self):
         return f"<Course(code='{self.code}', name='{self.name}', startDate='{self.startDate}', endDate='{self.endDate}', credit={self.credits})>"

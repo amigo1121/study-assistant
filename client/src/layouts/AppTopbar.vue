@@ -2,7 +2,8 @@
 import Menubar from 'primevue/menubar';
 import { RouterLink } from 'vue-router'
 import { useAuthStore } from '@/stores/auth';
-import { ref } from 'vue'
+import { ref, onMounted } from 'vue'
+import CreateCourseForm from '@/components/Form/CreateCourseForm.vue';
 const authStore = useAuthStore()
 const nestedMenuItem = ref([
     {
@@ -27,9 +28,18 @@ const userMenuItems = ref([
 const toggleUserMenu = (event) => {
     userMenu.value.toggle(event);
 }
+const openAddCourseDialog = ref(false)
+onMounted(() => {
+    if (authStore.type == 2) {
+        nestedMenuItem.value.push({
+            label: 'Add course',
+            command: () => { openAddCourseDialog.value = true }
+        })
+    }
+})
 </script>
 <style lang="scss" scoped>
-.p-menubar{
+.p-menubar {
     border-radius: 0px;
 }
 </style>
@@ -43,14 +53,13 @@ const toggleUserMenu = (event) => {
                         <button @click=""
                             class="w-full p-link flex align-items-center p-2 pl-3 text-color hover:surface-200 border-noround">
                             <div class="flex flex-column align">
-                                <span class="font-bold">{{authStore.username}}</span>
-                                <span class="text-sm">{{authStore.email}}</span>
+                                <span class="font-bold">{{ authStore.username }}</span>
+                                <span class="text-sm">{{ authStore.email }}</span>
                             </div>
                         </button>
                     </template>
                     <template #end>
-                        <button
-                            @click="authStore.logout()"
+                        <button @click="authStore.logout()"
                             class="w-full p-link flex align-items-center p-2 pl-4 text-color hover:surface-200 border-noround">
                             <i class="pi pi-sign-out" />
                             <span class="ml-2">Log Out</span>
@@ -59,5 +68,8 @@ const toggleUserMenu = (event) => {
                 </Menu>
             </template>
         </Menubar>
+        <Dialog v-model:visible="openAddCourseDialog" modal :style="{ width: '40rem' }" header="Create course">
+            <CreateCourseForm></CreateCourseForm>
+        </Dialog>
     </div>
 </template>

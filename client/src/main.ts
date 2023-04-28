@@ -19,6 +19,7 @@ import Column from 'primevue/column';
 import ColumnGroup from 'primevue/columngroup';
 import Row from 'primevue/row';
 import InlineMessage from 'primevue/inlinemessage';
+import InputNumber from 'primevue/inputnumber';
 
 import ToastService from 'primevue/toastservice';
 
@@ -45,6 +46,7 @@ app.component('Column', Column);
 app.component('ColumnGroup', ColumnGroup);
 app.component('Row',Row);
 app.component('InlineMessage', InlineMessage);
+app.component('InputNumber', InputNumber);
 
 
 console.log("init");

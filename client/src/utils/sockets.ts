@@ -57,7 +57,7 @@ export class BaseSocket {
   public connect() {
     this.socket.connect();
     this.socket.on("disconnect", () => {
-      console.log("Disconnected from server",this.socket.id);
+      console.log("Disconnected from server");
     });
   }
 
