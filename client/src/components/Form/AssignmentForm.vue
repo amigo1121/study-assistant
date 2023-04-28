@@ -5,6 +5,7 @@ import Dropdown from 'primevue/dropdown';
 import Calendar from 'primevue/calendar';
 import Button from 'primevue/button';
 import Editor from 'primevue/editor';
+import moment from 'moment';
 export default {
     components: { TextEditor, InputText, Dropdown, Calendar, Button },
     props: {
@@ -18,7 +19,7 @@ export default {
             required: false,
             default: '',
         },
-        importance: {
+        priority: {
             type: String,
             required: false,
             default: '',
@@ -32,11 +33,6 @@ export default {
             type: String,
             required: false,
             default: null,
-        },
-        dueTime: {
-            type: String,
-            required: false,
-            default: null,
         }
     },
     data() {
@@ -44,10 +40,9 @@ export default {
         return {
             state:{
                 title: data.title,
-                importance: data.importance,
+                priority: data.priority,
                 description: data.description,
                 dueDate: data.dueDate? data.dueDate:null,
-                dueTime: data.dueTime? data.dueTime:null,
             }
         }
     },
@@ -56,7 +51,9 @@ export default {
             this.$emit('close');
         },
         handleSubmit() {
-            this.$emit('addAssignment',{...this.state});
+            const {dueDate,...restData} =this.state
+            const dueDateFormated = moment(dueDate).format()
+            this.$emit('addAssignment',{due_date:dueDateFormated,...restData});
             this.$emit('modifyAssignment',{id: this.id ,...this.state});
             this.$emit('close');
             this.reset();
@@ -64,10 +61,9 @@ export default {
         reset(){
             this.state = {
                 title: '',
-                importance: '',
+                priority: '',
                 description: '',
                 dueDate: null,
-                dueTime: null,
             }
         }
     },
@@ -87,15 +83,11 @@ export default {
         </div>
         <div class="field col-12 md:col-4">
             <label for="age1">Priority</label>
-            <Dropdown v-model="state.importance" :options="['High', 'Medium', 'Low']" />
+            <Dropdown v-model="state.priority" :options="['High', 'Medium', 'Low']" />
         </div>
-        <div class="field col-12 md:col-4">
+        <div class="field col-12 md:col-8">
             <label for="date">Due date</label>
-            <Calendar v-model="state.dueDate" dateFormat="yy-mm-dd" showButtonBar />
-        </div>
-        <div class="field col-12 md:col-4">
-            <label for="date">Due Time</label>
-            <Calendar v-model="state.dueTime" timeOnly />
+            <Calendar v-model="state.dueDate" showButtonBar showTime hourFormat="24" />
         </div>
         <div class="col flex justify-content-end gap-3">
             <Button class="w-auto p-button-danger" label="Cancel" @click="handleCancel"></Button>

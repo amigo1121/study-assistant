@@ -21,12 +21,11 @@ export default defineComponent({
         TextEditor
     },
     props: {
-        id: String,
+        id: Number,
         title: String,
         importance: String,
         description: String,
         dueDate: String,
-        dueTime: String
     },
     data() {
         return {
@@ -50,7 +49,7 @@ export default defineComponent({
     },
 })
 </script>
-  
+
 <style scoped></style>
 
 <template>
@@ -63,7 +62,6 @@ export default defineComponent({
             </div>
             <p>Priority: {{ importance }}</p>
             <p>Due date: {{ dueDate }}</p>
-            <p>Due time: {{ dueTime }}</p>
         </div>
 
     </BaseCard>

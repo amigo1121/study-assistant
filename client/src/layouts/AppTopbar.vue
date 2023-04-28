@@ -10,13 +10,13 @@ const nestedMenuItem = ref([
         label: 'Dashboard',
         to: '/home/dashboard'
     },
-    {
-        label: 'Chats',
-        to: '/home/todos'
-    },
-    {
-        label: 'Groups'
-    }
+    // {
+    //     label: 'Chats',
+    //     to: '/home/todos'
+    // },
+    // {
+    //     label: 'Groups'
+    // }
 ])
 const userMenu = ref()
 const userMenuItems = ref([

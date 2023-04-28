@@ -11,11 +11,11 @@ class AsssignmentBase(BaseModel):
 
 
 class AssignmentCreate(AsssignmentBase):
-
+    course_code: str
     pass
 
 
-class Assignment(AssignmentCreate):
+class Assignment(AsssignmentBase):
     id: int
     course_id: int
 

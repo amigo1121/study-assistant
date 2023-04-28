@@ -32,16 +32,6 @@ export default defineComponent({
             required: false,
             default: null
         },
-        dueDate:{
-            type: String,
-            required: false,
-            default: ''
-        },
-        dueTime:{
-            type: String,
-            required: false,
-            default: ''
-        },
         estHours:{
             type: Number,
             required: false,
@@ -60,8 +50,6 @@ export default defineComponent({
                 title: this.title,
                 description: this.description,
                 importance: this.importance,
-                dueDate: this.dueDate,
-                dueTime: this.dueTime,
                 estHours: this.estHours,
                 dependencies: this.dependencies
             }
@@ -81,8 +69,6 @@ export default defineComponent({
                 title: null,
                 description: '',
                 importance: null,
-                dueDate: '',
-                dueTime: '',
                 estHours: null,
                 dependencies: null
             }
@@ -106,14 +92,6 @@ export default defineComponent({
         <div class="field col-12 md:col-4">
             <label for="age1">Priority</label>
             <Dropdown v-model="state.importance" :options="['High', 'Medium', 'Low']" />
-        </div>
-        <div class="field col-12 md:col-4">
-            <label for="date">Due date</label>
-            <Calendar v-model="state.dueDate" dateFormat="yy-mm-dd" showButtonBar />
-        </div>
-        <div class="field col-12 md:col-4">
-            <label for="date">Due Time</label>
-            <Calendar v-model="state.dueTime" timeOnly />
         </div>
         <div class="field col-12 md:col-4">
             <label for="age1">Estimated Hours</label>

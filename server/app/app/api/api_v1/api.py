@@ -1,5 +1,5 @@
 from fastapi import APIRouter
-from .endpoints import users, security, event, course, course_action
+from .endpoints import users, security, event, course, course_action, assignment
 
 api_router = APIRouter()
 api_router.include_router(users.router, prefix="/users", tags=["users"])
@@ -9,3 +9,4 @@ api_router.include_router(course.router, prefix="/course", tags=["course"])
 api_router.include_router(
     course_action.router, prefix="/course-action", tags=["course action"]
 )
+api_router.include_router(assignment.router, prefix="/assignments", tags=["assignment"])
