@@ -64,6 +64,10 @@ export default defineComponent({
         handleCancel(){
             this.$emit('cancel');
         },
+        handleModify(){
+            this.$emit('change', this.state);
+            this.reset();
+        },
         reset(){
             this.state = {
                 title: null,
@@ -74,7 +78,7 @@ export default defineComponent({
             }
         }
     },
-    emits: ['add-task', 'cancel']
+    emits: ['add-task', 'cancel', 'change']
 })
 </script>
 <style lang="scss" scoped></style>

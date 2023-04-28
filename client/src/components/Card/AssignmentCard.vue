@@ -9,21 +9,23 @@ import { ref, defineComponent } from 'vue';
 // import { Assignment } from '@/stores/assignments.ts'
 import { useAssignmentsStore } from '@/stores/assignments';
 import { formatDate, formatTime } from '@/utils/datetime';
+import TaskForm from '../Form/TaskForm.vue';
 const assignmentStore = useAssignmentsStore();
 export default defineComponent({
     name: 'AssignmentCard',
     components: {
-        BaseCard,
-        BaseDialog,
-        AssigmentModifyDialog,
-        Dialog,
-        AssignmentForm,
-        TextEditor
-    },
+    BaseCard,
+    BaseDialog,
+    AssigmentModifyDialog,
+    Dialog,
+    AssignmentForm,
+    TextEditor,
+    TaskForm
+},
     props: {
         id: Number,
         title: String,
-        importance: String,
+        priority: String,
         description: String,
         dueDate: String,
     },
@@ -60,7 +62,7 @@ export default defineComponent({
                 <h4>Description:</h4>
                 <div v-html="description"></div>
             </div>
-            <p>Priority: {{ importance }}</p>
+            <p>Priority: {{ priority }}</p>
             <p>Due date: {{ dueDate }}</p>
         </div>
 
@@ -68,8 +70,8 @@ export default defineComponent({
 
     <!-- <AssigmentModifyDialog v-if="openDialog" @close="closeDialogHandler"></AssigmentModifyDialog> -->
 
-    <Dialog v-model:visible="openDialog" modal :style="{ width: '50vw' }" header="Header">
-        <AssignmentForm @close="closeDialogHandler" @modify-assignment="updateAssignment" v-bind="this.$props">
-        </AssignmentForm>
+    <Dialog v-model:visible="openDialog" modal :style="{ width: '50vw' }" header="Add taak">
+        <TaskForm @close="closeDialogHandler" @modify-assignment="updateAssignment" v-bind="this.$props">
+        </TaskForm>
     </Dialog>
 </template>

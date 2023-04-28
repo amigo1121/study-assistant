@@ -10,9 +10,9 @@ export default {
     components: { TextEditor, InputText, Dropdown, Calendar, Button },
     props: {
         id: {
-            type: String,
+            type: Number,
             required: false,
-            default: '',
+            default: null,
         },
         title: {
             type: String,
