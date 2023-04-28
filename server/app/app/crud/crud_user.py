@@ -1,4 +1,4 @@
-from sqlalchemy.orm import Session
+from sqlalchemy.orm import Session, joinedload
 from sqlalchemy import and_, or_, update
 from datetime import datetime
 from app import models, schemas
@@ -7,7 +7,12 @@ from utils.auth import hash_password
 
 
 def get_user(db: Session, user_id: int):
-    return db.query(models.User).filter(models.User.id == user_id).first()
+    return (
+        db.query(models.User)
+        .options(joinedload(models.User.registered_courses))
+        .filter(models.User.id == user_id)
+        .first()
+    )
 
 
 def get_user_by_email(db: Session, email: str):

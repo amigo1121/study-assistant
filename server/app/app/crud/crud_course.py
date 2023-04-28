@@ -1,4 +1,4 @@
-from sqlalchemy.orm import Session
+from sqlalchemy.orm import Session, joinedload
 from app import models, schemas
 import logging
 
@@ -9,7 +9,12 @@ logging.basicConfig(
 
 
 def get_course(db: Session, course_id: int):
-    return db.query(models.Course).filter(models.Course.id == course_id).first()
+    return (
+        db.query(models.Course)
+        .options(joinedload(models.Course.students))
+        .filter(models.Course.id == course_id)
+        .first()
+    )
 
 
 def get_courses(db: Session, skip: int = 0, limit: int = 100):
