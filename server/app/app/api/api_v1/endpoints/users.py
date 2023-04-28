@@ -1,10 +1,11 @@
 from typing import List
-from fastapi import APIRouter, Depends, HTTPException
+from fastapi import APIRouter, Depends, HTTPException, status
 from sqlalchemy.orm import Session
 from app.api import deps
 from app.crud import crud_user
 from app import schemas
 from app.core import security
+from app.utils.commons import UserType
 
 router = APIRouter()
 
@@ -27,6 +28,13 @@ def register(user: schemas.UserCreate, db: Session = Depends(deps.get_db)):
     if db_user:
         raise HTTPException(status_code=400, detail="Username already registered")
 
+    if user.code != "" and user.code != "ADMIN":
+        raise HTTPException(
+            status_code=status.HTTP_400_BAD_REQUEST,
+            detail="Administrator code is not correct",
+        )
+    if user.code == "ADMIN":
+        user.type = UserType.TEACHER
     return crud_user.create_user(db=db, user=user)
 
 

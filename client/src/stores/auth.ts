@@ -140,11 +140,13 @@ export const useAuthStore = defineStore({
       username: string;
       email: string;
       password: string;
+      code: string;
     }): Promise<any> {
       return axios.post(API_URL + "/users/register", {
         email: user.email,
         username: user.username,
         password: user.password,
+        code: user.code
       });
     }
   },
