@@ -1,6 +1,7 @@
 <script lang="ts" setup>
 import DashboardSidebar from '@/layouts/DashboardSidebar.vue';
-import {ref} from 'vue';
+import {ref, onBeforeMount} from 'vue';
+import { useAuthStore } from '@/stores/auth';
 const sidebarItems=ref([
     {
         // Statistic of Assignments, Tasks, etc
@@ -37,6 +38,19 @@ const sidebarItems=ref([
         name: 'groups'
     }
 ]);
+
+onBeforeMount(() => {
+    const authStore = useAuthStore()
+    if(authStore.type==2)
+    {
+        sidebarItems.value = [
+            {
+                label: "My classes",
+                name: "my-classes"
+            }
+        ]
+    }
+})
 </script>
 <style lang="scss" scoped>
 .dashboard {
