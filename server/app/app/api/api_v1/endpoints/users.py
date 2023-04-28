@@ -65,7 +65,7 @@ def read_users(skip: int = 0, limit: int = 100, db: Session = Depends(deps.get_d
     return users
 
 
-@router.get("/{user_id}", response_model=schemas.User)
+@router.get("/{user_id}", response_model=schemas.StudentWithCourse)
 def read_user(user_id: int, db: Session = Depends(deps.get_db)):
     db_user = crud_user.get_user(db, user_id=user_id)
     if db_user is None:

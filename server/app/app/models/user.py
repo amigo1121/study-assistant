@@ -5,6 +5,7 @@ from sqlalchemy.orm import relationship
 from app.db.base_class import Base
 from app.utils.commons import UserType
 from app.utils.mixins import Timestamp
+from .course import student_course
 
 
 class User(Timestamp, Base):
@@ -17,3 +18,6 @@ class User(Timestamp, Base):
     is_active = Column(Boolean, default=True)
     type = Column(Enum(UserType), nullable=False)
     events = relationship("Event", back_populates="owner")
+    registered_courses = relationship(
+        "Course", secondary=student_course, back_populates="students"
+    )

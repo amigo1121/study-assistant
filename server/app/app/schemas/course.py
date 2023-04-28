@@ -3,7 +3,6 @@ from typing import List, Optional
 from pydantic import BaseModel
 
 
-# Pydantic schema for creating a course
 class CourseCreate(BaseModel):
     code: str
     name: str
@@ -21,7 +20,6 @@ class CourseUpdate(BaseModel):
     credits: Optional[int]
 
 
-# Pydantic schema for reading a course
 class CourseRead(BaseModel):
     id: int
     code: str
