@@ -2,7 +2,7 @@ rev:
 ifndef m
 	$(error m is requied)
 endif
-	alembic revision --autogenerate -m "$(m)"
+	alembic revision -m "$(m)"
 
 up:
 	alembic upgrade head
