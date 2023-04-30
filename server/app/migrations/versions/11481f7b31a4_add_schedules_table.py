@@ -37,7 +37,10 @@ def upgrade():
         "course_schedule",
         sa.Column("id", sa.Integer(), nullable=False, primary_key=True),
         sa.Column(
-            "course_id", sa.Integer(), sa.ForeignKey("courses.id"), nullable=False
+            "course_id",
+            sa.Integer(),
+            sa.ForeignKey("courses.id", ondelete="CASCADE"),
+            nullable=False,
         ),
         sa.Column("start_time", sa.Time(), nullable=False),
         sa.Column("end_time", sa.Time(), nullable=False),

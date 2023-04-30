@@ -31,10 +31,16 @@ def upgrade():
         "enrollments",
         sa.Column("id", sa.Integer(), nullable=False, primary_key=True),
         sa.Column(
-            "student_id", sa.Integer(), sa.ForeignKey("users.id"), nullable=False
+            "student_id",
+            sa.Integer(),
+            sa.ForeignKey("users.id", ondelete="CASCADE"),
+            nullable=False,
         ),
         sa.Column(
-            "course_id", sa.Integer(), sa.ForeignKey("courses.id"), nullable=False
+            "course_id",
+            sa.Integer(),
+            sa.ForeignKey("courses.id", ondelete="CASCADE"),
+            nullable=False,
         ),
         sa.Column("enrollment_date", sa.Date(), nullable=False),
         sa.UniqueConstraint(
