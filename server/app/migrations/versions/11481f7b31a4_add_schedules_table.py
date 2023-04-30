@@ -13,13 +13,16 @@ import enum
 
 
 class Weekday(enum.Enum):
-    MONDAY = "MONDAY"
-    TUESDAY = "TUESDAY"
-    WEDNESDAY = "WEDNESDAY"
-    THURSDAY = "THURSDAY"
-    FRIDAY = "FRIDAY"
-    SATURDAY = "SATURDAY"
-    SUNDAY = "SUNDAY"
+    MONDAY = 1
+    TUESDAY = 2
+    WEDNESDAY = 3
+    THURSDAY = 4
+    FRIDAY = 5
+    SATURDAY = 6
+    SUNDAY = 7
+
+
+week_day = postgresql.ENUM(Weekday, name="weekday")
 
 
 # revision identifiers, used by Alembic.
@@ -32,7 +35,7 @@ depends_on = None
 def upgrade():
     op.create_table(
         "course_schedule",
-        sa.Column("schedule_id", sa.Integer(), nullable=False, primary_key=True),
+        sa.Column("id", sa.Integer(), nullable=False, primary_key=True),
         sa.Column(
             "course_id", sa.Integer(), sa.ForeignKey("courses.id"), nullable=False
         ),
@@ -40,12 +43,10 @@ def upgrade():
         sa.Column("end_time", sa.Time(), nullable=False),
     )
 
-    week_day = postgresql.ENUM(Weekday, name="weekday")
     week_day.create(op.get_bind())
     op.add_column("course_schedule", sa.Column("week_day", week_day, nullable=False))
 
 
 def downgrade():
     op.drop_table("course_schedule")
-    week_day = postgresql.ENUM(Weekday, name="weekday")
     week_day.drop(op.get_bind())
