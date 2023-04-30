@@ -26,7 +26,10 @@ def upgrade() -> None:
             "due_date", sa.DateTime(), nullable=False, server_default=sa.func.now()
         ),
         sa.Column(
-            "course_id", sa.Integer(), sa.ForeignKey("courses.id"), nullable=False
+            "course_id",
+            sa.Integer(),
+            sa.ForeignKey("courses.id", ondelete="CASCADE"),
+            nullable=False,
         ),
     )
     pass

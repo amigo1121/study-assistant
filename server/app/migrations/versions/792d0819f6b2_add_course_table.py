@@ -26,7 +26,10 @@ def upgrade():
         sa.Column("end_date", sa.Date(), nullable=False),
         sa.Column("credits", sa.Integer(), nullable=False),
         sa.Column(
-            "teacher_id", sa.Integer(), sa.ForeignKey("users.id"), nullable=False
+            "teacher_id",
+            sa.Integer(),
+            sa.ForeignKey("users.id", ondelete="CASCADE"),
+            nullable=False,
         ),
         sa.PrimaryKeyConstraint("id"),
         sa.UniqueConstraint("code"),
