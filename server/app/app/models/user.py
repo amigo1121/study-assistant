@@ -5,10 +5,10 @@ from sqlalchemy.orm import relationship
 from app.db.base_class import Base
 from app.utils.commons import UserType
 from app.utils.mixins import Timestamp
-from .course import student_course
+from .course import Enrollment
 
 
-class User(Timestamp, Base):
+class User(Base):
     __tablename__ = "users"
 
     id = Column(Integer, primary_key=True, index=True, nullable=False)
@@ -18,3 +18,9 @@ class User(Timestamp, Base):
     email = Column(String, unique=True, index=True, nullable=False)
     password_hash = Column(String, nullable=False)
     role = Column(Enum(UserType), nullable=False)
+
+    # relationship
+
+    events = relationship("Event", back_populates="owner")
+    registered_courses = relationship("Enrollment", back_populates="student")
+    teaching_courses = relationship("Course", back_populates="teacher")

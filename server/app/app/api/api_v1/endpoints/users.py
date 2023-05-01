@@ -6,6 +6,7 @@ from app.crud import crud_user
 from app import schemas
 from app.core import security
 from app.utils.commons import UserType
+from .security import get_current_user
 
 router = APIRouter()
 
@@ -34,24 +35,29 @@ def register(user: schemas.UserCreate, db: Session = Depends(deps.get_db)):
             detail="Administrator code is not correct",
         )
     if user.code == "ADMIN":
-        user.type = UserType.TEACHER
+        user.role = UserType.TEACHER
     return crud_user.create_user(db=db, user=user)
 
 
 @router.post("/login", response_model=schemas.User)
 def login(user: schemas.UserLogin, db: Session = Depends(deps.get_db)):
     db_user = crud_user.get_user_by_username_or_email(db, credential=user.identifier)
-    if db_user and security.verify_password(user.password, db_user.hashed_password):
+    if db_user and security.verify_password(user.password, db_user.password_hash):
         return db_user
     raise HTTPException(status_code=400, detail="Wrong username or password!")
 
 
 @router.post("/changepw", response_model=int)
 def change_passowrd(
-    user: schemas.UserChangePassword, db: Session = Depends(deps.get_db)
+    user: schemas.UserChangePassword,
+    db: Session = Depends(deps.get_db),
+    current_user=Depends(get_current_user),
 ):
-    db_user = crud_user.get_user_by_username(db, username=user.username)
-    if db_user and security.verify_password(user.old_password, db_user.hashed_password):
+
+    if current_user and security.verify_password(
+        user.old_password, current_user.password_hash
+    ):
+        user.username = current_user.username
         updated_user_count = crud_user.change_user_password(db, user=user)
         return updated_user_count
     raise HTTPException(

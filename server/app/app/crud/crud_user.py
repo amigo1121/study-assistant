@@ -41,9 +41,11 @@ def create_user(db: Session, user: schemas.UserCreate):
     hashed_password = hash_password(user.password)
     db_user = models.User(
         email=user.email,
-        hashed_password=hashed_password,
+        password_hash=hashed_password,
         username=user.username,
-        type=user.type,
+        first_name=user.first_name,
+        last_name=user.last_name,
+        role=user.role,
     )
     db.add(db_user)
     db.commit()
@@ -57,7 +59,7 @@ def change_user_password(db: Session, user: schemas.UserChangePassword):
         db.query(models.User)
         .filter(models.User.username == user.username)
         .update(
-            {models.User.hashed_password: new_hashed_password},
+            {models.User.password_hash: new_hashed_password},
             synchronize_session="evaluate",
         )
     )
