@@ -25,6 +25,10 @@ class Enrollment(Base):
     enrollment_date = Column(Date, nullable=False)
     status = Column(Enum(EnrollmentStatus), nullable=False)
 
+    # relationship
+    student = relationship("User", back_populates="registered_courses")
+    course = relationship("Course", back_populates="students")
+
 
 class CourseSchedule(Base):
     __tablename__ = "course_schedule"
@@ -34,6 +38,9 @@ class CourseSchedule(Base):
     start_time = Column(Time, nullable=False)
     end_time = Column(Time, nullable=False)
     week_day = Column(Enum(WeekDay), nullable=False)
+
+    # relationship
+    course = relationship("Course", back_populates="schedules")
 
 
 class Course(Base):
@@ -49,6 +56,12 @@ class Course(Base):
         Integer, ForeignKey("users.id", ondelete="CASCADE"), nullable=False
     )
 
+    # relationship
+    students = relationship("Enrollment", back_populates="course")
+    teacher = relationship("User", back_populates="teaching_courses")
+    assignments = relationship("Assignment", back_populates="course")
+    schedules = relationship("CourseSchedule", back_populates="course")
+
 
 class Assignment(Base):
     __tablename__ = "assignments"
@@ -60,3 +73,6 @@ class Assignment(Base):
     course_id = Column(
         Integer, ForeignKey("courses.id", ondelete="CASCADE"), nullable=False
     )
+
+    # relationship
+    course = relationship("Course", back_populates="assignments")

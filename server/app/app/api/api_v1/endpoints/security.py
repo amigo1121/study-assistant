@@ -53,7 +53,7 @@ def authenticate_user(identifier: str, password: str):
     user = get_user(identifier=identifier)
     if not user:
         return False
-    if not verify_password(password=password, hashed_password=user.hashed_password):
+    if not verify_password(password=password, hashed_password=user.password_hash):
         return False
     return user
 

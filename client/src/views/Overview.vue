@@ -81,18 +81,5 @@ const assignmentPriority = (()=>{
                 </DataTable>
             </div>
         </div>
-
-        <div class="col-6">
-            <div class="card">
-                <h5>Tasks by priority</h5>
-                <Diagram :data="[10,50,40]"/>
-            </div>
-        </div>
-        <div class="col-6">
-            <div class="card">
-                <h5>Assignments by priority</h5>
-                <Diagram :data="assignmentPriority()"/>
-            </div>
-        </div>
     </div>
 </template>

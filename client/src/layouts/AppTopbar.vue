@@ -21,8 +21,7 @@ const nestedMenuItem = ref([
 const userMenu = ref()
 const userMenuItems = ref([
     { separator: true },
-    { label: 'Profile', icon: 'pi pi-fw pi-user' },
-    { label: 'Settings', icon: 'pi pi-fw pi-cog' },
+    { label: 'Profile', icon: 'pi pi-fw pi-user' , to: "/profile"},
     { separator: true }
 ])
 const toggleUserMenu = (event) => {
@@ -57,7 +56,7 @@ onMounted(() => {
                         <button @click=""
                             class="w-full p-link flex align-items-center p-2 pl-3 text-color hover:surface-200 border-noround">
                             <div class="flex flex-column align">
-                                <span class="font-bold">{{ authStore.username }}</span>
+                                <span class="font-bold">{{ authStore.first_name + " " + authStore.last_name}}</span>
                                 <span class="text-sm">{{ authStore.email }}</span>
                             </div>
                         </button>

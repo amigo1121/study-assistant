@@ -1,7 +1,7 @@
 import { defineStore } from "pinia";
 import axios from "axios";
 import router from "@/router";
-import { API_URL, refreshTokenIntervalInMinutes} from "@/utils/config";
+import { API_URL, refreshTokenIntervalInMinutes } from "@/utils/config";
 
 type LoginData = {
   identifier: string;
@@ -15,8 +15,10 @@ export const useAuthStore = defineStore({
       refreshToken: null,
       username: null,
       email: null,
-      type: null,
-      timeoutID: null
+      role: null,
+      first_name: null,
+      last_name: null,
+      timeoutID: null,
     };
   },
   getters: {
@@ -40,13 +42,19 @@ export const useAuthStore = defineStore({
         },
       };
       try {
-        const response = await axios.get(API_URL+"/oauth/refreshtoken", config);
+        const response = await axios.get(
+          API_URL + "/oauth/refreshtoken",
+          config
+        );
         if (response.status === 200) {
           const data = await response.data;
-          localStorage.setItem("accessToken", data.access_token)
+          localStorage.setItem("accessToken", data.access_token);
           this.loadTokenFromLocalStorage("accessToken");
           console.log("Refresh token success");
-          this.timeoutID = setTimeout(this.tryRefreshToken,refreshTokenIntervalInMinutes*60*1000);
+          this.timeoutID = setTimeout(
+            this.tryRefreshToken,
+            refreshTokenIntervalInMinutes * 60 * 1000
+          );
         } else {
           throw new Error("Failed to refresh access token");
         }
@@ -69,19 +77,13 @@ export const useAuthStore = defineStore({
         if (response.status !== 200) {
           throw new Error("Failed to authenticate with access token");
         }
-        console.log(response.data)
-        this.setEmail(response.data.email)
-        this.setUsername(response.data.username)
-        this.setType(response.data.type)
-        console.log("Authenticate successful")
-        if(this.timeoutID)
-        {
-          console.log("continue loading")
-        }
-        else{
-          console.log('welcome back')
-          if (this.refreshToken)
-            await this.tryRefreshToken();
+        this.setInfor(response.data);
+        console.log("Authenticate successful");
+        if (this.timeoutID) {
+          console.log("continue loading");
+        } else {
+          console.log("welcome back");
+          if (this.refreshToken) await this.tryRefreshToken();
         }
         return response;
       } catch (error) {
@@ -93,13 +95,16 @@ export const useAuthStore = defineStore({
               Authorization: `Bearer ${this.accessToken}`,
             },
           };
-          const response = await axios.get(API_URL + "/oauth/authorize", config);
+          const response = await axios.get(
+            API_URL + "/oauth/authorize",
+            config
+          );
           if (response.status !== 200) {
-            throw new Error("Failed to authenticate with refreshed access token");
+            throw new Error(
+              "Failed to authenticate with refreshed access token"
+            );
           }
-          this.setEmail(response.data.email)
-          this.setUsername(response.data.username)
-          this.setType(response.data.type)
+          this.setInfor(response.data);
           console.log("Authenticate successful with refreshed access token");
           return response;
         } catch (error) {
@@ -115,8 +120,14 @@ export const useAuthStore = defineStore({
     setEmail(email: string) {
       this.email = email;
     },
-    setType(type: number){
-      this.type = type;
+    setRole(role: String) {
+      this.role = role;
+    },
+    setInfor(data) {
+      this.username = data.username;
+      this.first_name = data.first_name;
+      this.last_name = data.last_name;
+      this.email = data.email;
     },
     logout() {
       localStorage.removeItem("accessToken");
@@ -124,7 +135,10 @@ export const useAuthStore = defineStore({
       localStorage.removeItem("loginTime");
       router.go();
     },
-    async login(user: { identifier: string; password: string }, isRemember: boolean): Promise<any> {
+    async login(
+      user: { identifier: string; password: string },
+      isRemember: boolean
+    ): Promise<any> {
       const authStore = useAuthStore();
       const loginData: LoginData = { ...user };
       return axios
@@ -133,12 +147,15 @@ export const useAuthStore = defineStore({
           if (response.data.access_token) {
             localStorage.setItem("accessToken", response.data.access_token);
             authStore.loadTokenFromLocalStorage("accessToken");
-            localStorage.setItem("loginTime", new Date().toUTCString())
+            localStorage.setItem("loginTime", new Date().toUTCString());
           }
-          if(isRemember && response.data.refresh_token){
+          if (isRemember && response.data.refresh_token) {
             localStorage.setItem("refreshToken", response.data.refresh_token);
             authStore.loadTokenFromLocalStorage("refreshToken");
-            this.timeoutID = setTimeout(this.tryRefreshToken,refreshTokenIntervalInMinutes*60*1000);
+            this.timeoutID = setTimeout(
+              this.tryRefreshToken,
+              refreshTokenIntervalInMinutes * 60 * 1000
+            );
           }
           return response.data;
         });
@@ -148,13 +165,21 @@ export const useAuthStore = defineStore({
       email: string;
       password: string;
       code: string;
+      first_name: string;
+      last_name: string;
     }): Promise<any> {
-      return axios.post(API_URL + "/users/register", {
-        email: user.email,
-        username: user.username,
-        password: user.password,
-        code: user.code
-      });
-    }
+      return axios.post(API_URL + "/users/register", user);
+    },
+    async changePassword(data: {
+      old_password: string;
+      new_password: string;
+    }) {
+      const config = {
+        headers: {
+          Authorization: `Bearer ${this.accessToken}`,
+        },
+      };
+      return axios.post(API_URL + "/users/changepw", data, config);
+    },
   },
 });

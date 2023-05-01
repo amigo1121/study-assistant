@@ -14,3 +14,7 @@ class Event(Base):
     owner_id = Column(
         Integer, ForeignKey("users.id", ondelete="CASCADE"), nullable=False
     )
+
+    # relationships
+
+    owner = relationship("User", back_populates="events")
