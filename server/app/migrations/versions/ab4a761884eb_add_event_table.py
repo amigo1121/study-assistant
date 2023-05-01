@@ -23,7 +23,12 @@ def upgrade():
         sa.Column("title", sa.String(length=200), nullable=False),
         sa.Column("start", sa.String(), nullable=False),
         sa.Column("end", sa.String(), nullable=False),
-        sa.Column("owner_id", sa.Integer(), sa.ForeignKey("users.id"), nullable=False),
+        sa.Column(
+            "owner_id",
+            sa.Integer(),
+            sa.ForeignKey("users.id", ondelete="CASCADE"),
+            nullable=False,
+        ),
     )
 
 
