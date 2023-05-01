@@ -12,13 +12,9 @@ class User(Timestamp, Base):
     __tablename__ = "users"
 
     id = Column(Integer, primary_key=True, index=True, nullable=False)
-    email = Column(String, unique=True, index=True, nullable=False)
     username = Column(String, unique=True, index=True, nullable=False)
-    hashed_password = Column(String, nullable=False)
-    is_active = Column(Boolean, default=True)
-    type = Column(Enum(UserType), nullable=False)
-    events = relationship("Event", back_populates="owner")
-    registered_courses = relationship(
-        "Course", secondary=student_course, back_populates="students"
-    )
-    teaching_courses = relationship("Course", back_populates="teacher")
+    first_name = Column(String, nullable=False)
+    last_name = Column(String, nullable=False)
+    email = Column(String, unique=True, index=True, nullable=False)
+    password_hash = Column(String, nullable=False)
+    role = Column(Enum(UserType), nullable=False)
