@@ -4,6 +4,7 @@ from pydantic import BaseModel
 from .assignment import Assignment
 from app.utils.commons import WeekDay, EnrollmentStatus
 from app import schemas
+from .assignment import Assignment
 
 
 class CourseScheduleBase(BaseModel):
@@ -52,3 +53,7 @@ class CourseRead(BaseModel):
 
 class CourseWithSchedules(CourseRead):
     schedules: List[CourseSchedule]
+
+
+class CourseWithAssignments(CourseWithSchedules):
+    assignments: List[Assignment]

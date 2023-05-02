@@ -23,7 +23,10 @@ def upgrade() -> None:
         sa.Column("name", sa.String(length=100), nullable=False),
         sa.Column("description", sa.Text(), nullable=True),
         sa.Column(
-            "due_date", sa.DateTime(), nullable=False, server_default=sa.func.now()
+            "due_date",
+            sa.DateTime(timezone=True),
+            nullable=False,
+            server_default=sa.func.now(),
         ),
         sa.Column(
             "course_id",

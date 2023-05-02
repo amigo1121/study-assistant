@@ -1,13 +1,5 @@
-<script>
-import  Editor from '@tinymce/tinymce-vue'
-import { QuillEditor } from '@vueup/vue-quill'
-export default {
-  
-  components: {
-    Editor,
-    QuillEditor
-  }
-}
+<script setup lang="ts">
+import Editor from '@tinymce/tinymce-vue'
 </script>
 
 <template>

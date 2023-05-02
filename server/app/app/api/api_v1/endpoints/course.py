@@ -66,6 +66,18 @@ def read_course(course_id: int, db: Session = Depends(deps.get_db)):
     return db_course
 
 
+@router.get("/code/{course_code}", response_model=schemas.enrollment.CourseWithStudent)
+def get_course_by_code(
+    course_code: str,
+    db: Session = Depends(deps.get_db),
+    current_user=Depends(get_current_user),
+):
+    if not current_user or current_user.role != UserType.TEACHER:
+        raise HTTPException(status_code=403, detail="Only the teacher can read courses")
+    db_course = crud_course.get_course_by_code(db, course_code=course_code)
+    return db_course
+
+
 @router.put("/{course_id}", response_model=schemas.CourseRead)
 def update_course(
     course_id: int, course: schemas.CourseUpdate, db: Session = Depends(deps.get_db)

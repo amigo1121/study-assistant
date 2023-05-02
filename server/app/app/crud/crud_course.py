@@ -17,6 +17,10 @@ def get_course(db: Session, course_id: int):
     )
 
 
+def get_course_by_code(db: Session, course_code: str):
+    return db.query(models.Course).filter(models.Course.code == course_code).first()
+
+
 def get_courses(db: Session, skip: int = 0, limit: int = 100):
     return db.query(models.Course).offset(skip).limit(limit).all()
 

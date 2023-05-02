@@ -5,11 +5,16 @@ import axios from 'axios';
 import { API_URL } from '@/utils/config';
 import CourseCard from '@/components/Card/CoursesCard.vue'
 let authStore = useAuthStore();
+import router from "@/router"
 const state = reactive({
     coursesSeach: ""
 })
 const props = defineProps<{}>()
 const courses = ref([])
+
+const watchCourse = (code)=>{
+   router.push({path: `/home/dashboard/my-classes/${code}`})
+}
 onBeforeMount(async()=>{
     let config = {
         headers: {
@@ -28,6 +33,8 @@ onBeforeMount(async()=>{
         console.log(error)
     }
 })
+
+
 </script>
 
 <style scoped></style>
@@ -48,7 +55,7 @@ onBeforeMount(async()=>{
             :endDate="course.end_date"
             :schedules="course.schedules"
             :details="true"
-
+            @click="watchCourse(course.code)"
         ></CourseCard>
     </div>
 
