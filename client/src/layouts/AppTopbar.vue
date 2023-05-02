@@ -33,7 +33,7 @@ const handleSubmit = ()=>{
     openAddCourseDialog.value=false
 }
 onMounted(() => {
-    if (authStore.role == 'TEACHER') {
+    if (authStore.role === 'TEACHER') {
         nestedMenuItem.value.push({
             label: 'Add course',
             command: () => { openAddCourseDialog.value = true }

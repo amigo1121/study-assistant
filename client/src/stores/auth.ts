@@ -77,8 +77,8 @@ export const useAuthStore = defineStore({
         if (response.status !== 200) {
           throw new Error("Failed to authenticate with access token");
         }
-        this.setInfor(response.data);
         console.log("Authenticate successful");
+        this.setInfor(response.data)
         if (this.timeoutID) {
           console.log("continue loading");
         } else {
@@ -124,6 +124,7 @@ export const useAuthStore = defineStore({
       this.role = role;
     },
     setInfor(data) {
+      console.log(data)
       this.username = data.username;
       this.first_name = data.first_name;
       this.last_name = data.last_name;
