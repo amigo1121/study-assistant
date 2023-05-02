@@ -35,7 +35,7 @@ const sidebarItems=ref([
 
 onBeforeMount(() => {
     const authStore = useAuthStore()
-    if(authStore.role="TEACHER")
+    if(authStore.role==="TEACHER")
     {
         sidebarItems.value = [
             {
