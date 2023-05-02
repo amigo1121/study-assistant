@@ -139,6 +139,6 @@ const deleteAssignment = (id: number) => {
         <Dialog v-model:visible="isOpened" modal :style="{ width: '50rem' }" header="Add assignment">
             <AssignmentForm @close="toggleDialog" @addAssignment="addAssignment"></AssignmentForm>
         </Dialog>
-
+        <ConfirmDialog></ConfirmDialog>
     </div>
 </template>
