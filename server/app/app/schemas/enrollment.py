@@ -1,4 +1,4 @@
-from .course import CourseRead
+from .course import CourseRead, CourseWithSchedules, CourseWithAssignments
 from .user import User
 from pydantic import BaseModel
 from typing import List
@@ -13,7 +13,7 @@ class EnrollmentWithStudent(EnrollmentBase):
     student: User
 
 
-class CourseWithStudent(CourseRead):
+class CourseWithStudent(CourseWithAssignments):
     students: List[EnrollmentWithStudent]
 
 

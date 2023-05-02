@@ -108,13 +108,19 @@ const addAssignment = async (assignmentData) => {
     }
 }
 </script>
-<style lang="scss" scoped></style>
+<style lang="scss" scoped>
+    .card{
+        &:hover{
+            background-color: rgba($color: #000000, $alpha: 0.1);
+        }
+    }
+</style>
 <template>
-    <div class="card border-round-3xl" @click="handleClick">
+    <div class="card border-round-3xl">
         <h3>Course name: {{ props.name }}</h3>
         <h4>Course code: {{ props.code }}</h4>
         <template v-if="details && props.schedules.length > 0">
-            <h4>Schedue: </h4>
+            <h4>Schedule: </h4>
             <ul class="list-none">
                 <li v-for="(schedule, index) in props.schedules" :key="index" class="mb-2">
                     {{ schedule.week_day }}: {{ moment(schedule.start_time,"HH:mm:ss").format("HH:mm") }} - {{  moment(schedule.end_time,"HH:mm:ss").format("HH:mm") }}

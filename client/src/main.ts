@@ -20,9 +20,13 @@ import ColumnGroup from 'primevue/columngroup';
 import Row from 'primevue/row';
 import InlineMessage from 'primevue/inlinemessage';
 import InputNumber from 'primevue/inputnumber';
-
+import Panel from 'primevue/panel';
 import ToastService from 'primevue/toastservice';
-
+import Accordion from 'primevue/accordion';
+import AccordionTab from 'primevue/accordiontab';
+import ConfirmPopup from 'primevue/confirmpopup';
+import ConfirmationService from 'primevue/confirmationservice';
+import ConfirmDialog from 'primevue/confirmdialog';
 const pinia = createPinia();
 const app = createApp(App);
 
@@ -30,6 +34,7 @@ app.use(router);
 app.use(pinia);
 app.use(PrimeVue);
 app.use(ToastService);
+app.use(ConfirmationService);
 
 
 
@@ -47,7 +52,11 @@ app.component('ColumnGroup', ColumnGroup);
 app.component('Row',Row);
 app.component('InlineMessage', InlineMessage);
 app.component('InputNumber', InputNumber);
-
+app.component('Panel', Panel);
+app.component('Accordion',Accordion);
+app.component('AccordionTab',AccordionTab);
+app.component('ConfirmPopup',ConfirmPopup);
+app.component('ConfirmDialog',ConfirmDialog);
 
 console.log("init");
 

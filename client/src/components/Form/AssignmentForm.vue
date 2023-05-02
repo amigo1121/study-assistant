@@ -14,12 +14,7 @@ export default {
             required: false,
             default: null,
         },
-        title: {
-            type: String,
-            required: false,
-            default: '',
-        },
-        priority: {
+        name: {
             type: String,
             required: false,
             default: '',
@@ -39,11 +34,11 @@ export default {
         const {id,...data} = this.$props;
         return {
             state:{
-                title: data.title,
-                priority: data.priority,
+                name: data.name,
                 description: data.description,
-                dueDate: data.dueDate? data.dueDate:null,
-            }
+                dueDate: data.dueDate? moment(data.dueDate).toDate():null,
+            },
+            errorMsg:[]
         }
     },
     methods: {
@@ -53,18 +48,29 @@ export default {
         handleSubmit() {
             const {dueDate,...restData} =this.state
             const dueDateFormated = moment(dueDate).format()
+            this.validateInput()
+            if(this.errorMsg.length > 0)
+                return;
             this.$emit('addAssignment',{due_date:dueDateFormated,...restData});
-            this.$emit('modifyAssignment',{id: this.id ,...this.state});
+            this.$emit('modifyAssignment',{id: this.id ,due_date:dueDateFormated,...restData});
             this.$emit('close');
             this.reset();
         },
         reset(){
             this.state = {
-                title: '',
-                priority: '',
+                name: '',
                 description: '',
                 dueDate: null,
             }
+        },
+        validateInput(){
+            this.errorMsg=[]
+            if(this.state.name==="")
+                this.errorMsg.push("Assignment name is empty")
+            if(this.state.description==="")
+                this.errorMsg.push("Assignment description is empty")
+            if(!moment(this.state.dueDate).isValid())
+                this.errorMsg.push("Assignment due date is invalid")
         }
     },
     emits : ['close','addAssignment','modifyAssignment']
@@ -74,20 +80,19 @@ export default {
     <h5>Assignment</h5>
     <div class="p-fluid formgrid grid">
         <div class="field col-12">
-            <label for="name1">Title</label>
-            <InputText id="name1" type="text" v-model="state.title" />
+            <label for="name1">Name</label>
+            <InputText id="name1" type="text" v-model="state.name" />
         </div>
         <div class="field col-12 h-auto">
             <label for="description">Description</label>
-            <TextEditor v-model="state.description" />
+            <TextEditor v-model="state.description" class="z-5"/>
         </div>
-        <div class="field col-12 md:col-4">
-            <label for="age1">Priority</label>
-            <Dropdown v-model="state.priority" :options="['High', 'Medium', 'Low']" />
-        </div>
-        <div class="field col-12 md:col-8">
+        <div class="field col-12">
             <label for="date">Due date</label>
             <Calendar v-model="state.dueDate" showButtonBar showTime hourFormat="24" />
+        </div>
+        <div class="field col-12" v-if="errorMsg.length > 0">
+            <InlineMessage v-for="(msg, index) in errorMsg" :key="index" severity="error">{{msg}}</InlineMessage>
         </div>
         <div class="col flex justify-content-end gap-3">
             <Button class="w-auto p-button-danger" label="Cancel" @click="handleCancel"></Button>

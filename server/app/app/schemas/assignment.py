@@ -4,14 +4,18 @@ from pydantic import BaseModel
 
 
 class AsssignmentBase(BaseModel):
-    title: str
-    priority: str
+    name: str
     description: str
     due_date: datetime
 
 
 class AssignmentCreate(AsssignmentBase):
     course_code: str
+    pass
+
+
+class AssignmentUpdate(AsssignmentBase):
+    id: int
     pass
 
 

@@ -6,9 +6,10 @@ import AssignmentForm from '@/components/Form/AssignmentForm.vue';
 import TextEditor from '@/components/TextEditor.vue';
 import Dialog from 'primevue/dialog';
 import { ref, defineComponent } from 'vue';
+import moment from 'moment'
 // import { Assignment } from '@/stores/assignments.ts'
 import { useAssignmentsStore } from '@/stores/assignments';
-import { formatDate, formatTime } from '@/utils/datetime';
+import {formatDate, formatTime } from '@/utils/datetime';
 import TaskForm from '../Form/TaskForm.vue';
 const assignmentStore = useAssignmentsStore();
 export default defineComponent({
@@ -24,7 +25,7 @@ export default defineComponent({
 },
     props: {
         id: Number,
-        title: String,
+        name: String,
         priority: String,
         description: String,
         dueDate: String,
@@ -47,6 +48,9 @@ export default defineComponent({
             assignment.dueTime= formatTime(dueTime);
             console.log(assignment)
             assignmentStore.modifyAssignment(assignment.id, assignment);
+        },
+        formatDate(date: string){
+            return moment(date).format("YYYY-MM-DD hh:mm")
         }
     },
 })
@@ -57,13 +61,12 @@ export default defineComponent({
 <template>
     <BaseCard @click="openDialogHandler">
         <div>
-            <h2>{{ title }}</h2>
+            <h2>{{ name }}</h2>
             <div class="bg-yellow-100 border-round-xl p-3">
                 <h4>Description:</h4>
                 <div v-html="description"></div>
             </div>
-            <p>Priority: {{ priority }}</p>
-            <p>Due date: {{ dueDate }}</p>
+            <p>Due date: {{ this.formatDate(dueDate)}}</p>
         </div>
 
     </BaseCard>
