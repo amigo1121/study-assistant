@@ -76,7 +76,6 @@ const items = ref([
 </script>
 <style lang="scss "> </style>
 <template>
-    <ConfirmDialog></ConfirmDialog>
     <Panel :header="props.name + ' - Due date: ' + moment(props.deadline).format('YYYY-MM-DD HH:mm')" toggleable collapsed>
         <template #icons>
             <button class="p-panel-header-icon p-link mr-2" @click="toggle">
