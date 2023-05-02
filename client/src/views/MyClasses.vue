@@ -6,9 +6,6 @@ import { API_URL } from '@/utils/config';
 import CourseCard from '@/components/Card/CoursesCard.vue'
 let authStore = useAuthStore();
 import router from "@/router"
-const state = reactive({
-    coursesSeach: ""
-})
 const props = defineProps<{}>()
 const courses = ref([])
 
@@ -39,10 +36,6 @@ onBeforeMount(async () => {
 <style scoped></style>
 <template>
     <h1>My classes</h1>
-    <span class="p-input-icon-left">
-        <i class="pi pi-search" />
-        <InputText v-model="state.coursesSeach" placeholder="Search for courses" />
-    </span>
     <div class="card p-3 mt-3" v-if="courses.length > 0">
 
         <CourseCard v-for="(course, index) in courses" :key="index" :name="course.name" :code="course.code"
