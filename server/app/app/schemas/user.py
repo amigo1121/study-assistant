@@ -1,4 +1,4 @@
-from pydantic import BaseModel
+from pydantic import BaseModel, Field
 from datetime import date
 from datetime import datetime
 from typing import List, Optional
@@ -31,6 +31,7 @@ class UserChangePassword(BaseModel):
 
 class User(UserBase):
     id: int
+    role: UserType
 
     class Config:
         orm_mode = True

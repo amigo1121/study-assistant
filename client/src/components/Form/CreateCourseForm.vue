@@ -1,4 +1,5 @@
 <script lang="ts" setup>
+import { capitalize } from '@/utils/datetime';
 import Calendar from 'primevue/calendar';
 import moment from 'moment'
 import axios from 'axios'
@@ -56,9 +57,9 @@ const submit = async () => {
             .filter(([key, value]) => value.apply)
             .map(([key, value]) => {
                 return {
-                    day: key,
-                    start: extractHour(value.from),
-                    end: extractHour(value.to)
+                    week_day: key.toUpperCase(),
+                    start_time: extractHour(value.from),
+                    end_time: extractHour(value.to)
                 }
             }
             ))

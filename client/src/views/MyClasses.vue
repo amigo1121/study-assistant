@@ -37,7 +37,7 @@ onBeforeMount(async()=>{
         <i class="pi pi-search" />
         <InputText v-model="state.coursesSeach" placeholder="Search for courses" />
     </span>
-    <div class="card max-h-30rem p-3 overflow-scroll mt-3">
+    <div class="card p-3 mt-3">
 
         <CourseCard v-for="(course, index) in courses"
             :key="index"

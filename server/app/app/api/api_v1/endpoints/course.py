@@ -11,13 +11,13 @@ from app.utils.commons import UserType
 router = APIRouter()
 
 
-@router.post("/", response_model=schemas.CourseRead)
+@router.post("/", response_model=schemas.course.CourseWithSchedules)
 def create_course(
     course: schemas.CourseCreate,
     current_user: schemas.User = Depends(get_current_user),
     db: Session = Depends(deps.get_db),
 ):
-    if not current_user or current_user.type != UserType.TEACHER:
+    if not current_user or current_user.role != UserType.TEACHER:
         raise HTTPException(
             status_code=403, detail="Only the teacher can create a course"
         )
@@ -43,14 +43,14 @@ def read_courses(skip: int = 0, limit: int = 100, db: Session = Depends(deps.get
     return courses
 
 
-@router.get("/my-courses", response_model=List[schemas.CourseWithStudent])
+@router.get("/my-courses", response_model=List[schemas.course.CourseWithSchedules])
 def read_courses(
     skip: int = 0,
     limit: int = 100,
     db: Session = Depends(deps.get_db),
     current_user: schemas.User = Depends(get_current_user),
 ):
-    if not current_user or current_user.type != UserType.TEACHER:
+    if not current_user or current_user.role != UserType.TEACHER:
         raise HTTPException(status_code=403, detail="Only the teacher can read courses")
     courses = crud_course.get_courses_by_teacher_id(
         db, skip=skip, limit=limit, teacher_id=current_user.id

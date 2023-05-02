@@ -1,13 +1,15 @@
-from datetime import date
-from typing import List, Optional
+from datetime import date, time
+from typing import List, Optional, Any
 from pydantic import BaseModel
 from .assignment import Assignment
+from app.utils.commons import WeekDay, EnrollmentStatus
+from app import schemas
 
 
 class CourseScheduleBase(BaseModel):
-    day: str
-    start: str
-    end: str
+    week_day: WeekDay
+    start_time: time
+    end_time: time
 
 
 class CourseSchedule(CourseScheduleBase):
@@ -42,9 +44,11 @@ class CourseRead(BaseModel):
     start_date: date
     end_date: date
     credits: int
-    schedules: List[CourseSchedule]
-    assignments: List[Assignment]
     teacher_id: int
 
     class Config:
         orm_mode = True
+
+
+class CourseWithSchedules(CourseRead):
+    schedules: List[CourseSchedule]

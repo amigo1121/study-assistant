@@ -3,6 +3,7 @@ import { defineProps, withDefaults, ref } from "vue";
 import AssignmentFormVue from "../Form/AssignmentForm.vue";
 import { useAuthStore } from "@/stores/auth";
 import { API_URL } from "@/utils/config";
+import moment from 'moment'
 import axios from 'axios'
 import { useToast } from 'primevue/usetoast';
 import router from "@/router";
@@ -115,8 +116,8 @@ const addAssignment = async (assignmentData) => {
         <template v-if="details && props.schedules.length > 0">
             <h4>Schedue: </h4>
             <ul class="list-none">
-                <li v-for="(value, key) in props.schedules" :key="key">
-                    {{ value.day.toString().toUpperCase() }}: {{ value.start }} - {{ value.end }}
+                <li v-for="(schedule, index) in props.schedules" :key="index" class="mb-2">
+                    {{ schedule.week_day }}: {{ moment(schedule.start_time,"HH:mm:ss").format("HH:mm") }} - {{  moment(schedule.end_time,"HH:mm:ss").format("HH:mm") }}
                 </li>
             </ul>
             <h4>Start date: {{ props.startDate }}</h4>
@@ -128,14 +129,5 @@ const addAssignment = async (assignmentData) => {
         <h4>
             Credit: {{ props.credits }}
         </h4>
-        <div class="flex gap-3" v-if="authStore.type == 1">
-            <Button label="Register" severity="info" @click="handleRegister" />
-            <Button label="Drop" severity="danger" @click="handleDrop" />
-        </div>
     </div>
-
-    <Dialog v-model:visible="openCreateNewAssignment" modal :style="{ width: '60rem', height: '100%' }"
-        header="Create new Assignment">
-        <AssignmentFormVue @addAssignment="addAssignment"></AssignmentFormVue>
-    </Dialog>
 </template>
