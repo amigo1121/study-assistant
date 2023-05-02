@@ -7,3 +7,7 @@ export function formatTime(time: string){
     const _time = new Date(time);
     return `${_time.getHours()}:${_time.getMinutes()}`;
 }
+
+export function capitalize(str: string){
+    return str[0].toUpperCase() + str.slice(1).toLowerCase()
+}

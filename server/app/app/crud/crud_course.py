@@ -56,12 +56,14 @@ def create_course(db: Session, course: schemas.CourseCreate, teacher_id):
         credits=course.credits,
         teacher_id=teacher_id,
     )
-    db.add(db_course)
-    db.commit()
-    db.refresh(db_course)
-
-    for schedule in course.schedules:
-        create_course_schedule(db=db, schedule=schedule, course_id=db_course.id)
+    try:
+        db.add(db_course)
+        db.commit()
+        db.refresh(db_course)
+        for schedule in course.schedules:
+            create_course_schedule(db=db, schedule=schedule, course_id=db_course.id)
+    except Exception as e:
+        db.rollback()
 
     return db_course
 

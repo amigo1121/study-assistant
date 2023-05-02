@@ -128,6 +128,7 @@ export const useAuthStore = defineStore({
       this.first_name = data.first_name;
       this.last_name = data.last_name;
       this.email = data.email;
+      this.role = data.role;
     },
     logout() {
       localStorage.removeItem("accessToken");

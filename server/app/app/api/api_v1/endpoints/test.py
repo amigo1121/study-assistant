@@ -82,6 +82,13 @@ def get_users(db: Session = Depends(deps.get_db)):
     return db.query(models.User).all()
 
 
-@router.get("/courses", response_model=List[Course])
+@router.get("/courses", response_model=List[schemas.course.CourseWithSchedules])
 def get_courses(db: Session = Depends(deps.get_db)):
+    return db.query(models.Course).all()
+
+
+@router.get(
+    "/coursewithstudent", response_model=List[schemas.enrollment.CourseWithStudent]
+)
+def read_course(db: Session = Depends(deps.get_db)):
     return db.query(models.Course).all()
