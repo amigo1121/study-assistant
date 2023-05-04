@@ -4,8 +4,9 @@ import { useAuthStore } from '@/stores/auth';
 import { API_URL } from '@/utils/config';
 const authStore = useAuthStore()
 import axios from 'axios'
-import CourseCard from '@/components/Card/CoursesCard.vue'
-import AssignmentCard from '@/components/Card/AssignmentCard.vue';
+// import AssignmentCard from '@/components/Card/AssignmentCard.vue';
+import AssignmentPanel from '@/components/AssignmentPanel.vue';
+
 const state = reactive({
     coursesSeach: ""
 })
@@ -26,11 +27,11 @@ onBeforeMount(async () => {
             courses.value = response.data.registered_courses
 
             courses.value.forEach(course =>{
-                assignments.value= assignments.value.concat(course.assignments)
+                assignments.value= assignments.value.concat(course.course.assignments)
             })
 
-            console.log(courses.value)
-            console.log(assignments.value)
+            console.log("course",courses.value)
+            console.log("ass",assignments.value)
         }
         else throw new Error("Can't fetch Assignments")
     } catch (error) {
@@ -38,16 +39,29 @@ onBeforeMount(async () => {
     }
 })
 </script>
-<style scoped></style>
+<style scoped>
+:deep(.p-panel .p-panel-header, .p-panel-content) {
+    border-radius: 0px;
+}
+
+:deep(.p-panel .p-panel-content) {
+    border-radius: 0px;
+}
+</style>
 <template>
     <h1>Assignments</h1>
-    <div class="card max-h-full p-3 overflow-scroll mt-3">
-        <AssignmentCard v-for="(assignment, index) in assignments" :key="index"
-            :id="assignment.id"
-            :title="assignment.title"
-            :priority="assignment.priority"
-            :description="assignment.description"
-            :dueDate="assignment.due_date"
-        ></AssignmentCard>
-    </div>
+    <div v-if="assignments.length > 0">
+            <div class="card">
+                <AssignmentPanel v-for="(assignment, index) in assignments" :key="index" :name="assignment.name"
+                    :description="assignment.description" :deadline="assignment.due_date" :id="assignment.id"
+                    readOnly="a"
+                    >
+                </AssignmentPanel>
+            </div>
+        </div>
+        <div v-else>
+            <div class="card">
+                <i>No assignments</i>
+            </div>
+        </div>
 </template>

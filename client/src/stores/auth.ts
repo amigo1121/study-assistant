@@ -124,17 +124,19 @@ export const useAuthStore = defineStore({
       this.role = role;
     },
     setInfor(data) {
-      console.log(data)
       this.username = data.username;
       this.first_name = data.first_name;
       this.last_name = data.last_name;
       this.email = data.email;
       this.role = data.role;
     },
-    logout() {
+    clearToken(){
       localStorage.removeItem("accessToken");
       localStorage.removeItem("refreshToken");
       localStorage.removeItem("loginTime");
+    },
+    logout() {
+      this.clearToken();
       router.go();
     },
     async login(

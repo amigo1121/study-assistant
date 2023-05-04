@@ -88,8 +88,11 @@ export default {
             <TextEditor v-model="state.description" class="z-5"/>
         </div>
         <div class="field col-12">
-            <label for="date">Due date</label>
-            <Calendar v-model="state.dueDate" showButtonBar showTime hourFormat="24" />
+            <div class="col-8 p-0">
+
+                <label for="date">Due date</label>
+                <Calendar v-model="state.dueDate" showButtonBar showTime hourFormat="24" />
+            </div>
         </div>
         <div class="field col-12" v-if="errorMsg.length > 0">
             <InlineMessage v-for="(msg, index) in errorMsg" :key="index" severity="error">{{msg}}</InlineMessage>

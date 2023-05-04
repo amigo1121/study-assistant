@@ -14,6 +14,7 @@ from sqlalchemy import (
 from sqlalchemy.orm import relationship
 from app.utils.commons import EnrollmentStatus, WeekDay
 from app.db.base_class import Base
+from datetime import date
 
 
 class Enrollment(Base):
@@ -22,8 +23,10 @@ class Enrollment(Base):
     id = Column(Integer, primary_key=True)
     student_id = Column(Integer, ForeignKey("users.id"), nullable=False)
     course_id = Column(Integer, ForeignKey("courses.id"), nullable=False)
-    enrollment_date = Column(Date, nullable=False)
-    status = Column(Enum(EnrollmentStatus), nullable=False)
+    enrollment_date = Column(Date, nullable=False, default=date.today())
+    status = Column(
+        Enum(EnrollmentStatus), nullable=False, default=EnrollmentStatus.ACTIVE
+    )
 
     # relationship
     student = relationship("User", back_populates="registered_courses")

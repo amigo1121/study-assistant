@@ -7,8 +7,9 @@ import CreateCourseForm from '@/components/Form/CreateCourseForm.vue';
 const authStore = useAuthStore()
 const nestedMenuItem = ref([
     {
-        label: 'Dashboard',
-        to: '/home/dashboard'
+        // label: 'Dashboard',
+        icon:'pi pi-home',
+        to: '/dashboard'
     },
     // {
     //     label: 'Chats',
@@ -32,18 +33,18 @@ const openAddCourseDialog = ref(false)
 const handleSubmit = ()=>{
     openAddCourseDialog.value=false
 }
-onMounted(() => {
-    if (authStore.role === 'TEACHER') {
-        nestedMenuItem.value.push({
-            label: 'Add course',
-            command: () => { openAddCourseDialog.value = true }
-        })
-    }
-})
 </script>
-<style lang="scss" scoped>
+<style  scoped>
 .p-menubar {
     border-radius: 0px;
+}
+:deep(.p-menuitem-text){
+    font-weight: 500;
+    font-size: large;
+}
+:deep(.p-menuitem-icon){
+    font-size: large;
+    margin: 0px !important;
 }
 </style>
 <template>
@@ -71,8 +72,6 @@ onMounted(() => {
                 </Menu>
             </template>
         </Menubar>
-        <Dialog v-model:visible="openAddCourseDialog" modal :style="{ width: '40rem' }" header="Create course">
-            <CreateCourseForm @submit="handleSubmit"></CreateCourseForm>
-        </Dialog>
+
     </div>
 </template>

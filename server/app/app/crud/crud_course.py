@@ -68,6 +68,7 @@ def create_course(db: Session, course: schemas.CourseCreate, teacher_id):
             create_course_schedule(db=db, schedule=schedule, course_id=db_course.id)
     except Exception as e:
         db.rollback()
+        raise Exception("An error occurred")
 
     return db_course
 

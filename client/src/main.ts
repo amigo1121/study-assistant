@@ -58,7 +58,4 @@ app.component('AccordionTab',AccordionTab);
 app.component('ConfirmPopup',ConfirmPopup);
 app.component('ConfirmDialog',ConfirmDialog);
 
-console.log("init");
-
-
 app.mount('#app');

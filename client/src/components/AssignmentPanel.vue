@@ -24,17 +24,7 @@ const toggleDialog = () => {
 }
 
 const updateAssignment = (data) => {
-    console.log('update',data)
-    const config = {
-        headers: {
-            Authorization: `Bearer ${authStore.getAccessToken}`,
-        },
-    };
-    axios.put(API_URL+"/assignments",data,config).then((response)=>{
-        router.go()
-        toast.add({ severity: 'success', summary: 'Updated', detail: 'Data Updated', life: 3000 });
-        console.log(response.data)
-    }).catch((error)=>{console.log(error)})
+    emit('update',data)
 }
 
 const confirmDelete = (event) => {
