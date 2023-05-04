@@ -46,6 +46,7 @@ onMounted(() => {
     const toast = useToast();
     if (route.query.sessionExpired) {
         toast.add({ severity: 'warn', summary: 'Warning', detail: 'Your session has expired, please login.' });
+        authStore.lo
     }
     if (route.query.status && route.query.status === 'registered') {
         toast.add({ severity: 'success', summary: 'Sucess', detail: 'Register successfull, you can login now.', life: 3000 })

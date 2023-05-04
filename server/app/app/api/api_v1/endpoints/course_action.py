@@ -30,11 +30,12 @@ def register_course(
     if not student:
         raise HTTPException(status_code=404, detail="Student not found")
     try:
-        stmt = insert(models.course.student_course).values(
+        db_enrollment = models.course.Enrollment(
             student_id=student.id, course_id=course.id
         )
-        db.execute(stmt)
+        db.add(db_enrollment)
         db.commit()
+        db.refresh(db_enrollment)
         return {"message": "Course registered successfully"}
     except SQLAlchemyError as e:
         db.rollback()

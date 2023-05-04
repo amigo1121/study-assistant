@@ -1,49 +1,82 @@
 <script lang="ts" setup>
-import { capitalize } from '@/utils/datetime';
+import { capitalize, timeValidation, getMinutesDifference } from '@/utils/datetime';
+import { useToast } from 'primevue/usetoast';
 import Calendar from 'primevue/calendar';
-import moment from 'moment'
-import axios from 'axios'
-import { ref } from "vue"
+import moment from 'moment';
+import axios from 'axios';
+import { ref } from "vue";
 import { useAuthStore } from '@/stores/auth';
 import { API_URL } from "@/utils/config";
 import router from '@/router'
-const authStore = useAuthStore()
+const toast = useToast();
+const authStore = useAuthStore();
 const name = ref("");
 const code = ref("");
 const credits = ref(1);
-const start = ref();
-const end = ref();
+const start = ref(null);
+const end = ref(null);
+const errorMsg = ref([]);
 const schedule = ref({
     monday: {
         apply: false,
-        from: "",
-        to: ""
+        from: null,
+        to: null
     },
     tuesday: {
         apply: false,
-        from: "",
-        to: ""
+        from: null,
+        to: null
     },
     wednesday: {
         apply: false,
-        from: "",
-        to: ""
+        from: null,
+        to: null
     },
     thursday: {
         apply: false,
-        from: "",
-        to: ""
+        from: null,
+        to: null
     },
     friday: {
         apply: false,
-        from: "",
-        to: ""
+        from: null,
+        to: null
     }
 });
 const emit = defineEmits(['submit'])
 
 const extractHour = (d: Date) => {
     return moment(d).format("HH:mm")
+}
+
+const validateInput = (input) => {
+
+    errorMsg.value = []
+    let { start_date, end_date, schedules } = input
+    start_date = moment(start_date)
+    end_date = moment(end_date)
+    if (!input.name)
+        errorMsg.value.push("Course name is empty")
+    if (!input.code)
+        errorMsg.value.push("Course code is empty")
+    if (!start_date.isValid())
+        errorMsg.value.push("Course's start date is empty or invalid")
+    if (!end_date.isValid())
+        errorMsg.value.push("Course's end date is empty or invalid")
+    if (start_date.isValid() && end_date.isValid() && end_date.diff(start_date, 'days') < 1)
+        errorMsg.value.push("Course's start date must be before course's end date")
+    if (schedules.length === 0)
+        errorMsg.value.push("Course's schedule details missed")
+    schedules.forEach((schedule) => {
+        let { start_time, end_time, week_day } = schedule
+        if (!timeValidation(start_time))
+            errorMsg.value.push(`Course's start time on ${capitalize(week_day)} is empty`)
+        if (!timeValidation(end_time))
+            errorMsg.value.push(`Course's end time on ${capitalize(week_day)} is empty`)
+        if (timeValidation(start_time) && timeValidation(end_time) && getMinutesDifference(start_time,end_time) < 0)
+            errorMsg.value.push(`Course's start time on ${capitalize(week_day)} must be before the end time`)
+    })
+    return (errorMsg.value.length === 0)
 }
 
 const submit = async () => {
@@ -66,19 +99,25 @@ const submit = async () => {
     }
     // console.log(inputForm)
 
-    let config = {
-        headers: {
-            Authorization: `Bearer ${authStore.accessToken}`,
-        },
-    };
-    try {
-        const response = await axios.post(API_URL + "/course", inputForm, config)
-        if(response.status!=200)
-            throw new Error("Cannot create new course")
-        emit('submit')
-        router.go()
-    } catch (error) {
-        console.log(error)
+    if (validateInput(inputForm)) {
+        let config = {
+            headers: {
+                Authorization: `Bearer ${authStore.accessToken}`,
+            },
+        };
+        try {
+            const response = await axios.post(API_URL + "/course", inputForm, config)
+            if (response.status != 200)
+                throw new Error("Cannot create new course")
+            emit('submit', response.data)
+        } catch (error) {
+            console.log(error.response.data)
+            toast.add({ severity: 'error', summary: 'Error', detail: error.response.data.detail, life:(3000) });
+        }
+    } else {
+        errorMsg.value.forEach((error,index)=>{
+            toast.add({ severity: 'error', summary: 'Error', detail: error, life:( 3000 + index*10) });
+        })
     }
 }
 
@@ -131,38 +170,6 @@ const upper = (str) => {
                 </div>
             </div>
         </div>
-
-
-
-
-
-
-
-
-        <!-- <div class="field col-12">
-            <div class="mb-1">All day</div>
-            <InputSwitch v-model="allDay" />
-        </div>
-        <div class="field col-6">
-            <label for="startDate">From</label>
-            <Calendar v-model="startDate" id="startDate" dateFormat="yy-mm-dd" showButtonBar />
-        </div>
-        <div class="field col-6" v-if="!allDay">
-            <label for="startTime">At</label>
-            <Calendar v-model="startTime" id="startTime" timeOnly />
-        </div>
-        <div class="field col-6">
-            <label for="endDate">To</label>
-            <Calendar v-model="endDate" id="endDate" dateFormat="yy-mm-dd" showButtonBar />
-        </div>
-        <div class="field col-6" v-if="!allDay">
-            <label for="endTime">At</label>
-            <Calendar v-model="endTime" id="endTime" timeOnly />
-        </div>
-        <div class="col-12 mb-3" v-if="!valid">
-            <InlineMessage severity="error">Wrong input</InlineMessage>
-        </div> -->
-
         <div class="flex col-12 gap-4 flex-nowrap justify-content-end">
             <Button class="flex max-w-min" severity="info" label="Save" @click="submit" />
         </div>

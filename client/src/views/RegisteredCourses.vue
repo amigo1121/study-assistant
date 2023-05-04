@@ -5,7 +5,6 @@ import { API_URL } from '@/utils/config';
 const authStore = useAuthStore()
 import axios from 'axios'
 import CourseCard from '@/components/Card/CoursesCard.vue'
-import AssignmentCard from '@/components/Card/AssignmentCard.vue';
 const state = reactive({
     coursesSeach: ""
 })
@@ -23,6 +22,7 @@ onBeforeMount(async () => {
         const response = await axios.get(API_URL + "/course/registered-courses",config)
         if (response.status === 200) {
             courses.value = response.data.registered_courses
+            courses.value = courses.value.map((course)=>course.course)
             console.log(courses.value)
         }
         else throw new Error("Can't fetch courses")

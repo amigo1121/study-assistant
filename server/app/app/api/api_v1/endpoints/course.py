@@ -1,5 +1,5 @@
 from typing import List
-from fastapi import APIRouter, Depends, HTTPException
+from fastapi import APIRouter, Depends, HTTPException, status
 from sqlalchemy.orm import Session
 from app import schemas
 from app.crud import crud_course, crud_user
@@ -21,7 +21,14 @@ def create_course(
         raise HTTPException(
             status_code=403, detail="Only the teacher can create a course"
         )
-    return crud_course.create_course(db=db, course=course, teacher_id=current_user.id)
+    try:
+        return crud_course.create_course(
+            db=db, course=course, teacher_id=current_user.id
+        )
+    except Exception as e:
+        raise HTTPException(
+            status_code=status.HTTP_400_BAD_REQUEST, detail="Unable to create a course"
+        )
 
 
 @router.get("/registered-courses", response_model=schemas.StudentWithCourse)
