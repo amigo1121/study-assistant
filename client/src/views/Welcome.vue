@@ -8,9 +8,5 @@ const authStore = useAuthStore()
 
 </style>
 <template>
-    <h1>Welcome</h1>
-    <h2>Username: {{ authStore.username }}</h2>
-    <h2>Email: {{ authStore.email }}</h2>
-    <button @click="authStore.logout">Logout</button>
-    <router-link to="/home/todos">Todos</router-link>
+    <h1>Welcome {{ authStore.first_name }} {{ authStore.last_name }}</h1>
 </template>

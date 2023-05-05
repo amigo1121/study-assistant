@@ -34,10 +34,9 @@ onBeforeMount(async () => {
 <style scoped></style>
 <template>
     <h1>Courses</h1>
-    <div class="card max-h-full p-3 overflow-scroll mt-3">
-
+    <div class="card p-3 mt-3">
         <CourseCard v-for="(course, index) in courses" :key="index" :name="course.name" :code="course.code"
             :credits="course.credits" :startDate="course.start_date" :endDate="course.end_date"
-            :schedules="course.schedules" :details="true"></CourseCard>
+            :schedules="course.schedules" :details="false"></CourseCard>
     </div>
 </template>

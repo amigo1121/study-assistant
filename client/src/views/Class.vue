@@ -148,6 +148,7 @@ const updateAssignment = (assignmentUpdateInfo) => {
                 <AssignmentPanel v-for="(assignment, index) in assignments" :key="index" :name="assignment.name"
                     :description="assignment.description" :deadline="assignment.due_date" :id="assignment.id"
                     @delete="deleteAssignment" @update="updateAssignment">
+                    <div v-html="assignment.description"></div>
                 </AssignmentPanel>
             </div>
         </div>
