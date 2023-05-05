@@ -46,4 +46,5 @@ onMounted(() => {
 <template>
   <Toast></Toast>
   <RouterView />
+  <DynamicDialog />
 </template>

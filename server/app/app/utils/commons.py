@@ -7,6 +7,12 @@ class UserType(enum.Enum):
     TEACHER = "TEACHER"
 
 
+class Priority(enum.Enum):
+    HIGH = "HIGH"
+    MEDIUM = "MEDIUM"
+    LOW = "LOW"
+
+
 class TaskStatus(enum.Enum):
     NOT_STARTED = "NOT_STARTED"
     IN_PROGRESS = "IN_PROGRESS"
