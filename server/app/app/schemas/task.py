@@ -1,6 +1,6 @@
 from typing import List
 from pydantic import BaseModel
-from app.utils.commons import TaskStatus
+from app.utils.commons import TaskStatus, Priority
 
 # TaskDependency schema
 
@@ -26,13 +26,16 @@ class TaskBase(BaseModel):
     title: str
     description: str = None
     est_hours: int = None
-
+    priority: Priority = Priority.LOW
     status: TaskStatus = TaskStatus.NOT_STARTED
+
+    class Config:
+        orm_mode = True
 
 
 class TaskCreate(TaskBase):
-    enrollment_id: int
     assignment_id: int
+    dependencies: List[int]
     pass
 
 
@@ -42,6 +45,3 @@ class TaskUpdate(TaskBase):
 
 class Task(TaskBase):
     id: int
-
-    class Config:
-        orm_mode = True

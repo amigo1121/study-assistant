@@ -29,6 +29,8 @@ import ConfirmationService from 'primevue/confirmationservice';
 import ConfirmDialog from 'primevue/confirmdialog';
 import TabView from 'primevue/tabview';
 import TabPanel from 'primevue/tabpanel';
+import DynamicDialog from 'primevue/dynamicdialog';
+import DialogService from 'primevue/dialogservice';
 const pinia = createPinia();
 const app = createApp(App);
 
@@ -37,7 +39,7 @@ app.use(pinia);
 app.use(PrimeVue);
 app.use(ToastService);
 app.use(ConfirmationService);
-
+app.use(DialogService);
 
 
 app.component('Button', Button);
@@ -61,5 +63,6 @@ app.component('ConfirmPopup',ConfirmPopup);
 app.component('ConfirmDialog',ConfirmDialog);
 app.component('TabView', TabView);
 app.component('TabPanel', TabPanel);
+app.component('DynamicDialog', DynamicDialog);
 
 app.mount('#app');

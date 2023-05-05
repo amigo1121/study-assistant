@@ -9,7 +9,10 @@ import AssignmentForm from '@/components/Form/AssignmentForm.vue';
 import TaskPanel from '@/components/TaskPanel.vue';
 import moment from "moment";
 import router from '@/router';
+import { useDialog } from 'primevue/usedialog';
 import { useToast } from 'primevue/usetoast';
+import TaskForm from '@/components/Form/TaskForm.vue';
+const dialog = useDialog();
 
 // stores
 const route = useRoute();
@@ -35,6 +38,38 @@ onBeforeMount(async () => {
         console.log(error)
     }
 })
+
+const showCreateTaskDialog = (assignment) => {
+    const options = assignment.tasks.map((task) => ({ title: task.title, id: task.id }))
+    const dialogRef = dialog.open(TaskForm, {
+        props: {
+            header: 'Add taks',
+            style: {
+                width: '50rem'
+            },
+            modal: true
+        },
+        data: {
+            options: options
+        },
+        emits: {
+            onCreate: (newTaskInfo) => {
+                newTaskInfo.assignment_id = assignment.id
+                console.log("newTask:", newTaskInfo)
+                const config = {
+                    headers: {
+                        Authorization: `Bearer ${authStore.accessToken}`,
+                    },
+                };
+                axios.post(API_URL+"/task", newTaskInfo, config).then((response)=>{
+                    console.log(response.data)
+                }).catch((error)=>{
+                    console.log(error.response)
+                })
+            }
+        }
+    })
+}
 
 </script>
 <style scoped>
@@ -66,23 +101,25 @@ onBeforeMount(async () => {
                     :description="assignment.description" :deadline="assignment.due_date" :id="assignment.id" readOnly>
                     <TabView>
                         <TabPanel header="Description">
-                           <div v-html="assignment.description"></div>
+                            <div v-html="assignment.description"></div>
                         </TabPanel>
                         <TabPanel header="Tasks">
-                           <div class="flex justify-content-end">
-                            <Button class="mb-3">Add task</Button>
-                           </div>
-                            <TaskPanel v-for="(task, index) in assignment.tasks" :key="index" :name="task.title" :assignment_id="assignment.id" :description="task.description" :est_hour="task.est_hours">
-                            <div v-html="task.description"></div>
+                            <div class="flex justify-content-end">
+                                <Button class="mb-3 " @click="showCreateTaskDialog(assignment)">Add task</Button>
+                            </div>
+                            <TaskPanel v-for="(task, index) in assignment.tasks" :key="index" :name="task.title"
+                                :assignment_id="assignment.id" :description="task.description" :est_hour="task.est_hours">
+                                <div v-html="task.description"></div>
                             </TaskPanel>
                         </TabPanel>
                     </TabView>
                 </AssignmentPanel>
             </div>
-    </div>
-    <div v-else>
-        <div class="card">
-            <i>No assignments</i>
+        </div>
+        <div v-else>
+            <div class="card">
+                <i>No assignments</i>
+            </div>
         </div>
     </div>
-</div></template>
+</template>

@@ -5,8 +5,15 @@ from app import schemas
 from app.api import deps
 from .security import get_current_user
 from app.crud import crud_task
+import logging
+
 
 router = APIRouter()
+
+logging.basicConfig(
+    level=logging.DEBUG,
+    format="%(asctime)s - %(levelname)s: %(message)s",
+)
 
 
 @router.get("/assignment/{assignment_id}", response_model=List[schemas.Task])
@@ -31,7 +38,7 @@ def read_tasks_by_user(
     return task_list
 
 
-@router.post("/tasks", response_model=schemas.Task)
+@router.post("/", response_model=schemas.Task)
 def create_task(
     task: schemas.TaskCreate,
     db: Session = Depends(deps.get_db),
