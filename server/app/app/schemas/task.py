@@ -1,28 +1,47 @@
-from typing import List, Optional
-from datetime import date, time
+from typing import List
 from pydantic import BaseModel
+from app.utils.commons import TaskStatus
+
+# TaskDependency schema
 
 
-class TaskBase(BaseModel):
-    title: str
-    description: Optional[str] = None
-    priority: Optional[str] = None
-    est_hours: Optional[float] = None
-    due_date: Optional[date] = None
-    due_time: Optional[time] = None
+class TaskDependencyBase(BaseModel):
+    task_id: int
+    depends_on_task_id: int
 
 
-class TaskCreate(TaskBase):
-    dependencies: Optional[List[int]] = []
+class TaskDependencyCreate(TaskDependencyBase):
+    pass
 
 
-class Task(TaskBase):
-    id: int
-    dependencies: List["Task"] = []
-
+class TaskDependency(TaskDependencyBase):
     class Config:
         orm_mode = True
 
 
+# Task schema
+
+
+class TaskBase(BaseModel):
+    title: str
+    description: str = None
+    est_hours: int = None
+
+    status: TaskStatus = TaskStatus.NOT_STARTED
+
+
+class TaskCreate(TaskBase):
+    enrollment_id: int
+    assignment_id: int
+    pass
+
+
 class TaskUpdate(TaskBase):
-    dependencies: Optional[List[int]] = []
+    pass
+
+
+class Task(TaskBase):
+    id: int
+
+    class Config:
+        orm_mode = True

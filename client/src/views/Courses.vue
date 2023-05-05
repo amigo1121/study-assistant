@@ -15,7 +15,12 @@ const toast = useToast();
 onBeforeMount(async () => {
 
     try {
-        const response = await axios.get(API_URL + "/course")
+        let config = {
+                headers: {
+                    Authorization: `Bearer ${authStore.accessToken}`,
+                },
+            };
+        const response = await axios.get(API_URL + "/course/available-courses",config)
         if (response.status === 200) {
             courses.value = response.data
             console.log(courses.value)
@@ -23,6 +28,8 @@ onBeforeMount(async () => {
         else throw new Error("Can't fetch courses")
     } catch (error) {
         console.log(error)
+        const message = error.message ? error.message: error.response.data.detail;
+        toast.add({severity: 'error', summary: 'Failed', detail: message, life: 3000})
     }
 })
 
@@ -46,9 +53,12 @@ const registerCourse = (code) => {
 <style scoped></style>
 <template>
     <h1>Courses</h1>
-    <div class="card p-3 mt-3 bottom-0 h-full">
-        <CourseCard v-for="(course, index) in courses" :key="index" :name="course.name" :code="course.code"
+    <div class="card p-3 mt-3 bottom-0 h-full" v-if="courses.length >0">
+        <CourseCard  v-for="(course, index) in courses" :key="index" :name="course.name" :code="course.code"
             :credits="course.credits" :startDate="course.start_date" :endDate="course.end_date"
             :schedules="course.schedules" :details="true" @click="registerCourse(course.code)"></CourseCard>
+    </div>
+    <div class="card" v-else>
+        <p><i>You have no available course</i></p>
     </div>
 </template>

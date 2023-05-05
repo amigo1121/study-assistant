@@ -18,7 +18,7 @@ class CourseWithStudent(CourseWithAssignments):
 
 
 class EnrollmentCourse(EnrollmentBase):
-    course: CourseWithAssignments
+    course: CourseWithSchedules
 
 
 class StudentWithCourse(User):
