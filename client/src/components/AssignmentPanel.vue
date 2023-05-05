@@ -73,7 +73,7 @@ const items = ref([
             </button>
             <Menu ref="menu" id="config_menu" :model="items" popup />
         </template>
-        <div v-html="props.description"></div>
+        <slot></slot>
     </Panel>
     <Dialog v-model:visible="isOpened" modal :style="{ width: '50rem' }" header="Update assignment">
         <AssignmentForm @close="toggleDialog" @modifyAssignment="updateAssignment" :id="props.id" :name="props.name"

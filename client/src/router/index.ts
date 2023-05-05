@@ -15,9 +15,14 @@ const router = createRouter({
         {
           path: "dashboard",
           name: "dashboard",
-          redirect: { name: "my-classes" },
+          redirect: {name: 'welcome'},
           component: () => import("@/views/Dashboard.vue"),
           children: [
+            {
+              path: '',
+              name: 'welcome',
+              component: ()=> import('@/views/Welcome.vue')
+            },
             {
               path: "overview",
               name: "overview",

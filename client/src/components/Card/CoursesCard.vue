@@ -133,7 +133,7 @@ const addAssignment = async (assignmentData) => {
             Teacher: {{ props.teacher }}
         </h4>
         <h4>
-            Credit: {{ props.credits }}
+            Credits: {{ props.credits }}
         </h4>
     </div>
 </template>
