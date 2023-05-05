@@ -54,8 +54,9 @@ onBeforeMount(async () => {
             <div class="card">
                 <AssignmentPanel v-for="(assignment, index) in assignments" :key="index" :name="assignment.name"
                     :description="assignment.description" :deadline="assignment.due_date" :id="assignment.id"
-                    readOnly="a"
+                    readOnly
                     >
+                    <div v-html="assignment.description"></div>
                 </AssignmentPanel>
             </div>
         </div>

@@ -1,5 +1,6 @@
 from sqlalchemy.orm import Session, joinedload
 from app import models, schemas
+from sqlalchemy.orm import aliased
 import logging
 
 logging.basicConfig(
@@ -23,6 +24,25 @@ def get_course_by_code(db: Session, course_code: str):
 
 def get_courses(db: Session, skip: int = 0, limit: int = 100):
     return db.query(models.Course).offset(skip).limit(limit).all()
+
+
+def get_available_courses_for_student(
+    db: Session, student_id: int, skip: int = 0, limit: int = 100
+):
+    enrollment = aliased(models.course.Enrollment)
+    course = aliased(models.course.Course)
+
+    already_registered_courses = (
+        db.query(enrollment.course_id)
+        .filter(enrollment.student_id == student_id)
+        .subquery()
+    )
+
+    unregistered_courses = (
+        db.query(course).filter(~course.id.in_(already_registered_courses)).all()
+    )
+
+    return unregistered_courses
 
 
 def get_courses_by_teacher_id(
@@ -51,7 +71,6 @@ def create_course_schedule(
 
 
 def create_course(db: Session, course: schemas.CourseCreate, teacher_id):
-
     db_course = models.Course(
         code=course.code,
         name=course.name,

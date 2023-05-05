@@ -27,6 +27,8 @@ import AccordionTab from 'primevue/accordiontab';
 import ConfirmPopup from 'primevue/confirmpopup';
 import ConfirmationService from 'primevue/confirmationservice';
 import ConfirmDialog from 'primevue/confirmdialog';
+import TabView from 'primevue/tabview';
+import TabPanel from 'primevue/tabpanel';
 const pinia = createPinia();
 const app = createApp(App);
 
@@ -57,5 +59,7 @@ app.component('Accordion',Accordion);
 app.component('AccordionTab',AccordionTab);
 app.component('ConfirmPopup',ConfirmPopup);
 app.component('ConfirmDialog',ConfirmDialog);
+app.component('TabView', TabView);
+app.component('TabPanel', TabPanel);
 
 app.mount('#app');

@@ -1,6 +1,7 @@
 from datetime import datetime
-from typing import Optional
+from typing import List
 from pydantic import BaseModel
+from .task import Task
 
 
 class AsssignmentBase(BaseModel):
@@ -25,3 +26,7 @@ class Assignment(AsssignmentBase):
 
     class Config:
         orm_mode = True
+
+
+class AssignmentWithTaks(Assignment):
+    tasks: List[Task]

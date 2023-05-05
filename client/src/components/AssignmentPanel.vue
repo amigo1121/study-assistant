@@ -8,7 +8,28 @@ import { useConfirm } from "primevue/useconfirm";
 import AssignmentForm from '@/components/Form/AssignmentForm.vue';
 import { API_URL } from '@/utils/config';
 import { useAuthStore } from '@/stores/auth';
-const props = defineProps(['name', 'description', 'deadline', 'id'])
+const props = defineProps({
+  name: {
+    type: String,
+    required: true
+  },
+  description: {
+    type: String,
+    required: true
+  },
+  deadline: {
+    type: String,
+    required: true
+  },
+  id: {
+    type: Number,
+    required: true
+  },
+  readOnly: {
+    type: Boolean,
+    default: false
+  }
+})
 const emit = defineEmits(['delete', 'update'])
 const menu = ref(null);
 const toast = useToast();
@@ -67,7 +88,7 @@ const items = ref([
 <style lang="scss "> </style>
 <template>
     <Panel :header="props.name + ' - Due date: ' + moment(props.deadline).format('YYYY-MM-DD HH:mm')" toggleable collapsed>
-        <template #icons>
+        <template #icons v-if="!props.readOnly">
             <button class="p-panel-header-icon p-link mr-2" @click="toggle">
                 <span class="pi pi-cog"></span>
             </button>

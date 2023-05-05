@@ -5,10 +5,7 @@ import { API_URL } from '@/utils/config';
 const authStore = useAuthStore()
 import axios from 'axios'
 import CourseCard from '@/components/Card/CoursesCard.vue'
-const state = reactive({
-    coursesSeach: ""
-})
-const props = defineProps<{}>()
+import router from "@/router"
 const courses = ref([])
 
 onBeforeMount(async () => {
@@ -30,13 +27,19 @@ onBeforeMount(async () => {
         console.log(error)
     }
 })
+
+const watchCourse = (code) => {
+    router.push({ path: `/dashboard/registered-courses/${code}` })
+}
 </script>
 <style scoped></style>
 <template>
     <h1>Courses</h1>
     <div class="card p-3 mt-3">
-        <CourseCard v-for="(course, index) in courses" :key="index" :name="course.name" :code="course.code"
+        <CourseCard  v-if="courses.length > 0" v-for="(course, index) in courses" :key="index" :name="course.name" :code="course.code"
             :credits="course.credits" :startDate="course.start_date" :endDate="course.end_date"
-            :schedules="course.schedules" :details="false"></CourseCard>
+            :schedules="course.schedules" :details="false" @click="watchCourse(course.code)"></CourseCard>
+
+        <p v-else> <i>You have no registered course</i></p>
     </div>
 </template>

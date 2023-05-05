@@ -1,10 +1,9 @@
 from datetime import date, time
 from typing import List, Optional, Any
 from pydantic import BaseModel
-from .assignment import Assignment
 from app.utils.commons import WeekDay, EnrollmentStatus
 from app import schemas
-from .assignment import Assignment
+from .assignment import AssignmentWithTaks, Assignment
 
 
 class CourseScheduleBase(BaseModel):
@@ -56,4 +55,5 @@ class CourseWithSchedules(CourseRead):
 
 
 class CourseWithAssignments(CourseWithSchedules):
-    assignments: List[Assignment]
+    teacher: schemas.User
+    assignments: List[AssignmentWithTaks]
