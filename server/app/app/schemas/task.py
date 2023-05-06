@@ -7,7 +7,7 @@ from app.utils.commons import TaskStatus, Priority
 
 class TaskDependencyBase(BaseModel):
     task_id: int
-    depends_on_task_id: int
+    depend_on_task_id: int
 
 
 class TaskDependencyCreate(TaskDependencyBase):
@@ -40,8 +40,17 @@ class TaskCreate(TaskBase):
 
 
 class TaskUpdate(TaskBase):
+    dependencies: List[int]
+    id: int
     pass
 
 
 class Task(TaskBase):
     id: int
+
+
+class TaskWithDepdend(TaskBase):
+    id: int
+    depends_on: List[TaskDependency]
+    depended_by: List[TaskDependency]
+    pass

@@ -1,5 +1,5 @@
 <script lang="ts" setup>
-import { defineEmits, defineProps, ref, inject, onMounted } from 'vue';
+import { defineEmits, defineProps, ref, inject, onMounted, reactive } from 'vue';
 import MultiSelect from 'primevue/multiselect';
 import InputText from 'primevue/inputtext';
 import InputNumber from 'primevue/inputnumber';
@@ -7,7 +7,7 @@ import Dropdown from 'primevue/dropdown';
 import Calendar from 'primevue/calendar';
 import Button from 'primevue/button';
 import TextEditor from '@/components/TextEditor.vue';
-const emit = defineEmits(['create','cancle','change'])
+const emit = defineEmits(['create','cancel','update'])
 const dialogRef = inject('dialogRef')
 const options = ref([])
 const statusOptions = ref([
@@ -41,7 +41,7 @@ const props = defineProps({
     priority: {
         type: String,
         required: false,
-        default: null
+        default: "LOW"
     },
     est_hours: {
         type: Number,
@@ -56,7 +56,7 @@ const props = defineProps({
     status: {
         type: String,
         required: false,
-        default: "Not started"
+        default: "NOT_STARTED"
     }
 })
 
@@ -66,20 +66,17 @@ const state = ref({
     priority: props.priority,
     est_hours: props.est_hours,
     dependencies: props.dependencies,
+    status: props.status
 });
 
 const handleSubmit = () => {
     emit('create', state.value);
-    reset();
+    emit('update', state.value);
 };
 
 const handleCancel = () => {
-    emit('cancel');
-};
-
-const handleModify = () => {
-    emit('change', state.value);
     reset();
+    emit('cancel');
 };
 
 const reset = () => {
@@ -89,11 +86,14 @@ const reset = () => {
         priority: null,
         est_hours: null,
         dependencies: null,
+        status: null
     };
 };
 
 onMounted(()=>{
     options.value = dialogRef.value.data.options
+    if(dialogRef.value.data.state)
+        state.value = dialogRef.value.data.state
 })
 </script>
 <style lang="scss" scoped></style>
@@ -114,7 +114,7 @@ onMounted(()=>{
         </div>
         <div class="field col-12 md:col-6">
             <label for="age1">Estimated Hours</label>
-            <InputNumber v-model="state.est_hours" inputId="integeronly" :min="0" />
+            <InputNumber v-model="state.est_hours" inputId="integeronly" :min="1" />
         </div>
         <div class="field col-12 md:col-6">
             <label for="age1">Dependencies</label>

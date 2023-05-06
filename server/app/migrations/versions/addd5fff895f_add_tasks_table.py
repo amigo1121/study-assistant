@@ -35,7 +35,7 @@ def upgrade() -> None:
         sa.Column("id", sa.Integer(), nullable=False, primary_key=True),
         sa.Column("title", sa.String(length=100), nullable=False),
         sa.Column("description", sa.Text(), nullable=True),
-        sa.Column("est_hours", sa.Integer(), nullable=True),
+        sa.Column("est_hours", sa.Integer(), nullable=False),
         sa.Column(
             "enrollment_id",
             sa.Integer(),

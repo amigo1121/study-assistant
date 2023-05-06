@@ -30,7 +30,6 @@ class Event(BaseModel):
 
 
 class User(BaseModel):
-
     username: str
     events: List[Event]
 
@@ -63,7 +62,6 @@ class Enrollment(BaseModel):
 
 
 class Course(BaseModel):
-
     id: int
     name: str
     code: int
@@ -92,3 +90,17 @@ def get_courses(db: Session = Depends(deps.get_db)):
 )
 def read_course(db: Session = Depends(deps.get_db)):
     return db.query(models.Course).all()
+
+
+@router.get("/tasks", response_model=List[schemas.task.TaskWithDepdend])
+def read_task(db: Session = Depends(deps.get_db)):
+    task = db.query(models.Task).filter_by(id=11).first()
+
+    db_dep = models.TaskDependency(task_id=11, depend_on_task_id=10)
+    # db_dep=db.query(models.TaskDependency).first()
+    task.depends_on = [
+        models.TaskDependency(depend_on_task_id=9),
+        models.TaskDependency(depend_on_task_id=11),
+    ]
+    db.commit()
+    return db.query(models.Task).all()

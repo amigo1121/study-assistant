@@ -16,4 +16,5 @@ from .task import (
     TaskDependencyBase,
     TaskDependencyCreate,
     TaskDependency,
+    TaskWithDepdend,
 )
