@@ -4,15 +4,19 @@ import { useConfirm } from 'primevue/useconfirm'
 import { useToast } from 'primevue/usetoast'
 import moment from 'moment'
 import TaskForm from '@/components/Form/TaskForm.vue'
-
+const menu=ref(null)
+const confirm = useConfirm()
+const toast = useToast()
+const emit = defineEmits(['delete', 'update'])
 const props = defineProps({
-    name: {
+    title: {
         type: String,
         required: true
     },
     description: {
         type: String,
-        required: true
+        required: false,
+        default: ""
     },
     est_hour: {
         type: Number,
@@ -21,8 +25,29 @@ const props = defineProps({
     assignment_id: {
         type: Number,
         required: true
+    },
+    id: {
+        type: Number,
+        required: true,
     }
+
 });
+
+const confirmDelete = (event) => {
+    confirm.require({
+        target: event.currentTarget,
+        message: 'Do you want to delete this task?',
+        icon: 'pi pi-info-circle',
+        acceptClass: 'p-button-danger',
+        accept: () => {
+            emit('delete', props.id, props.assignment_id)
+        },
+        reject: () => {
+            toast.add({ severity: 'error', summary: 'Rejected', detail: 'You have rejected', life: 3000 });
+        }
+    });
+};
+
 const items = ref([
     {
         label: 'Options',
@@ -31,8 +56,7 @@ const items = ref([
                 label: 'Update',
                 icon: 'pi pi-refresh',
                 command: () => {
-                    toggleDialog()
-
+                    emit("update",props.id, props.assignment_id)
                 }
             },
             {
@@ -45,10 +69,15 @@ const items = ref([
         ]
     }
 ]);
+
+const toggle = () =>{
+    menu.value.toggle(event);
+}
+
 </script>
 <style lang="scss" scoped></style>
 <template>
-    <Panel :header="props.name" toggleable collapsed>
+    <Panel :header="props.title" toggleable collapsed>
         <template #icons>
             <button class="p-panel-header-icon p-link mr-2" @click="toggle">
                 <span class="pi pi-cog"></span>

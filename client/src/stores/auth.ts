@@ -135,8 +135,19 @@ export const useAuthStore = defineStore({
       localStorage.removeItem("refreshToken");
       localStorage.removeItem("loginTime");
     },
+    resetData(){
+      this.accessToken= null
+      this.refreshToken=null
+      this.username=null
+      this.email=null
+      this.role=null
+      this.first_name=null
+      this.last_name=null
+      this.timeoutID=null
+    },
     logout() {
       this.clearToken();
+      this.resetData();
       router.go();
     },
     async login(

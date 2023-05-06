@@ -5,6 +5,7 @@ from app import schemas
 from app.api import deps
 from .security import get_current_user
 from app.crud import crud_task
+from app.utils.commons import UserType
 import logging
 
 
@@ -28,6 +29,18 @@ def read_tasks_by_assignment(
     return task_list
 
 
+@router.get("/{assignment_id}/tasks", response_model=List[schemas.TaskWithDepdend])
+def read_assignment_tasks(
+    assignment_id: int,
+    db: Session = Depends(deps.get_db),
+    current_user: schemas.User = Depends(get_current_user),
+):
+    assignment_tasks = crud_task.read_task_by_user_and_assignment(
+        db=db, user_id=current_user.id, assignment_id=assignment_id
+    )
+    return assignment_tasks
+
+
 @router.get("/users", response_model=List[schemas.Task])
 def read_tasks_by_user(
     user_id: int,
@@ -38,7 +51,7 @@ def read_tasks_by_user(
     return task_list
 
 
-@router.post("/", response_model=schemas.Task)
+@router.post("/", response_model=schemas.TaskWithDepdend)
 def create_task(
     task: schemas.TaskCreate,
     db: Session = Depends(deps.get_db),
@@ -48,7 +61,7 @@ def create_task(
     return task
 
 
-@router.put("/tasks/{task_id}", response_model=schemas.Task)
+@router.put("/{task_id}", response_model=schemas.Task)
 def update_task(
     task_id: int,
     task: schemas.TaskUpdate,
@@ -65,12 +78,16 @@ def update_task(
     return task
 
 
-@router.delete("/tasks/{task_id}", response_model=schemas.Task)
+@router.delete("/{task_id}", response_model=schemas.Task)
 def delete_task(
     task_id: int,
     db: Session = Depends(deps.get_db),
     current_user: schemas.User = Depends(get_current_user),
 ):
+    if not current_user or current_user.role != UserType.STUDENT:
+        raise HTTPException(
+            status_code=status.HTTP_403_FORBIDDEN, detail="Student access only"
+        )
     task = crud_task.delete_task(db=db, task_id=task_id, user_id=current_user.id)
     if not task:
         raise HTTPException(

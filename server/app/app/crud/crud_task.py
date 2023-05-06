@@ -24,7 +24,7 @@ def read_tasks_by_user_id(db: Session, user_id: int) -> List[schemas.Task]:
 
 def read_task_by_user_and_assignment(
     db: Session, user_id: int, assignment_id: int
-) -> List[schemas.Task]:
+) -> List[schemas.TaskWithDepdend]:
     db_tasks = (
         db.query(models.Task)
         .filter(models.Task.assignment_id == assignment_id)
@@ -32,7 +32,7 @@ def read_task_by_user_and_assignment(
         .filter(models.Enrollment.student_id == user_id)
         .all()
     )
-    return [schemas.Task.from_orm(db_task) for db_task in db_tasks]
+    return [schemas.TaskWithDepdend.from_orm(db_task) for db_task in db_tasks]
 
 
 def get_enrollment_id(db: Session, assignment_id: int, user_id: int) -> int:
@@ -64,18 +64,61 @@ def create_task(db: Session, task: schemas.TaskCreate, user_id: int) -> schemas.
             priority=task.priority,
             enrollment_id=enrollment_id,
         )
-        db.add(db_task)
-        db.commit()
-        db.refresh(db_task)
-
         for depending_task_id in task.dependencies:
-            db_dependency = models.TaskDependency(
-                task_id=db_task.id, depend_on_task_id=depending_task_id
-            )
-            db.add(db_dependency)
-            db.commit()
-            db.refresh(db_dependency)
+            db_dependency = models.TaskDependency(depend_on_task_id=depending_task_id)
+            db_task.depends_on.append(db_dependency)
+        db.add(db_task)
+        db.flush()
+        db.refresh(db_task)
+        db.commit()
         return db_task
     except Exception as e:
         db.rollback()
         raise e
+
+
+def delete_task(db: Session, task_id: int, user_id: int) -> schemas.Task:
+    db_task = (
+        db.query(models.Task)
+        .filter_by(id=task_id)
+        .join(models.Task.enrollment)
+        .filter(models.Enrollment.student_id == user_id)
+        .first()
+    )
+
+    if db_task:
+        db.delete(db_task)
+        db.commit()
+    return db_task
+
+
+def update_task(
+    db: Session, task_id: int, task: schemas.TaskUpdate, user_id: int
+) -> schemas.Task:
+
+    db_task = (
+        db.query(models.Task)
+        .filter_by(id=task_id)
+        .join(models.Task.enrollment)
+        .filter(models.Enrollment.student_id == user_id)
+        .first()
+    )
+
+    if db_task:
+        db_task.description = task.description
+        db_task.title = task.title
+        db_task.priority = task.priority
+        db_task.status = task.status
+        db_task.est_hours = task.est_hours
+        db_task.depends_on = []
+        for id in task.dependencies:
+            db_depend = models.TaskDependency(depend_on_task_id=id)
+            db_task.depends_on.append(db_depend)
+        db.flush()
+        db.refresh(db_task)
+        db.commit()
+        return db_task
+    else:
+        raise HTTPException(
+            status_code=status.HTTP_404_NOT_FOUND, detail="Task not found"
+        )

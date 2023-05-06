@@ -81,6 +81,22 @@ class Assignment(Base):
     course = relationship("Course", back_populates="assignments")
 
 
+class TaskDependency(Base):
+    __tablename__ = "task_dependencies"
+    task_id = Column(Integer, ForeignKey("tasks.id"), primary_key=True)
+    depend_on_task_id = Column(Integer, ForeignKey("tasks.id"), primary_key=True)
+
+    # relationships
+    depending_task = relationship(
+        "Task", back_populates="depends_on", foreign_keys="TaskDependency.task_id"
+    )
+    depended_task = relationship(
+        "Task",
+        back_populates="depended_by",
+        foreign_keys="TaskDependency.depend_on_task_id",
+    )
+
+
 class Task(Base):
 
     __tablename__ = "tasks"
@@ -96,17 +112,17 @@ class Task(Base):
 
     # relationships
 
-    # depends_on = relationship("TaskDependency", back_populates="depending_task")
-    # depended_by = relationship("TaskDependency", back_populates="depended_task")
+    depends_on = relationship(
+        "TaskDependency",
+        back_populates="depending_task",
+        foreign_keys="TaskDependency.task_id",
+        cascade="all, delete-orphan",
+    )
+    depended_by = relationship(
+        "TaskDependency",
+        back_populates="depended_task",
+        foreign_keys="TaskDependency.depend_on_task_id",
+        cascade="all, delete-orphan",
+    )
     assignment = relationship("Assignment")
     enrollment = relationship("Enrollment")
-
-
-class TaskDependency(Base):
-    __tablename__ = "task_dependencies"
-    task_id = Column(Integer, ForeignKey("tasks.id"), primary_key=True)
-    depend_on_task_id = Column(Integer, ForeignKey("tasks.id"), primary_key=True)
-
-    # relationships
-    # depending_task = relationship("Task", back_populates="depends_on")
-    # depended_task = relationship("Task", back_populates="depended_by")

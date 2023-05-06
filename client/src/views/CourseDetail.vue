@@ -2,7 +2,7 @@
 import { API_URL } from '@/utils/config';
 import axios from 'axios'
 import { useRoute } from 'vue-router'
-import { onBeforeMount, reactive, ref } from 'vue'
+import { onBeforeMount, reactive, ref, nextTick, onBeforeUpdate } from 'vue'
 import { useAuthStore } from '@/stores/auth';
 import AssignmentPanel from '@/components/AssignmentPanel.vue';
 import AssignmentForm from '@/components/Form/AssignmentForm.vue';
@@ -12,6 +12,7 @@ import router from '@/router';
 import { useDialog } from 'primevue/usedialog';
 import { useToast } from 'primevue/usetoast';
 import TaskForm from '@/components/Form/TaskForm.vue';
+import { useTasksStore } from '@/stores/tasks';
 const dialog = useDialog();
 
 // stores
@@ -19,7 +20,8 @@ const route = useRoute();
 const authStore = useAuthStore();
 const toast = useToast();
 let courseData = ref({});
-const assignments = ref([])
+const assignments = ref([]);
+const errorMsg = ref([]);
 // hooks
 onBeforeMount(async () => {
     const courseCode = route.params.coursecode
@@ -39,7 +41,24 @@ onBeforeMount(async () => {
     }
 })
 
-const showCreateTaskDialog = (assignment) => {
+const updateAssignmentTasks = async (assignment_id, newTasks) => {
+    const assignmentIndex = assignments.value.findIndex((e) => e.id === assignment_id)
+    await nextTick();
+    assignments.value[assignmentIndex].tasks = newTasks
+    await nextTick();
+};
+
+const validateInput = (taskInput) => {
+    errorMsg.value = []
+    if (!taskInput.title)
+        errorMsg.value.push("Task title is empty")
+
+    if (!taskInput.est_hours)
+        errorMsg.value.push("Task estimate hours is empty")
+
+    return errorMsg.value.length === 0
+}
+const showCreateTaskDialog = async (assignment) => {
     const options = assignment.tasks.map((task) => ({ title: task.title, id: task.id }))
     const dialogRef = dialog.open(TaskForm, {
         props: {
@@ -54,6 +73,10 @@ const showCreateTaskDialog = (assignment) => {
         },
         emits: {
             onCreate: (newTaskInfo) => {
+                if (!validateInput(newTaskInfo)) {
+                    broadcastErrorMessage()
+                    return
+                }
                 newTaskInfo.assignment_id = assignment.id
                 console.log("newTask:", newTaskInfo)
                 const config = {
@@ -61,16 +84,121 @@ const showCreateTaskDialog = (assignment) => {
                         Authorization: `Bearer ${authStore.accessToken}`,
                     },
                 };
-                axios.post(API_URL+"/task", newTaskInfo, config).then((response)=>{
+                axios.post(API_URL + "/task", newTaskInfo, config).then(async (response) => {
                     console.log(response.data)
-                }).catch((error)=>{
+                    dialogRef.close()
+                    toast.add({ severity: 'success', Summary: "Success", detail: "Create task success", life: 3000 })
+                    fetchAssighnmentTasks(assignment.id).then((res) => {
+                        updateAssignmentTasks(assignment.id, res.data)
+                    }).catch((err) => { console.log(err) })
+                }).catch((error) => {
                     console.log(error.response)
                 })
+
+            },
+            onCancel: () => {
+                dialogRef.close()
             }
         }
     })
 }
 
+const deleteTask = (taskID, assignmentID) => {
+    const config = {
+        headers: {
+            Authorization: `Bearer ${authStore.accessToken}`,
+        },
+    };
+
+    axios.delete(API_URL + `/task/${taskID}`, config)
+        .then((response) => {
+            if (response.status === 200) {
+                toast.add({ severity: 'success', Summary: "Success", detail: "Delete task success", life: 3000 });
+            }
+            fetchAssighnmentTasks(assignmentID).then((res) => {
+                updateAssignmentTasks(assignmentID, res.data)
+            }).catch((err) => { console.log(err) })
+        })
+        .catch((error) => {
+            console.log(error);
+        });
+
+
+
+
+};
+
+function broadcastErrorMessage() {
+    errorMsg.value.forEach(msg => {
+        toast.add({ severity: 'error', summary: "Error", detail: msg, life: 3000 })
+    })
+}
+
+const updateTask = (taskID, assignmentID) => {
+    // const assignment
+    const assignment = assignments.value.find((e) => e.id === assignmentID)
+    const task = assignment.tasks.find((e) => e.id === taskID)
+    const dependedTaskOnThis = task.depended_by.map((e)=>e.task_id)
+    const options = assignment.tasks.map((task) => ({ title: task.title, id: task.id })).filter(e => e.id !== taskID && !dependedTaskOnThis.includes(e.id))
+    const dialogRef = dialog.open(TaskForm, {
+        props: {
+            header: 'Update taks',
+            style: {
+                width: '50rem'
+            },
+            modal: true
+        },
+        data: {
+            options: options,
+            state: {
+                title: task.title,
+                status: task.status,
+                priority: task.priority,
+                description: task.description,
+                est_hours: task.est_hours,
+                id: task.id,
+                dependencies: task.depends_on.map((e) => e.depend_on_task_id)
+            }
+        },
+        emits: {
+            onUpdate: (newTask) => {
+                console.log("update", newTask)
+                if (!validateInput(newTask)) {
+                    broadcastErrorMessage()
+                    return
+                }
+                const config = {
+                    headers: {
+                        Authorization: `Bearer ${authStore.accessToken}`,
+                    },
+                };
+                axios.put(API_URL + `/task/${taskID}`, newTask, config).then((response) => {
+                    console.log(response.data)
+                    dialogRef.close()
+                    toast.add({ severity: 'success', Summary: "Success", detail: "Update task success", life: 3000 })
+                    fetchAssighnmentTasks(assignment.id).then((res) => {
+                        updateAssignmentTasks(assignment.id, res.data)
+                    }).catch((err) => { console.log(err) })
+                }).catch(error => { console.log(error) })
+            },
+            onCancel: () => {
+                console.log("cancel")
+                dialogRef.close()
+            }
+        }
+    })
+    // console.log({ taskID, assignment })
+    console.log(task)
+}
+
+const fetchAssighnmentTasks = (assignment_id) => {
+    const config = {
+        headers: {
+            Authorization: `Bearer ${authStore.accessToken}`,
+        },
+    };
+    return axios(API_URL + `/task/${assignment_id}/tasks`, config)
+}
 </script>
 <style scoped>
 :deep(.p-panel .p-panel-header, .p-panel-content) {
@@ -107,8 +235,9 @@ const showCreateTaskDialog = (assignment) => {
                             <div class="flex justify-content-end">
                                 <Button class="mb-3 " @click="showCreateTaskDialog(assignment)">Add task</Button>
                             </div>
-                            <TaskPanel v-for="(task, index) in assignment.tasks" :key="index" :name="task.title"
-                                :assignment_id="assignment.id" :description="task.description" :est_hour="task.est_hours">
+                            <TaskPanel v-for="(task, index) in assignment.tasks" :key="index" :title="task.title"
+                                :id="task.id" :assignment_id="assignment.id" :description="task.description"
+                                :est_hour="task.est_hours" @delete="deleteTask" @update="updateTask">
                                 <div v-html="task.description"></div>
                             </TaskPanel>
                         </TabPanel>
@@ -121,5 +250,6 @@ const showCreateTaskDialog = (assignment) => {
                 <i>No assignments</i>
             </div>
         </div>
+        <ConfirmDialog></ConfirmDialog>
     </div>
 </template>
