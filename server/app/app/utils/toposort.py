@@ -1,4 +1,4 @@
-from app.schemas.task import TaskWithDepdend, TaskDependency
+from app.schemas.task import TaskWithDepdend, TaskDependency, TaskGraphEdge
 
 
 def topo_sort_task(taskList):
@@ -50,3 +50,14 @@ def topo_sort_task(taskList):
     tasks_dict = {task.id: task for task in taskList}
     sorted_tasks = [tasks_dict[task_id] for task_id in result]
     return sorted_tasks
+
+
+def construct_graph_edge(taskList):
+    edges = []
+
+    for task in taskList:
+        list_depended_by = task.depended_by
+        for edge in list_depended_by:
+            new_dict = TaskGraphEdge(from_id=edge.depend_on_task_id, to_id=edge.task_id)
+            edges.append(new_dict)
+    return edges

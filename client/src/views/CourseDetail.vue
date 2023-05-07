@@ -3,6 +3,7 @@ import { API_URL } from '@/utils/config';
 import axios from 'axios'
 import { useRoute } from 'vue-router'
 import { onBeforeMount, reactive, ref, nextTick, onBeforeUpdate } from 'vue'
+import { defineAsyncComponent } from 'vue'
 import { useAuthStore } from '@/stores/auth';
 import AssignmentPanel from '@/components/AssignmentPanel.vue';
 import AssignmentForm from '@/components/Form/AssignmentForm.vue';
@@ -14,7 +15,7 @@ import { useToast } from 'primevue/usetoast';
 import TaskForm from '@/components/Form/TaskForm.vue';
 import { useTasksStore } from '@/stores/tasks';
 const dialog = useDialog();
-
+const TaskGraph = defineAsyncComponent(()=>import ('@/components/TaskGraph.vue'))
 // stores
 const route = useRoute();
 const authStore = useAuthStore();
@@ -254,6 +255,9 @@ const fetchAssighnmentTasks = (assignment_id) => {
                                 :est_hour="task.est_hours" @delete="deleteTask" @update="updateTask">
                                 <div v-html="task.description"></div>
                             </TaskPanel>
+                        </TabPanel>
+                        <TabPanel header="Task graph">
+                            <TaskGraph :assignment_id="assignment.id"></TaskGraph>
                         </TabPanel>
                     </TabView>
                 </AssignmentPanel>
