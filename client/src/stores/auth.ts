@@ -78,7 +78,7 @@ export const useAuthStore = defineStore({
           throw new Error("Failed to authenticate with access token");
         }
         console.log("Authenticate successful");
-        this.setInfor(response.data)
+        this.setInfor(response.data);
         if (this.timeoutID) {
           console.log("continue loading");
         } else {
@@ -130,20 +130,20 @@ export const useAuthStore = defineStore({
       this.email = data.email;
       this.role = data.role;
     },
-    clearToken(){
+    clearToken() {
       localStorage.removeItem("accessToken");
       localStorage.removeItem("refreshToken");
       localStorage.removeItem("loginTime");
     },
-    resetData(){
-      this.accessToken= null
-      this.refreshToken=null
-      this.username=null
-      this.email=null
-      this.role=null
-      this.first_name=null
-      this.last_name=null
-      this.timeoutID=null
+    resetData() {
+      this.accessToken = null;
+      this.refreshToken = null;
+      this.username = null;
+      this.email = null;
+      this.role = null;
+      this.first_name = null;
+      this.last_name = null;
+      this.timeoutID = null;
     },
     logout() {
       this.clearToken();
@@ -185,10 +185,7 @@ export const useAuthStore = defineStore({
     }): Promise<any> {
       return axios.post(API_URL + "/users/register", user);
     },
-    async changePassword(data: {
-      old_password: string;
-      new_password: string;
-    }) {
+    async changePassword(data: { old_password: string; new_password: string }) {
       const config = {
         headers: {
           Authorization: `Bearer ${this.accessToken}`,

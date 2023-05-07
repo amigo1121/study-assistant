@@ -15,13 +15,13 @@ const router = createRouter({
         {
           path: "dashboard",
           name: "dashboard",
-          redirect: {name: 'welcome'},
+          redirect: { name: "welcome" },
           component: () => import("@/views/Dashboard.vue"),
           children: [
             {
-              path: '',
-              name: 'welcome',
-              component: ()=> import('@/views/Welcome.vue')
+              path: "",
+              name: "welcome",
+              component: () => import("@/views/Welcome.vue"),
             },
             {
               path: "overview",
@@ -76,8 +76,8 @@ const router = createRouter({
             {
               path: "/dashboard/registered-courses/:coursecode",
               name: "course-detail",
-              component: () => import("@/views/CourseDetail.vue")
-            }
+              component: () => import("@/views/CourseDetail.vue"),
+            },
           ],
         },
         {
@@ -120,7 +120,12 @@ router.beforeEach(async (to, from) => {
     if (to.name === "login" || to.name === "register") {
       try {
         await authStore.tryAuthenticate();
-        return { name: "root", query: {message: "You already logged in, please log out to continue"} };
+        return {
+          name: "root",
+          query: {
+            message: "You already logged in, please log out to continue",
+          },
+        };
       } catch (error) {
         return;
       }

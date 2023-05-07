@@ -1,2 +1,2 @@
-export const API_URL = "http://localhost"
-export const refreshTokenIntervalInMinutes = 10
+export const API_URL = "http://localhost";
+export const refreshTokenIntervalInMinutes = 10;
