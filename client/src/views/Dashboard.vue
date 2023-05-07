@@ -25,7 +25,7 @@ const sidebarItems=ref([
     },
     {
         // List of assignments, create new, etc
-        label: 'Assignment',
+        label: 'Assignments',
         name: 'assignments'
     },
     {
