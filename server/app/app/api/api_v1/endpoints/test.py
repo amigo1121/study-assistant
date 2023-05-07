@@ -11,7 +11,7 @@ from datetime import date
 from .security import get_current_user
 from pydantic import BaseModel
 import logging
-from app.utils.toposort import topo_sort_task
+from app.utils.toposort import topo_sort_task, construct_graph_edge
 from typing import Any
 
 router = APIRouter()
@@ -134,3 +134,27 @@ def get_todos_by_assignment(
 @router.get("/remain_time/{assignment_id}")
 def getremaintime(assignment_id: int, db: Session = Depends(deps.get_db)):
     return crud_course.assignment_remain_time(db=db, assignment_id=assignment_id)
+
+
+@router.get(
+    "/todos/assignment/edges/{assignment_id}",
+    response_model=List[schemas.task.TaskGraphEdge],
+)
+def get_todos_edge_by_assignment(
+    student_id: int, assignment_id: int, db: Session = Depends(deps.get_db)
+):
+    tasks = crud_task.read_task_by_user_and_assignment(
+        db=db, user_id=student_id, assignment_id=assignment_id
+    )
+    return construct_graph_edge(tasks)
+
+
+@router.get("/nodes/{assignment_id}", response_model=List[schemas.task.TaskBase])
+def get_task_node_by_assignment(
+    student_id: int, assignment_id: int, db: Session = Depends(deps.get_db)
+):
+    tasks = crud_task.read_task_by_user_and_assignment(
+        db=db, user_id=student_id, assignment_id=assignment_id
+    )
+
+    return tasks

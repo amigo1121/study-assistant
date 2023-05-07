@@ -54,3 +54,11 @@ class TaskWithDepdend(TaskBase):
     depends_on: List[TaskDependency]
     depended_by: List[TaskDependency]
     pass
+
+
+class TaskGraphEdge(BaseModel):
+    from_id: int
+    to_id: int
+
+    class Config:
+        orm_mode = True
