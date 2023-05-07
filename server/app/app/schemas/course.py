@@ -56,4 +56,4 @@ class CourseWithSchedules(CourseRead):
 
 class CourseWithAssignments(CourseWithSchedules):
     teacher: schemas.User
-    assignments: List[AssignmentWithTaks]
+    assignments: List[Assignment]
