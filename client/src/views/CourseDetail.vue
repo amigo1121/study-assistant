@@ -40,7 +40,6 @@ onBeforeMount(async () => {
     );
     courseData.value = response.data;
     assignments.value = response.data.assignments;
-    console.log(courseData.value);
   } catch (error) {
     console.log(error);
   }
@@ -86,7 +85,6 @@ const showCreateTaskDialog = async (assignment) => {
           return;
         }
         newTaskInfo.assignment_id = assignment.id;
-        console.log("newTask:", newTaskInfo);
         const config = {
           headers: {
             Authorization: `Bearer ${authStore.accessToken}`,
@@ -95,7 +93,6 @@ const showCreateTaskDialog = async (assignment) => {
         axios
           .post(API_URL + "/task", newTaskInfo, config)
           .then(async (response) => {
-            console.log(response.data);
             dialogRef.close();
             toast.add({
               severity: "success",
@@ -202,7 +199,6 @@ const updateTask = (taskID, assignmentID) => {
     },
     emits: {
       onUpdate: (newTask) => {
-        console.log("update", newTask);
         if (!validateInput(newTask)) {
           broadcastErrorMessage();
           return;
@@ -215,7 +211,6 @@ const updateTask = (taskID, assignmentID) => {
         axios
           .put(API_URL + `/task/${taskID}`, newTask, config)
           .then((response) => {
-            console.log(response.data);
             dialogRef.close();
             toast.add({
               severity: "success",
@@ -236,7 +231,6 @@ const updateTask = (taskID, assignmentID) => {
           });
       },
       onCancel: () => {
-        console.log("cancel");
         dialogRef.close();
       },
     },

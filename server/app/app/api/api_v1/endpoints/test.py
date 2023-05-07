@@ -12,6 +12,7 @@ from .security import get_current_user
 from pydantic import BaseModel
 import logging
 from app.utils.toposort import topo_sort_task, construct_graph_edge
+from app.utils.stats import get_task_stats
 from typing import Any
 
 router = APIRouter()
@@ -158,3 +159,14 @@ def get_task_node_by_assignment(
     )
 
     return tasks
+
+
+@router.get("/tasks/priority", response_model=List[int])
+def task_priority(student_id: int, db: Session = Depends(deps.get_db)):
+    tasks = (
+        db.query(models.Task)
+        .join(models.Task.enrollment)
+        .filter_by(student_id=student_id)
+        .all()
+    )
+    return get_task_stats(tasks)

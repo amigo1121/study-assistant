@@ -36,7 +36,7 @@ function toggleMenu(event) {
 <style lang="scss" scoped></style>
 <template>
   <Button
-    icon="pi pi-user"
+    icon="pi pi-ellipsis-h"
     severity="info"
     text
     rounded
