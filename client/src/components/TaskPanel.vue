@@ -4,38 +4,22 @@ import { useConfirm } from 'primevue/useconfirm'
 import { useToast } from 'primevue/usetoast'
 import moment from 'moment'
 import TaskForm from '@/components/Form/TaskForm.vue'
+import type { TaskStatus } from '@/utils/common'
 const menu=ref(null)
 const confirm = useConfirm()
 const toast = useToast()
 const emit = defineEmits(['delete', 'update'])
-const props = defineProps({
-    title: {
-        type: String,
-        required: true
-    },
-    description: {
-        type: String,
-        required: false,
-        default: ""
-    },
-    est_hour: {
-        type: Number,
-        required: true
-    },
-    assignment_id: {
-        type: Number,
-        required: true
-    },
-    id: {
-        type: Number,
-        required: true,
-    },
-    readOnly: {
-        type: Boolean,
-        default: false
-    }
+interface Props {
+    title: string;
+    description?: string;
+    est_hour: number;
+    assignment_id: number;
+    id: number;
+    readOnly?: boolean;
+    status: TaskStatus;
+}
 
-});
+const props = defineProps<Props>()
 
 const confirmDelete = (event) => {
     confirm.require({
@@ -77,11 +61,34 @@ const items = ref([
 const toggle = () =>{
     menu.value.toggle(event);
 }
+function modifyStatus(str){
+    str = str.toLowerCase().replace('_', ' ')
+    return str[0].toUpperCase()+str.slice(1)
+}
+
+function badgeColor(){
+    switch (props.status) {
+        case 'NOT_STARTED':
+            return 'bg-gray-400'
+        case 'IN_PROGRESS':
+            return 'bg-yellow-400'
+        case 'COMPLETE':
+            return 'bg-green-400'
+        default:
+        return 'bg-green-500'
+    }
+}
 
 </script>
 <style lang="scss" scoped></style>
 <template>
-    <Panel :header="props.title" toggleable collapsed>
+    <Panel toggleable collapsed>
+        <template #header>
+            <div class="flex">
+                <div class="align-self-baseline mr-3">{{  props.title }}</div>
+                <Badge :value="modifyStatus(props.status)" class="align-self-baseline" :class="{[badgeColor()]:true}"></Badge>
+            </div>
+        </template>
         <template #icons v-if="!props.readOnly">
             <button class="p-panel-header-icon p-link mr-2" @click="toggle">
                 <span class="pi pi-cog"></span>

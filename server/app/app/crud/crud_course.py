@@ -1,6 +1,8 @@
 from sqlalchemy.orm import Session, joinedload
 from app import models, schemas
 from sqlalchemy.orm import aliased
+from datetime import datetime, timedelta, timezone
+import math
 import logging
 
 logging.basicConfig(
@@ -108,3 +110,11 @@ def delete_course(db: Session, course_id: int):
         db.delete(db_course)
         db.commit()
     return db_course
+
+
+def assignment_remain_time(db: Session, assignment_id):
+    db_assignment = db.query(models.Assignment).filter_by(id=assignment_id).first()
+    current_time = math.floor(
+        (db_assignment.due_date - datetime.now(timezone.utc)).total_seconds() / 3600
+    )
+    return current_time

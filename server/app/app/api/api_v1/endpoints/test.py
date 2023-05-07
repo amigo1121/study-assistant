@@ -4,13 +4,14 @@ from typing import List
 from fastapi import APIRouter, Depends, HTTPException, status
 from sqlalchemy.orm import Session
 from app.api import deps
-from app.crud import crud_event
+from app.crud import crud_event, crud_task, crud_course
 from app import schemas
 from app import models
 from datetime import date
 from .security import get_current_user
 from pydantic import BaseModel
 import logging
+from app.utils.toposort import topo_sort_task
 from typing import Any
 
 router = APIRouter()
@@ -104,3 +105,32 @@ def read_task(db: Session = Depends(deps.get_db)):
     ]
     db.commit()
     return db.query(models.Task).all()
+
+
+@router.get("/todos", response_model=List[schemas.task.TaskWithDepdend])
+def get_todos(student_id: int, db: Session = Depends(deps.get_db)):
+    tasks = (
+        db.query(models.Task)
+        .join(models.Task.enrollment)
+        .filter_by(student_id=student_id)
+        .all()
+    )
+    return topo_sort_task(tasks)
+
+
+@router.get(
+    "/todos/assignment/{assignment_id}",
+    response_model=List[schemas.task.TaskWithDepdend],
+)
+def get_todos_by_assignment(
+    student_id: int, assignment_id: int, db: Session = Depends(deps.get_db)
+):
+    tasks = crud_task.read_task_by_user_and_assignment(
+        db=db, user_id=student_id, assignment_id=assignment_id
+    )
+    return topo_sort_task(tasks)
+
+
+@router.get("/remain_time/{assignment_id}")
+def getremaintime(assignment_id: int, db: Session = Depends(deps.get_db)):
+    return crud_course.assignment_remain_time(db=db, assignment_id=assignment_id)
