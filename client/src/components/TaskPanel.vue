@@ -29,6 +29,10 @@ const props = defineProps({
     id: {
         type: Number,
         required: true,
+    },
+    readOnly: {
+        type: Boolean,
+        default: false
     }
 
 });
@@ -78,7 +82,7 @@ const toggle = () =>{
 <style lang="scss" scoped></style>
 <template>
     <Panel :header="props.title" toggleable collapsed>
-        <template #icons>
+        <template #icons v-if="!props.readOnly">
             <button class="p-panel-header-icon p-link mr-2" @click="toggle">
                 <span class="pi pi-cog"></span>
             </button>

@@ -102,7 +102,7 @@ def get_course_by_code(
 
 @router.get(
     "/registered-course/{course_code}",
-    response_model=schemas.course.CourseWithAssignments,
+    response_model=schemas.course.CourseWithTasks,
 )
 def get_registered_course(
     course_code: str,

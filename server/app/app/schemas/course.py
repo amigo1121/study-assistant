@@ -57,3 +57,16 @@ class CourseWithSchedules(CourseRead):
 class CourseWithAssignments(CourseWithSchedules):
     teacher: schemas.User
     assignments: List[Assignment]
+
+
+class CourseWithTasks(CourseWithSchedules):
+    teacher: schemas.User
+    assignments: List[AssignmentWithTaks]
+
+
+class Student_Course_Assignment_Task(BaseModel):
+    id: int
+    course: CourseWithTasks
+
+    class Config:
+        orm_mode = True

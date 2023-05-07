@@ -1,10 +1,11 @@
 from fastapi import APIRouter, Depends, HTTPException
-from sqlalchemy.orm import Session
+from sqlalchemy.orm import Session, joinedload
 from datetime import datetime
 from app import schemas, models
 from app.api.deps import get_db
 from .security import get_current_user
 from app.utils.commons import UserType
+from app.crud import crud_task
 from typing import List, Any
 
 router = APIRouter()
@@ -16,7 +17,6 @@ def create_assignment(
     db: Session = Depends(get_db),
     user: schemas.User = Depends(get_current_user),
 ):
-
     course = (
         db.query(models.Course)
         .filter(models.Course.code == assignment.course_code)
@@ -75,7 +75,6 @@ def delete_assignment(
     db: Session = Depends(get_db),
     user: schemas.User = Depends(get_current_user),
 ):
-
     if not user or user.role != UserType.TEACHER:
         raise HTTPException(
             status_code=403, detail="Only the teacher can create assignments"
@@ -94,3 +93,28 @@ def delete_assignment(
     db.commit()
 
     return {"message": f"Assignment with ID {assignment_id} deleted successfully"}
+
+
+@router.get(
+    "/student", response_model=List[schemas.course.Student_Course_Assignment_Task]
+)
+def get_student_assignmenst(
+    student: schemas.User = Depends(get_current_user), db: Session = Depends(get_db)
+):
+    db_enrollments = (
+        db.query(models.Enrollment)
+        .filter_by(student_id=student.id)
+        .options(
+            joinedload(models.Enrollment.course).joinedload(models.Course.assignments)
+        )
+        .all()
+    )
+
+    for enrollment in db_enrollments:
+        for assignment in enrollment.course.assignments:
+            tasks = crud_task.read_task_by_user_and_assignment(
+                db=db, user_id=student.id, assignment_id=assignment.id
+            )
+            assignment.tasks = tasks
+
+    return db_enrollments
