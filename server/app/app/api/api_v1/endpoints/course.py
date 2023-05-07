@@ -88,7 +88,7 @@ def read_course(course_id: int, db: Session = Depends(deps.get_db)):
     return db_course
 
 
-@router.get("/code/{course_code}", response_model=schemas.enrollment.CourseWithStudent)
+@router.get("/code/{course_code}", response_model=schemas.course.CourseWithAssignments)
 def get_course_by_code(
     course_code: str,
     db: Session = Depends(deps.get_db),
