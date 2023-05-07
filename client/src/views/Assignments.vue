@@ -59,7 +59,7 @@ onBeforeMount(async () => {
                     <TabPanel header="Tasks">
                         <TaskPanel v-for="(task, index) in assignment.tasks" :key="index" :title="task.title" :id="task.id"
                             :assignment_id="assignment.id" :description="task.description" :est_hour="task.est_hours"
-                            :readOnly="true">
+                            :readOnly="true" :status="task.status">
                             <div v-html="task.description"></div>
                         </TaskPanel>
                         <i v-if="assignment.tasks.length ===0">No task</i>

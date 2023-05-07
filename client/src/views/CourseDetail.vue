@@ -134,11 +134,24 @@ function broadcastErrorMessage() {
     })
 }
 
+function getDependedTasks(task, assignment){
+    let ans = []
+    if(task.depended_by.length > 0){
+        task.depended_by.forEach(({task_id})=>{
+            const t = assignment.tasks.find((e) => e.id === task_id)
+            ans.push(task_id);
+            ans= ans.concat(getDependedTasks(t,assignment))
+        })
+        return ans
+    }
+    return []
+}
+
 const updateTask = (taskID, assignmentID) => {
     // const assignment
     const assignment = assignments.value.find((e) => e.id === assignmentID)
     const task = assignment.tasks.find((e) => e.id === taskID)
-    const dependedTaskOnThis = task.depended_by.map((e)=>e.task_id)
+    const dependedTaskOnThis = getDependedTasks(task,assignment);
     const options = assignment.tasks.map((task) => ({ title: task.title, id: task.id })).filter(e => e.id !== taskID && !dependedTaskOnThis.includes(e.id))
     const dialogRef = dialog.open(TaskForm, {
         props: {
@@ -188,7 +201,7 @@ const updateTask = (taskID, assignmentID) => {
         }
     })
     // console.log({ taskID, assignment })
-    console.log(task)
+    // console.log(task)
 }
 
 const fetchAssighnmentTasks = (assignment_id) => {
@@ -237,6 +250,7 @@ const fetchAssighnmentTasks = (assignment_id) => {
                             </div>
                             <TaskPanel v-for="(task, index) in assignment.tasks" :key="index" :title="task.title"
                                 :id="task.id" :assignment_id="assignment.id" :description="task.description"
+                                :status="task.status"
                                 :est_hour="task.est_hours" @delete="deleteTask" @update="updateTask">
                                 <div v-html="task.description"></div>
                             </TaskPanel>
