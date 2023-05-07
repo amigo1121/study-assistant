@@ -107,12 +107,23 @@ const addAssignment = async (assignmentData) => {
 
     }
 }
+
+const menu = ref(null);
+const toggle = (event) => {
+    menu.value.toggle(event);
+};
 </script>
 <style lang="scss" scoped>
     .card{
         &:hover{
             background-color: rgba($color: #000000, $alpha: 0.1);
         }
+        position: relative;
+    }
+    .menu{
+        position: absolute;
+        top: 1rem;
+        right: 1rem;
     }
 </style>
 <template>
@@ -135,5 +146,9 @@ const addAssignment = async (assignmentData) => {
         <h4>
             Credits: {{ props.credits }}
         </h4>
+        <div class="menu">
+            <slot name="menu" :course_code="props.code">
+            </slot>
+        </div>
     </div>
 </template>
