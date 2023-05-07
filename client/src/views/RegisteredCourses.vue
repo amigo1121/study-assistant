@@ -102,7 +102,6 @@ onBeforeMount(async () => {
     if (response.status === 200) {
       courses.value = response.data.registered_courses;
       courses.value = courses.value.map((course) => course.course);
-      console.log(courses.value);
     } else throw new Error("Can't fetch courses");
   } catch (error) {
     console.log(error);

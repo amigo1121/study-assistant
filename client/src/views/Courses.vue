@@ -28,7 +28,6 @@ async function fetchData() {
     );
     if (response.status === 200) {
       courses.value = response.data;
-      console.log(courses.value);
     } else throw new Error("Can't fetch courses");
   } catch (error) {
     console.log(error);

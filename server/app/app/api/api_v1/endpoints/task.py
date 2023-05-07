@@ -7,6 +7,7 @@ from .security import get_current_user
 from app.crud import crud_task
 from app.utils.commons import UserType
 from app.utils.toposort import topo_sort_task, construct_graph_edge
+from app.utils.stats import get_task_stats
 import logging
 
 
@@ -44,10 +45,13 @@ def read_assignment_tasks(
 
 @router.get("/users", response_model=List[schemas.Task])
 def read_tasks_by_user(
-    user_id: int,
     db: Session = Depends(deps.get_db),
     current_user: schemas.User = Depends(get_current_user),
 ):
+    if not current_user or current_user.role != UserType.STUDENT:
+        raise HTTPException(
+            status_code=status.HTTP_401_UNAUTHORIZED, detail="Student access only"
+        )
     task_list = crud_task.read_tasks_by_user_id(db=db, user_id=current_user.id)
     return task_list
 
@@ -130,3 +134,16 @@ def get_task_node_by_assignment(
         db=db, user_id=current_user.id, assignment_id=assignment_id
     )
     return tasks
+
+
+@router.get("/stat/priority", response_model=List[int])
+def task_priority(
+    current_user: schemas.User = Depends(get_current_user),
+    db: Session = Depends(deps.get_db),
+):
+    if not current_user or current_user.role != UserType.STUDENT:
+        raise HTTPException(
+            status_code=status.HTTP_401_UNAUTHORIZED, detail="Student access only"
+        )
+    tasks = crud_task.read_tasks_by_user_id(current_user.id)
+    return get_task_stats(tasks)
