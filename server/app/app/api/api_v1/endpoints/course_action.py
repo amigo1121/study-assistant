@@ -51,26 +51,28 @@ def leave_course(
     student: schemas.User = Depends(get_current_user),
 ):
 
-    course = (
+    db_course = (
         db.query(models.Course)
         .filter(models.Course.code == course_info.course_code)
         .first()
     )
 
-    if not course:
+    if not db_course:
         raise HTTPException(status_code=404, detail="Course not found")
 
     if not student:
         raise HTTPException(status_code=404, detail="Student not found")
 
     try:
-        stmt = delete(models.course.student_course).where(
-            models.course.student_course.c.student_id == student.id,
-            models.course.student_course.c.course_id == course.id,
+        db_enrollment = (
+            db.query(models.Enrollment)
+            .filter_by(student_id=student.id, course_id=db_course.id)
+            .first()
         )
-        result = db.execute(stmt)
-        if result.rowcount == 0:
+        if not db_enrollment:
             raise HTTPException(status_code=404, detail="Course registration not found")
+        db.delete(db_enrollment)
+        db.flush()
         db.commit()
         return {"message": "Course deregistration deleted successfully"}
     except SQLAlchemyError as e:
