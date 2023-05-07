@@ -18,11 +18,11 @@ export function timeValidation(str: string) {
 }
 
 export function getMinutesDifference(start, end) {
-    const startTime = new Date(`2000-01-01T${start}:00`);
-    const endTime = new Date(`2000-01-01T${end}:00`);
+  const startTime = new Date(`2000-01-01T${start}:00`);
+  const endTime = new Date(`2000-01-01T${end}:00`);
 
-    // Calculate difference in minutes
-    const diffMilliseconds = endTime - startTime;
-    const diffMinutes = diffMilliseconds / 60000;
-    return diffMinutes;
-  }
+  // Calculate difference in minutes
+  const diffMilliseconds = endTime - startTime;
+  const diffMinutes = diffMilliseconds / 60000;
+  return diffMinutes;
+}

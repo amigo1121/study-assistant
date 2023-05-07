@@ -1,8 +1,6 @@
 <template>
-    <div class="card">
-        <slot></slot>
-    </div>
+  <div class="card">
+    <slot></slot>
+  </div>
 </template>
-<style scoped lang="scss">
-</style>
-  
+<style scoped lang="scss"></style>

@@ -1,10 +1,8 @@
-import {defineStore} from 'pinia'
+import { defineStore } from "pinia";
 
 export const useLayoutStore = defineStore({
-    id: 'layout',
-    state: ()=>{
-        return{
-
-        }
-    }
-})
+  id: "layout",
+  state: () => {
+    return {};
+  },
+});

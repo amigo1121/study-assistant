@@ -1,8 +1,8 @@
 <script lang="ts" setup>
-import CustomCalendar from '@/components/CustomCalendar.vue'
+import CustomCalendar from "@/components/CustomCalendar.vue";
 </script>
 <template>
-    <div>
-        <CustomCalendar/>
-    </div>
+  <div>
+    <CustomCalendar />
+  </div>
 </template>

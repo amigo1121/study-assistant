@@ -1,5 +1,5 @@
 import type { Socket } from "socket.io-client";
-import { Manager } from "socket.io-client"
+import { Manager } from "socket.io-client";
 import { API_URL } from "./config";
 
 type EventHandler = (data: any) => void;
@@ -10,7 +10,10 @@ export class BaseSocket {
   private socket: Socket;
   private manager = null;
   constructor() {
-    this.manager = new Manager(API_URL,{path: "/sio/socket", autoConnect: false});
+    this.manager = new Manager(API_URL, {
+      path: "/sio/socket",
+      autoConnect: false,
+    });
   }
 
   static getInstance(): BaseSocket {
@@ -28,14 +31,12 @@ export class BaseSocket {
     this.socket.on(event, handler);
   }
 
-  public off(event: string){
-    if(this.socket)
-    this.socket.off(event);
+  public off(event: string) {
+    if (this.socket) this.socket.off(event);
   }
 
-  public offAll(){
-    if(this.socket)
-    this.socket.off();
+  public offAll() {
+    if (this.socket) this.socket.off();
   }
 
   public set(_option) {
@@ -49,9 +50,8 @@ export class BaseSocket {
     // });
 
     this.socket.on("connect", () => {
-      console.log("Connected to server",this.socket.id);
+      console.log("Connected to server", this.socket.id);
     });
-
   }
 
   public connect() {

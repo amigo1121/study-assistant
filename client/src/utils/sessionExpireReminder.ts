@@ -16,8 +16,8 @@ export function sessionExpireRemind(setNotification, setLogout) {
     setTimeout(setLogout, diffSecond * 1000);
 
     // setTimeout(()=>{toast.add({severity: 'info', summary: "Info", detail: `Session expires in 1 minutes, you will be loged out.`});},(120-60)*1000)
-    setTimeout(setNotification, (diffSecond-60) * 1000);
-}
+    setTimeout(setNotification, (diffSecond - 60) * 1000);
+  }
 }
 
 export default sessionExpireRemind;
