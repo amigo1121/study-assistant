@@ -7,9 +7,11 @@ import CourseCard from "@/components/Card/CoursesCard.vue";
 import CourseCardMenu from "./CourseCardMenu.vue";
 import router from "@/router";
 import { useToast } from "primevue/usetoast";
+import { useConfirm } from "primevue/useconfirm";
 const authStore = useAuthStore();
 const courses = ref([]);
 const toast = useToast();
+const confirm = useConfirm();
 
 function getMenuItem(course_code) {
   return [
@@ -45,28 +47,51 @@ function getMenuItem(course_code) {
   ];
 }
 
-function dropCourse(code) {
-  const config = {
-    headers: {
-      Authorization: `Bearer ${authStore.accessToken}`,
+const dropCourse = (code) => {
+  confirm.require({
+    message: "Do you want to drop this course?",
+    header: "Register Confirmation",
+    icon: "pi pi-info-circle",
+    accept: () => {
+      const config = {
+        headers: {
+          Authorization: `Bearer ${authStore.accessToken}`,
+        },
+      };
+      const data = {
+        course_code: code,
+      };
+      axios
+        .post(API_URL + "/course-action/drop-course", { course_code: code }, config)
+        .then(async (response) => {
+          toast.add({
+            severity: "success",
+            summary: "Sucess",
+            detail: "Drop course success",
+            life: 3000,
+          });
+          nextTick();
+          fetchData();
+        })
+        .catch((error) => {
+          toast.add({
+            severity: "error",
+            summary: "Error",
+            detail: "Drop course failed",
+            life: 3000,
+          });
+        });
     },
-  };
-  axios
-    .post(API_URL + "/course-action/drop-course", { course_code: code }, config)
-    .then((response) => {
-      console.log(response.data);
+    reject: () => {
       toast.add({
-        severity: "success",
-        summary: "Sucesss",
-        detail: response.data.message,
+        severity: "error",
+        summary: "Rejected",
+        detail: "You have rejected",
         life: 3000,
       });
-      fetchData();
-    })
-    .catch((error) => {
-      console.log(error);
-    });
-}
+    },
+  });
+};
 
 function fetchData() {
   const config = {
@@ -139,4 +164,5 @@ const watchCourse = (code) => {
 
     <p v-else><i>You have no registered course</i></p>
   </div>
+  <ConfirmDialog></ConfirmDialog>
 </template>
