@@ -32,6 +32,7 @@ import TabPanel from "primevue/tabpanel";
 import DynamicDialog from "primevue/dynamicdialog";
 import DialogService from "primevue/dialogservice";
 import Badge from "primevue/badge";
+import Tag from "primevue/tag";
 const pinia = createPinia();
 const app = createApp(App);
 
@@ -65,5 +66,6 @@ app.component("TabView", TabView);
 app.component("TabPanel", TabPanel);
 app.component("DynamicDialog", DynamicDialog);
 app.component("Badge", Badge);
+app.component("Tag", Tag);
 
 app.mount("#app");

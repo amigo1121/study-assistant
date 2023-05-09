@@ -2,9 +2,11 @@
 import Menubar from "primevue/menubar";
 import { RouterLink } from "vue-router";
 import { useAuthStore } from "@/stores/auth";
-import { ref, onMounted } from "vue";
+import { ref, onMounted, computed } from "vue";
+import { useTimer } from "@/stores/timer";
 import CreateCourseForm from "@/components/Form/CreateCourseForm.vue";
 const authStore = useAuthStore();
+const timer = useTimer();
 const nestedMenuItem = ref([
   {
     // label: 'Dashboard',
@@ -33,6 +35,20 @@ const openAddCourseDialog = ref(false);
 const handleSubmit = () => {
   openAddCourseDialog.value = false;
 };
+
+const timerMessage = computed(() => {
+  let modeTitle = "";
+  if (timer.mode === "study") {
+    modeTitle = "Study time";
+  } else {
+    modeTitle = "Break time";
+  }
+
+  const minutes = timer.minutes > 10 ? timer.minutes : `0${timer.minutes}`;
+  const seconds = timer.seconds > 10 ? timer.seconds : `0${timer.seconds}`;
+
+  return `${modeTitle} ${minutes}:${seconds}`;
+});
 </script>
 <style scoped>
 .p-menubar {
@@ -51,14 +67,23 @@ const handleSubmit = () => {
   <div class="layout-topbar">
     <Menubar :model="nestedMenuItem" class="h-5rem text-lg">
       <template #end>
-        <Button
-          icon="pi pi-user"
-          severity="info"
-          text
-          rounded
-          aria-label="User"
-          @click="toggleUserMenu"
-        />
+        <div class="flex">
+          <Tag
+            v-if="timer.started"
+            severity="success"
+            :value="timerMessage"
+            class="align-self-center"
+          ></Tag>
+          <Button
+            icon="pi pi-user"
+            severity="info"
+            text
+            rounded
+            aria-label="User"
+            @click="toggleUserMenu"
+          />
+        </div>
+
         <Menu :model="userMenuItems" popup ref="userMenu">
           <template #start>
             <button

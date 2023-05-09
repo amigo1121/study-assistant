@@ -23,3 +23,7 @@ class EnrollmentCourse(EnrollmentBase):
 
 class StudentWithCourse(User):
     registered_courses: List[EnrollmentCourse]
+
+
+class EnrollmentCourseAssignment(EnrollmentBase):
+    course: CourseWithAssignments
