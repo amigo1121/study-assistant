@@ -1,9 +1,13 @@
-import { createRouter, createWebHistory } from "vue-router";
+import {
+  createRouter,
+  createWebHistory,
+  createWebHashHistory,
+} from "vue-router";
 import AppLayout from "@/layouts/AppLayout.vue";
 import { useAuthStore } from "@/stores/auth";
 
 const router = createRouter({
-  history: createWebHistory(import.meta.env.BASE_URL),
+  history: createWebHashHistory(),
   routes: [
     {
       path: "/",
@@ -78,6 +82,11 @@ const router = createRouter({
               name: "course-detail",
               component: () => import("@/views/CourseDetail.vue"),
             },
+            {
+              path: "timer",
+              name: "timer",
+              component: () => import("@/views/Timer.vue"),
+            },
           ],
         },
         {
@@ -113,6 +122,7 @@ router.beforeEach(async (to, from) => {
     } catch (error) {
       if (authStore.accessToken) {
         authStore.clearToken();
+        authStore.resetData();
         return { name: "login", query: { sessionExpired: true } };
       } else return { name: "login" };
     }

@@ -12,14 +12,14 @@ def read_tasks_by_assignment_id(db: Session, assignment_id: int) -> List[schemas
     return [schemas.Task.from_orm(db_task) for db_task in db_tasks]
 
 
-def read_tasks_by_user_id(db: Session, user_id: int) -> List[schemas.Task]:
+def read_tasks_by_user_id(db: Session, user_id: int):
     db_tasks = (
         db.query(models.Task)
         .join(models.Task.enrollment)
         .filter(models.Enrollment.student_id == user_id)
         .all()
     )
-    return [schemas.Task.from_orm(db_task) for db_task in db_tasks]
+    return db_tasks
 
 
 def read_task_by_user_and_assignment(

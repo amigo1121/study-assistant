@@ -35,6 +35,10 @@ const sidebarItems = ref([
     label: "Registered courses",
     name: "registered-courses",
   },
+  {
+    label: "Pomodoro Timer",
+    name: "timer",
+  },
 ]);
 
 onBeforeMount(() => {

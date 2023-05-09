@@ -62,7 +62,11 @@ const dropCourse = (code) => {
         course_code: code,
       };
       axios
-        .post(API_URL + "/course-action/drop-course", { course_code: code }, config)
+        .post(
+          API_URL + "/course-action/drop-course",
+          { course_code: code },
+          config
+        )
         .then(async (response) => {
           toast.add({
             severity: "success",
@@ -133,8 +137,8 @@ onBeforeMount(async () => {
   }
 });
 
-const watchCourse = (code) => {
-  router.push({ path: `/dashboard/registered-courses/${code}` });
+const watchCourse = async (code) => {
+  await router.push({ path: `/dashboard/registered-courses/${code}` });
 };
 </script>
 <style scoped></style>

@@ -34,8 +34,6 @@ def topo_sort_task(taskList):
         if in_degree == 0:
             queue.append(task_id)
 
-    print(graph)
-
     while queue:
         task_id = queue.pop(0)
         # print(task_id)
