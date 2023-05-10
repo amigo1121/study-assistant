@@ -53,6 +53,7 @@ class TaskWithDepdend(TaskBase):
     id: int
     depends_on: List[TaskDependency]
     depended_by: List[TaskDependency]
+    assignment_id: int
     pass
 
 

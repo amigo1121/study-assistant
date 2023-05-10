@@ -72,6 +72,7 @@ onMounted(() => {
     min-width: 15rem;
     padding: 1rem;
     z-index: 4;
+    overflow: auto;
   }
 
   .dashboard__content {
