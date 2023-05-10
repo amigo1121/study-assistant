@@ -138,7 +138,11 @@ onBeforeMount(async () => {
 });
 
 const watchCourse = async (code) => {
-  await router.push({ path: `/dashboard/registered-courses/${code}` });
+  await router
+    .push({ path: `/dashboard/registered-courses/${code}` })
+    .catch((error) => {
+      console.error("Navigation error:", error);
+    });
 };
 </script>
 <style scoped></style>

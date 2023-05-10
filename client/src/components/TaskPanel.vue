@@ -84,7 +84,7 @@ function badgeColor() {
   }
 }
 </script>
-<style lang="scss" scoped></style>
+<style scoped></style>
 <template>
   <Panel toggleable collapsed>
     <template #header>
