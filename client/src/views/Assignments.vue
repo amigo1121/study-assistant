@@ -76,7 +76,7 @@ onBeforeMount(async () => {
             :id="task.id"
             :assignment_id="assignment.id"
             :description="task.description"
-            :est_hour="task.est_hours"
+            :est_hours="task.est_hours"
             :readOnly="true"
             :status="task.status"
           >

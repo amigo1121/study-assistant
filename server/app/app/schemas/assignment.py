@@ -1,7 +1,7 @@
 from datetime import datetime
 from typing import List
 from pydantic import BaseModel
-from .task import Task, TaskWithDepdend
+from .task import Task, TaskWithDepdend, TaskWithAssignmentID
 
 
 class AsssignmentBase(BaseModel):
@@ -30,3 +30,7 @@ class Assignment(AsssignmentBase):
 
 class AssignmentWithTaks(Assignment):
     tasks: List[TaskWithDepdend]
+
+
+class AssignmentWithTaskSummary(Assignment):
+    tasks: List[TaskWithAssignmentID]

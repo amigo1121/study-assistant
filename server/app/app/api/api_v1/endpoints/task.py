@@ -67,6 +67,26 @@ def create_task(
     return task
 
 
+@router.put("/status", response_model=schemas.TaskWithAssignmentID)
+def update_task_status(
+    task: schemas.TaskUpdateStatus,
+    db: Session = Depends(deps.get_db),
+    current_user: schemas.User = Depends(get_current_user),
+):
+    if not current_user or current_user.role != UserType.STUDENT:
+        raise HTTPException(
+            status_code=status.HTTP_401_UNAUTHORIZED, detail="Student access only"
+        )
+    task = crud_task.update_task_status(
+        db=db, task_id=task.id, task=task, user_id=current_user.id
+    )
+    if not task:
+        raise HTTPException(
+            status_code=status.HTTP_404_NOT_FOUND, detail=f"Task {task.id} not found"
+        )
+    return task
+
+
 @router.put("/{task_id}", response_model=schemas.Task)
 def update_task(
     task_id: int,
@@ -159,7 +179,26 @@ def get_todos(
     return topo_sort_task(tasks)
 
 
-@router.get("/user/assignment", response_model=List[schemas.AssignmentWithTaks])
+@router.get(
+    "/todos/assignment/{assignment_id}",
+    response_model=List[schemas.task.TaskWithAssignmentID],
+)
+def get_todos_by_assignment(
+    assignment_id: int,
+    db: Session = Depends(deps.get_db),
+    current_user: schemas.User = Depends(get_current_user),
+):
+    if not current_user or current_user.role != UserType.STUDENT:
+        raise HTTPException(
+            status_code=status.HTTP_401_UNAUTHORIZED, detail="Student access only"
+        )
+    tasks = crud_task.read_task_by_user_and_assignment(
+        db=db, user_id=current_user.id, assignment_id=assignment_id
+    )
+    return topo_sort_task(tasks)
+
+
+@router.get("/user/assignment", response_model=List[schemas.AssignmentWithTaskSummary])
 def get_task_all(
     # student_id: int,
     current_user: schemas.User = Depends(get_current_user),

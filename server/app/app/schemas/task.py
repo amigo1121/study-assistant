@@ -45,8 +45,22 @@ class TaskUpdate(TaskBase):
     pass
 
 
+class TaskUpdateStatus(BaseModel):
+    id: int
+    status: TaskStatus
+
+    class Config:
+        orm_mode = True
+
+    pass
+
+
 class Task(TaskBase):
     id: int
+
+
+class TaskWithAssignmentID(Task):
+    assignment_id: int
 
 
 class TaskWithDepdend(TaskBase):

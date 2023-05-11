@@ -122,3 +122,27 @@ def update_task(
         raise HTTPException(
             status_code=status.HTTP_404_NOT_FOUND, detail="Task not found"
         )
+
+
+def update_task_status(
+    db: Session, task_id: int, task: schemas.TaskUpdateStatus, user_id: int
+):
+    db_task = db_task = (
+        db.query(models.Task)
+        .filter_by(id=task_id)
+        .join(models.Task.enrollment)
+        .filter(models.Enrollment.student_id == user_id)
+        .first()
+    )
+
+    if db_task:
+        db_task.status = task.status
+        db.flush()
+        db.refresh(db_task)
+        db.commit()
+        return db_task
+    else:
+        db.rollback()
+        raise HTTPException(
+            status_code=status.HTTP_404_NOT_FOUND, detail="Task not found"
+        )

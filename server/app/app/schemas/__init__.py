@@ -8,6 +8,7 @@ from .assignment import (
     Assignment,
     AssignmentUpdate,
     AssignmentWithTaks,
+    AssignmentWithTaskSummary,
 )
 from .task import (
     Task,
@@ -17,4 +18,6 @@ from .task import (
     TaskDependencyCreate,
     TaskDependency,
     TaskWithDepdend,
+    TaskUpdateStatus,
+    TaskWithAssignmentID,
 )
