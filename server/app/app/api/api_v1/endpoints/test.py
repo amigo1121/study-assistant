@@ -121,7 +121,7 @@ def get_todos(student_id: int, db: Session = Depends(deps.get_db)):
 
 @router.get(
     "/todos/assignment/{assignment_id}",
-    response_model=List[schemas.task.TaskWithDepdend],
+    response_model=List[schemas.task.TaskWithAssignmentID],
 )
 def get_todos_by_assignment(
     student_id: int, assignment_id: int, db: Session = Depends(deps.get_db)

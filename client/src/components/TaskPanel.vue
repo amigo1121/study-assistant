@@ -12,7 +12,7 @@ const emit = defineEmits(["delete", "update"]);
 interface Props {
   title: string;
   description?: string;
-  est_hour: number;
+  est_hours: number;
   assignment_id: number;
   id: number;
   readOnly?: boolean;

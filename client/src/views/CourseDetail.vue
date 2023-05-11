@@ -308,7 +308,7 @@ const fetchAssighnmentTasks = (assignment_id) => {
                 :assignment_id="assignment.id"
                 :description="task.description"
                 :status="task.status"
-                :est_hour="task.est_hours"
+                :est_hours="task.est_hours"
                 @delete="deleteTask"
                 @update="updateTask"
               >
