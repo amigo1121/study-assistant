@@ -51,7 +51,7 @@ const submit = async () => {
           severity: "success",
           summary: "Success",
           detail: "Update password success",
-          life: 2000,
+          life: 1000,
         });
       }
     } catch (error) {

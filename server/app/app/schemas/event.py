@@ -1,5 +1,6 @@
 from typing import Optional
 from pydantic import BaseModel
+from typing import List
 
 
 class EventBase(BaseModel):
@@ -9,7 +10,14 @@ class EventBase(BaseModel):
 
 
 class EventCreate(EventBase):
-    owner_id: int = None
+    owner_id: int | None = None
+
+
+class MultilpleEventCreate(BaseModel):
+    events: List[EventCreate]
+
+    class Config:
+        orm_mode = True
 
 
 class Event(EventBase):

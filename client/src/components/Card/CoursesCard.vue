@@ -53,7 +53,7 @@ const handleRegister = async () => {
         severity: "success",
         summary: "Success",
         detail: "Course register sucess",
-        life: 2000,
+        life: 1000,
       });
     } catch (error) {
       console.log(error);
@@ -61,7 +61,7 @@ const handleRegister = async () => {
         severity: "error",
         summary: "Error",
         detail: "Failed to register",
-        life: 2000,
+        life: 1000,
       });
     }
   }
@@ -87,7 +87,7 @@ const handleDrop = async () => {
         severity: "success",
         summary: "Success",
         detail: "Course deregister sucess",
-        life: 2000,
+        life: 1000,
       });
       router.go();
     } catch (error) {
@@ -96,7 +96,7 @@ const handleDrop = async () => {
         severity: "error",
         summary: "Error",
         detail: "Failed to deregister",
-        life: 2000,
+        life: 1000,
       });
     }
   }

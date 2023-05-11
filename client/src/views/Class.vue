@@ -53,7 +53,7 @@ const menuItems = ref([
             severity: "success",
             summary: "Updated",
             detail: "Data Updated",
-            life: 3000,
+            life: 1000,
           });
         },
       },
@@ -65,7 +65,7 @@ const menuItems = ref([
             severity: "warn",
             summary: "Delete",
             detail: "Data Deleted",
-            life: 3000,
+            life: 1000,
           });
         },
       },
@@ -89,7 +89,7 @@ const addAssignment = (data) => {
         severity: "success",
         summary: "Success",
         detail: "Add assignment success",
-        life: 3000,
+        life: 1000,
       });
     })
     .catch((error) => {
@@ -98,7 +98,7 @@ const addAssignment = (data) => {
         severity: "error",
         summary: "Error",
         detail: "Add assignment failed",
-        life: 3000,
+        life: 1000,
       });
     });
 };
@@ -122,7 +122,7 @@ const deleteAssignment = (id: number) => {
         severity: "success",
         summary: "Success",
         detail: "Delete assignment success",
-        life: 3000,
+        life: 1000,
       });
     })
     .catch((error) => {
@@ -131,7 +131,7 @@ const deleteAssignment = (id: number) => {
         severity: "error",
         summary: "Error",
         detail: "Delete assignment failed",
-        life: 3000,
+        life: 1000,
       });
     });
 };
@@ -155,7 +155,7 @@ const updateAssignment = (assignmentUpdateInfo) => {
         severity: "success",
         summary: "Updated",
         detail: "Data Updated",
-        life: 3000,
+        life: 1000,
       });
     })
     .catch((error) => {
@@ -164,7 +164,7 @@ const updateAssignment = (assignmentUpdateInfo) => {
         severity: "error",
         summary: "Error",
         detail: "Data update failed",
-        life: 3000,
+        life: 1000,
       });
     });
 };

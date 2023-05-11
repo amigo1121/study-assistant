@@ -1,5 +1,7 @@
+from sqlalchemy import delete, and_
 from sqlalchemy.orm import Session
 from app import models, schemas
+from typing import List
 
 
 def get_event(db: Session, event_id: int):
@@ -28,6 +30,23 @@ def create_event(db: Session, event: schemas.EventCreate):
     return db_event
 
 
+def create_multiple_events(db: Session, events: List[schemas.EventCreate]):
+    db.bulk_insert_mappings(
+        models.Event,
+        [
+            {
+                "title": event.title,
+                "start": event.start,
+                "end": event.end,
+                "owner_id": event.owner_id,
+            }
+            for event in events
+        ],
+    )
+    db.commit()
+    return {"message": "Create events success"}
+
+
 def update_event(db: Session, event_id: int, event: schemas.EventUpdate):
     db_event = db.query(models.Event).filter(models.Event.id == event_id).first()
     if db_event:
@@ -44,3 +63,14 @@ def delete_event(db: Session, event_id: int):
         db.delete(db_event)
         db.commit()
     return db_event
+
+
+def delete_multiple_events(db: Session, event_title: str, user_id: int):
+    db.execute(
+        delete(models.Event).where(
+            and_(models.Event.title == event_title, models.Event.owner_id == user_id)
+        )
+    )
+    db.commit()
+
+    return {"message": "Remove events from calendar successfully"}

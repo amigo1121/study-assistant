@@ -98,7 +98,7 @@ const showCreateTaskDialog = async (assignment) => {
               severity: "success",
               Summary: "Success",
               detail: "Create task success",
-              life: 3000,
+              life: 1000,
             });
             fetchAssighnmentTasks(assignment.id)
               .then((res) => {
@@ -134,7 +134,7 @@ const deleteTask = (taskID, assignmentID) => {
           severity: "success",
           Summary: "Success",
           detail: "Delete task success",
-          life: 3000,
+          life: 1000,
         });
       }
       fetchAssighnmentTasks(assignmentID)
@@ -152,7 +152,7 @@ const deleteTask = (taskID, assignmentID) => {
 
 function broadcastErrorMessage() {
   errorMsg.value.forEach((msg) => {
-    toast.add({ severity: "error", summary: "Error", detail: msg, life: 3000 });
+    toast.add({ severity: "error", summary: "Error", detail: msg, life: 1000 });
   });
 }
 
@@ -216,7 +216,7 @@ const updateTask = (taskID, assignmentID) => {
               severity: "success",
               Summary: "Success",
               detail: "Update task success",
-              life: 3000,
+              life: 1000,
             });
             fetchAssighnmentTasks(assignment.id)
               .then((res) => {

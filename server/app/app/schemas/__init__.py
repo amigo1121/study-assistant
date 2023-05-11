@@ -1,5 +1,12 @@
 from .user import User, UserCreate, UserLogin, UserChangePassword
-from .event import *
+from .event import (
+    EventCreate,
+    MultilpleEventCreate,
+    EventBase,
+    Event,
+    EventUpdate,
+    EventDelete,
+)
 from .course import CourseCreate, CourseRead, CourseUpdate
 from .enrollment import StudentWithCourse, CourseWithStudent, EnrollmentBase
 from .course_action import LeaveCourse, RegisterCourse, StudentCourseInfo

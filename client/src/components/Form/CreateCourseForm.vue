@@ -131,7 +131,7 @@ const submit = async () => {
         severity: "error",
         summary: "Error",
         detail: error.response.data.detail,
-        life: 3000,
+        life: 1000,
       });
     }
   } else {

@@ -62,7 +62,7 @@ const confirmDelete = (event) => {
         severity: "error",
         summary: "Rejected",
         detail: "You have rejected",
-        life: 3000,
+        life: 1000,
       });
     },
   });

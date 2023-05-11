@@ -6,6 +6,7 @@ from app.crud import crud_event
 from app import schemas
 from .security import get_current_user
 from app import sio_server
+from app.utils.commons import UserType
 import logging
 
 router = APIRouter()
@@ -41,6 +42,25 @@ async def create_event(
         return response
     except Exception as e:
         logging.error(f"Error emitting new_message event: {e}")
+
+
+@router.post("/multiple", status_code=201)
+async def create_multiple_events(
+    eventList: schemas.MultilpleEventCreate,
+    current_user: schemas.User = Depends(get_current_user),
+    # user_id: int,
+    db: Session = Depends(deps.get_db),
+):
+    if not current_user:
+        raise HTTPException(
+            status_code=403, detail="Only the owner can create an event"
+        )
+    for event in eventList.events:
+        event.owner_id = current_user.id
+
+    print(eventList)
+
+    return crud_event.create_multiple_events(db, events=eventList.events)
 
 
 @router.get("/{event_id}", response_model=schemas.Event)
@@ -84,7 +104,6 @@ async def update_event(
     current_user: schemas.User = Depends(get_current_user),
     db: Session = Depends(deps.get_db),
 ):
-
     if not current_user:
         raise HTTPException(
             status_code=403, detail="Not authorized to update this event"
@@ -149,3 +168,25 @@ async def delete_event(
         raise HTTPException(
             status_code=status.HTTP_404_NOT_FOUND, detail="Event not found"
         )
+
+
+@router.delete("/multiple/{title}")
+async def delete_multiple_events(
+    title: str,
+    current_user: schemas.User = Depends(get_current_user),
+    db: Session = Depends(deps.get_db),
+):
+    if not current_user or current_user.role != UserType.STUDENT:
+        raise HTTPException(
+            status_code=403, detail="Not authorized to delete this event"
+        )
+    try:
+        response = crud_event.delete_multiple_events(
+            db=db, event_title=title, user_id=current_user.id
+        )
+        return response
+    except Exception as e:
+        raise e
+        # raise HTTPException(
+        #     status_code=status.HTTP_404_NOT_FOUND, detail="Event not found"
+        # )

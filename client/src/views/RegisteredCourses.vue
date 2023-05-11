@@ -26,7 +26,7 @@ function getMenuItem(course_code) {
               severity: "success",
               summary: "Updated",
               detail: `${course_code}`,
-              life: 3000,
+              life: 1000,
             });
           },
         },
@@ -38,7 +38,7 @@ function getMenuItem(course_code) {
               severity: "warn",
               summary: "Delete",
               detail: `${course_code}`,
-              life: 3000,
+              life: 1000,
             });
           },
         },
@@ -46,6 +46,28 @@ function getMenuItem(course_code) {
     },
   ];
 }
+
+const removeClassSchedule = async (course_code) => {
+  const course = courses.value.find((c) => c.code === course_code);
+  const config = {
+    headers: {
+      Authorization: `Bearer ${authStore.accessToken}`,
+    },
+  };
+  await axios
+    .delete(API_URL + `/events/multiple/${course.name}`, config)
+    .then((res) => {
+      toast.add({
+        severity: "success",
+        summary: "success",
+        detail: res.data.message,
+        life: 1000,
+      });
+    })
+    .catch((err) => {
+      console.log(err);
+    });
+};
 
 const dropCourse = (code) => {
   confirm.require({
@@ -72,9 +94,10 @@ const dropCourse = (code) => {
             severity: "success",
             summary: "Sucess",
             detail: "Drop course success",
-            life: 3000,
+            life: 1000,
           });
           nextTick();
+          removeClassSchedule(code);
           fetchData();
         })
         .catch((error) => {
@@ -82,7 +105,7 @@ const dropCourse = (code) => {
             severity: "error",
             summary: "Error",
             detail: "Drop course failed",
-            life: 3000,
+            life: 1000,
           });
         });
     },
@@ -91,7 +114,7 @@ const dropCourse = (code) => {
         severity: "error",
         summary: "Rejected",
         detail: "You have rejected",
-        life: 3000,
+        life: 1000,
       });
     },
   });
