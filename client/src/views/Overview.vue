@@ -1,14 +1,122 @@
 <script setup lang="ts">
-import { ref, onMounted, onBeforeMount, computed } from "vue";
+import { ref, onMounted, onBeforeMount, computed, nextTick } from "vue";
 import { useTasksStore } from "@/stores/tasks";
 import { useAuthStore } from "@/stores/auth";
+import Chart from "primevue/chart";
 import Diagram from "@/components/Diagram.vue";
 import { API_URL } from "@/utils/config";
 import axios from "axios";
+import moment from "moment";
 const authStore = useAuthStore();
 const tasks = ref([]);
 const assignments = ref([]);
 const courses = ref([]);
+
+const assignmentsNames = () => {
+  return assignments.value.map((e) => e.name);
+};
+
+const assignmentsEstimateTime = () => {
+  console.log(assignments.value.map((e) => e.est_time));
+  return assignments.value.map((e) => e.est_time);
+};
+
+const assignemntsRemainTime = () => {
+  return assignments.value.map((e) => e.remained_time);
+};
+
+const chartData = computed(() => {
+  const documentStyle = getComputedStyle(document.documentElement);
+
+  return {
+    labels: assignmentsNames(),
+    datasets: [
+      {
+        type: "bar",
+        label: "Estimate time",
+        backgroundColor: documentStyle.getPropertyValue("--blue-500"),
+        data: assignmentsEstimateTime(),
+      },
+      {
+        type: "bar",
+        label: "Remained time",
+        backgroundColor: documentStyle.getPropertyValue("--green-500"),
+        data: assignemntsRemainTime(),
+      },
+    ],
+  };
+});
+
+const chartOptions = computed(() => {
+  const documentStyle = getComputedStyle(document.documentElement);
+  const textColor = documentStyle.getPropertyValue("--text-color");
+  const textColorSecondary = documentStyle.getPropertyValue(
+    "--text-color-secondary"
+  );
+  const surfaceBorder = documentStyle.getPropertyValue("--surface-border");
+
+  return {
+    maintainAspectRatio: false,
+    aspectRatio: 0.8,
+    plugins: {
+      tooltips: {
+        mode: "index",
+        intersect: false,
+      },
+      legend: {
+        labels: {
+          color: textColor,
+        },
+      },
+    },
+    scales: {
+      x: {
+        stacked: true,
+        ticks: {
+          color: textColorSecondary,
+        },
+        grid: {
+          color: surfaceBorder,
+        },
+      },
+      y: {
+        stacked: true,
+        ticks: {
+          color: textColorSecondary,
+        },
+        grid: {
+          color: surfaceBorder,
+        },
+      },
+    },
+  };
+});
+
+function calcRemainTime() {
+  assignments.value.forEach((assignment) => {
+    assignment.remained_time = assignemntRemainTime(assignment);
+  });
+}
+
+function assignemntRemainTime(assignment) {
+  const remaintime =
+    moment(assignment.due_date).diff(moment(), "hours") - assignment.est_time;
+  return remaintime;
+}
+
+function assignemntEstimateTime(assignment) {
+  const estTime = assignment.tasks.reduce((sum, t) => {
+    if (t.status !== "COMPLETE") return sum + t.est_hours;
+    else return sum;
+  }, 0);
+  return estTime;
+}
+
+function calcEstTime() {
+  assignments.value.forEach((assignment) => {
+    assignment.est_time = assignemntEstimateTime(assignment);
+  });
+}
 
 onBeforeMount(async () => {
   let config = {
@@ -17,19 +125,13 @@ onBeforeMount(async () => {
     },
   };
   try {
-    const response = await axios.get(
-      API_URL + "/course/registered-courses",
-      config
-    );
+    const response = await axios.get(API_URL + "/task/user/assignment", config);
     if (response.status === 200) {
-      courses.value = response.data.registered_courses;
-
-      courses.value.forEach((course) => {
-        assignments.value = assignments.value.concat(course.assignments);
-      });
-
-      console.log(courses.value);
-      console.log(assignments.value);
+      assignments.value = response.data;
+      calcEstTime();
+      calcRemainTime();
+      await nextTick();
+      console.log("assignment", assignments.value);
     } else throw new Error("Can't fetch Assignments");
   } catch (error) {
     console.log(error);
@@ -63,25 +165,11 @@ const taskPriority = computed(() => {
   // console.log([stat.Low, stat.Medium, stat.High]);
   return [stat.low, stat.medium, stat.high];
 });
-
-const assignmentPriority = () => {
-  const stat = {
-    Low: 0,
-    Medium: 0,
-    High: 0,
-  };
-  assignments.value.forEach((assignment) => {
-    stat[assignment.priority] += 1;
-  });
-
-  console.log([stat.Low, stat.Medium, stat.High]);
-  return [stat.Low, stat.Medium, stat.High];
-};
 </script>
 <style scoped></style>
 <template>
-  <div class="grid">
-    <div class="col-6">
+  <div class="flex gap-3 w-full">
+    <div class="w-full">
       <div class="card">
         <h5>Tasks</h5>
         <DataTable
@@ -101,9 +189,14 @@ const assignmentPriority = () => {
           <Column field="status" header="Status" :sortable="true"></Column>
         </DataTable>
       </div>
+
+      <div class="card w-full">
+        <h5>Task by priority</h5>
+        <Diagram :data="taskPriority"></Diagram>
+      </div>
     </div>
-    <div class="col-6">
-      <div class="card">
+    <div class="w-full">
+      <div class="card w-full">
         <h5>Assignments</h5>
         <DataTable
           :value="assignments"
@@ -112,16 +205,27 @@ const assignmentPriority = () => {
           responsiveLayout="scroll"
         >
           <Column field="id" header="Assignment ID" :sortable="true"></Column>
-          <Column field="title" header="Title" :sortable="true"></Column>
-          <Column field="due_date" header="Due date" :sortable="true"></Column>
-          <Column field="priority" header="Priority" :sortable="true"></Column>
+          <Column field="name" header="Name" :sortable="true"></Column>
+          <Column
+            field="remained_time"
+            header="Time left(hours)"
+            :sortable="true"
+          ></Column>
+          <Column
+            field="est_time"
+            header="Estimate time(hours)"
+            :sortable="true"
+          ></Column>
         </DataTable>
       </div>
-    </div>
-    <div class="col-6">
-      <div class="card">
-        <h5>Task by priority</h5>
-        <Diagram :data="taskPriority"></Diagram>
+      <div class="card w-full">
+        <h5>Assignments</h5>
+        <Chart
+          type="bar"
+          :data="chartData"
+          :options="chartOptions"
+          class="h-20rem"
+        />
       </div>
     </div>
   </div>
