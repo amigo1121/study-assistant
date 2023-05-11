@@ -33,7 +33,7 @@ const submitSuccess = () => {
     severity: "success",
     summary: "Success",
     detail: "New event added",
-    life: 2000,
+    life: 1000,
   });
 };
 
@@ -42,7 +42,7 @@ const modifySuccess = (message) => {
     severity: "success",
     summary: "Success",
     detail: `${message} Success`,
-    life: 2000,
+    life: 1000,
   });
   openModifyDialog.value = false;
 };

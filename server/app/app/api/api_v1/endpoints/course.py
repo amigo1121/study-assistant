@@ -101,6 +101,20 @@ def get_course_by_code(
 
 
 @router.get(
+    "/schedule/code/{course_code}", response_model=schemas.course.CourseWithSchedules
+)
+def get_course_schedule(
+    course_code: str,
+    db: Session = Depends(deps.get_db),
+    current_user=Depends(get_current_user),
+):
+    if not current_user or current_user.role != UserType.STUDENT:
+        raise HTTPException(status_code=403, detail="Student access only")
+    db_course = crud_course.get_course_by_code(db, course_code=course_code)
+    return db_course
+
+
+@router.get(
     "/registered-course/{course_code}",
     response_model=schemas.course.CourseWithTasks,
 )

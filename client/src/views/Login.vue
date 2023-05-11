@@ -55,7 +55,7 @@ const login = () => {
           severity: "error",
           summary: "Error",
           detail: "Wrong identifier or password.",
-          life: 2000,
+          life: 1000,
         });
         console.log(error);
         console.log("Invalid credentials");
@@ -78,7 +78,7 @@ onMounted(() => {
       severity: "success",
       summary: "Sucess",
       detail: "Register successfull, you can login now.",
-      life: 3000,
+      life: 1000,
     });
   }
 });

@@ -229,7 +229,7 @@ const register = async () => {
         severity: "error",
         summary: "Error",
         detail: error.response.data.detail,
-        life: 2000,
+        life: 1000,
       });
       console.log(error);
       console.log("Invalid credentials");

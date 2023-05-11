@@ -36,7 +36,7 @@ onBeforeMount(async () => {
       severity: "error",
       summary: "Failed",
       detail: message,
-      life: 3000,
+      life: 1000,
     });
   }
 });
@@ -50,7 +50,7 @@ const handleSubmit = (responseData) => {
     severity: "success",
     summary: "Sucsess",
     detail: "New course created successfully",
-    life: 3000,
+    life: 1000,
   });
   toggleDialog();
 };

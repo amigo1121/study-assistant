@@ -23,7 +23,6 @@ def register_course(
         .filter(models.Course.code == course_info.course_code)
         .first()
     )
-    print(course_info)
     if not course:
         raise HTTPException(status_code=404, detail="Course not found")
 

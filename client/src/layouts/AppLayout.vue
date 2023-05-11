@@ -13,10 +13,9 @@ onMounted(() => {
       severity: "info",
       summary: "Infor",
       detail: route.query.message,
-      life: 3000,
+      life: 1000,
     });
   }
-  console.log("homepage mounted");
 });
 </script>
 <style lang="scss" scoped>

@@ -133,7 +133,7 @@ async function onAdd(event, str, list) {
         severity: "success",
         Summary: "Success",
         detail: "Update task success",
-        life: 3000,
+        life: 1000,
       });
     })
     .catch((error) => {
