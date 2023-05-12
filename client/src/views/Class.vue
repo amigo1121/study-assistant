@@ -1,5 +1,6 @@
 <script lang="ts" setup>
 import { API_URL } from "@/utils/config";
+import { sanitize } from "@/utils/santizie";
 import axios from "axios";
 import { useRoute } from "vue-router";
 import { onBeforeMount, reactive, ref } from "vue";
@@ -215,7 +216,7 @@ const updateAssignment = (assignmentUpdateInfo) => {
           @delete="deleteAssignment"
           @update="updateAssignment"
         >
-          <div v-html="assignment.description"></div>
+          <div v-html="sanitize(assignment.description)"></div>
         </AssignmentPanel>
       </div>
     </div>

@@ -1,8 +1,17 @@
 <script lang="ts" setup>
-import { reactive, defineProps, onBeforeMount, ref, nextTick } from "vue";
+import {
+  reactive,
+  defineProps,
+  onBeforeMount,
+  ref,
+  nextTick,
+  computed,
+} from "vue";
 import { defineAsyncComponent } from "vue";
 import { useAuthStore } from "@/stores/auth";
 import { API_URL } from "@/utils/config";
+import { sanitize } from "@/utils/santizie";
+
 const authStore = useAuthStore();
 import axios from "axios";
 // import AssignmentCard from '@/components/Card/AssignmentCard.vue';
@@ -53,7 +62,12 @@ onBeforeMount(async () => {
 <template>
   <h1>Assignments</h1>
 
-  <div class="card" v-for="(enrollment, index) in courses" :key="index">
+  <div
+    class="card"
+    v-for="(enrollment, index) in courses"
+    :key="index"
+    v-if="courses.length > 0"
+  >
     <h3>{{ enrollment.course.name }}</h3>
     <AssignmentPanel
       v-for="(assignment, index) in enrollment.course.assignments"
@@ -66,7 +80,7 @@ onBeforeMount(async () => {
     >
       <TabView>
         <TabPanel header="Description">
-          <div v-html="assignment.description"></div>
+          <div v-html="sanitize(assignment.description)"></div>
         </TabPanel>
         <TabPanel header="Tasks">
           <TaskPanel
@@ -80,7 +94,7 @@ onBeforeMount(async () => {
             :readOnly="true"
             :status="task.status"
           >
-            <div v-html="task.description"></div>
+            <div v-html="sanitize(task.description)"></div>
           </TaskPanel>
           <i v-if="assignment.tasks.length === 0">No task</i>
         </TabPanel>
@@ -90,4 +104,5 @@ onBeforeMount(async () => {
       </TabView>
     </AssignmentPanel>
   </div>
+  <div v-else class="card"><i>No assignment</i></div>
 </template>

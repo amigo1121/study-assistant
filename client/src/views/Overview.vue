@@ -33,7 +33,7 @@ const chartData = computed(() => {
     datasets: [
       {
         type: "bar",
-        label: "Estimate time",
+        label: "Estimate time to complete",
         backgroundColor: documentStyle.getPropertyValue("--blue-500"),
         data: assignmentsEstimateTime(),
       },
@@ -56,41 +56,47 @@ const chartOptions = computed(() => {
   const surfaceBorder = documentStyle.getPropertyValue("--surface-border");
 
   return {
+    indexAxis: "y",
     maintainAspectRatio: false,
     aspectRatio: 0.8,
     plugins: {
-      tooltips: {
-        mode: "index",
-        intersect: false,
-      },
       legend: {
         labels: {
-          color: textColor,
+          fontColor: textColor,
         },
       },
     },
     scales: {
       x: {
-        stacked: true,
         ticks: {
           color: textColorSecondary,
+          font: {
+            weight: 500,
+          },
         },
         grid: {
-          color: surfaceBorder,
+          display: false,
+          drawBorder: false,
         },
       },
       y: {
-        stacked: true,
         ticks: {
           color: textColorSecondary,
         },
         grid: {
           color: surfaceBorder,
+          drawBorder: false,
         },
       },
     },
   };
 });
+
+function filterOutdatedAssignments() {
+  assignments.value = assignments.value.filter(
+    (assignment) => moment(assignment.due_date).diff(moment(), "hours") > 0
+  );
+}
 
 function calcRemainTime() {
   assignments.value.forEach((assignment) => {
@@ -99,8 +105,7 @@ function calcRemainTime() {
 }
 
 function assignemntRemainTime(assignment) {
-  const remaintime =
-    moment(assignment.due_date).diff(moment(), "hours") - assignment.est_time;
+  const remaintime = moment(assignment.due_date).diff(moment(), "hours");
   return remaintime;
 }
 
@@ -128,6 +133,7 @@ onBeforeMount(async () => {
     const response = await axios.get(API_URL + "/task/user/assignment", config);
     if (response.status === 200) {
       assignments.value = response.data;
+      filterOutdatedAssignments();
       calcEstTime();
       calcRemainTime();
       await nextTick();
@@ -177,6 +183,7 @@ const taskPriority = computed(() => {
           :rows="5"
           :paginator="true"
           responsiveLayout="scroll"
+          v-if="tasks.length > 0"
         >
           <Column field="id" header="Task ID" :sortable="true"></Column>
           <Column field="title" header="Title" :sortable="true"></Column>
@@ -188,11 +195,13 @@ const taskPriority = computed(() => {
           <Column field="priority" header="Priority" :sortable="true"></Column>
           <Column field="status" header="Status" :sortable="true"></Column>
         </DataTable>
+        <div v-else><i>No task</i></div>
       </div>
 
       <div class="card w-full">
         <h5>Task by priority</h5>
-        <Diagram :data="taskPriority"></Diagram>
+        <Diagram :data="taskPriority" v-if="tasks.length > 0"></Diagram>
+        <div v-else><i>No task</i></div>
       </div>
     </div>
     <div class="w-full">
@@ -203,6 +212,7 @@ const taskPriority = computed(() => {
           :rows="5"
           :paginator="true"
           responsiveLayout="scroll"
+          v-if="assignments.length > 0"
         >
           <Column field="id" header="Assignment ID" :sortable="true"></Column>
           <Column field="name" header="Name" :sortable="true"></Column>
@@ -217,15 +227,18 @@ const taskPriority = computed(() => {
             :sortable="true"
           ></Column>
         </DataTable>
+        <div v-else><i>No Assignment</i></div>
       </div>
       <div class="card w-full">
-        <h5>Assignments</h5>
+        <h5>Assignments stats</h5>
         <Chart
           type="bar"
           :data="chartData"
           :options="chartOptions"
           class="h-20rem"
+          v-if="assignments.length > 0"
         />
+        <div v-else><i>No Assignment</i></div>
       </div>
     </div>
   </div>

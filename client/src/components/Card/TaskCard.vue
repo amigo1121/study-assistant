@@ -2,6 +2,8 @@
 import { defineComponent } from "vue";
 import BaseCard from "./BaseCard.vue";
 import { useTasksStore } from "@/stores/tasks";
+import { sanitize } from "@/utils/santizie";
+
 export default defineComponent({
   name: "TaskCard",
   components: {
@@ -60,6 +62,11 @@ export default defineComponent({
       taskStore: useTasksStore(),
     };
   },
+  computed: {
+    sanitizedInput() {
+      return sanitize(this.description);
+    },
+  },
 });
 </script>
 <style scoped lang="scss"></style>
@@ -69,7 +76,7 @@ export default defineComponent({
       <h2>{{ title }}</h2>
       <div class="bg-yellow-100 border-round-xl p-3">
         <h4>Description:</h4>
-        <div v-html="description"></div>
+        <div v-html="sanitizedInput"></div>
       </div>
       <p>Priority: {{ importance }}</p>
       <p>Due date: {{ dueDate }}</p>

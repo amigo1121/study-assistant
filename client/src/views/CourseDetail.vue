@@ -1,5 +1,6 @@
 <script lang="ts" setup>
 import { API_URL } from "@/utils/config";
+import { sanitize } from "@/utils/santizie";
 import axios from "axios";
 import { useRoute } from "vue-router";
 import { onBeforeMount, reactive, ref, nextTick, onBeforeUpdate } from "vue";
@@ -292,7 +293,7 @@ const fetchAssighnmentTasks = (assignment_id) => {
         >
           <TabView>
             <TabPanel header="Description">
-              <div v-html="assignment.description"></div>
+              <div v-html="sanitize(assignment.description)"></div>
             </TabPanel>
             <TabPanel header="Tasks">
               <div class="flex justify-content-end">
@@ -312,7 +313,7 @@ const fetchAssighnmentTasks = (assignment_id) => {
                 @delete="deleteTask"
                 @update="updateTask"
               >
-                <div v-html="task.description"></div>
+                <div v-html="sanitize(task.description)"></div>
               </TaskPanel>
             </TabPanel>
             <TabPanel header="Task graph">

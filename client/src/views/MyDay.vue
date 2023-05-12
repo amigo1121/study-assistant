@@ -6,6 +6,7 @@ import { onMounted, ref, computed, onBeforeMount, nextTick } from "vue";
 import { TaskPriorityTree } from "@/utils/TaskPriorityTree";
 import TaskPanel from "@/components/TaskPanel.vue";
 import { useToast } from "primevue/usetoast";
+import { sanitize } from "@/utils/santizie";
 
 import axios from "axios";
 import moment from "moment";
@@ -180,7 +181,7 @@ const dragOptions = computed(() => {
         </template>
         <template #item="{ element, index }">
           <TaskPanel v-bind="element" :readOnly="true">
-            <div v-html="element.description"></div>
+            <div v-html="sanitize(element.description)"></div>
           </TaskPanel>
         </template>
       </draggable>
@@ -200,7 +201,7 @@ const dragOptions = computed(() => {
         </template>
         <template #item="{ element, index }">
           <TaskPanel v-bind="element" :readOnly="true">
-            <div v-html="element.description"></div>
+            <div v-html="sanitize(element.description)"></div>
           </TaskPanel>
         </template>
       </draggable>
@@ -220,7 +221,7 @@ const dragOptions = computed(() => {
         </template>
         <template #item="{ element, index }">
           <TaskPanel v-bind="element" :readOnly="true">
-            <div v-html="element.description"></div>
+            <div v-html="sanitize(element.description)"></div>
           </TaskPanel>
         </template>
       </draggable>

@@ -7,6 +7,7 @@ import TextEditor from "@/components/TextEditor.vue";
 import Dialog from "primevue/dialog";
 import { ref, defineComponent } from "vue";
 import moment from "moment";
+import { sanitize } from "@/utils/santizie";
 // import { Assignment } from '@/stores/assignments.ts'
 import { useAssignmentsStore } from "@/stores/assignments";
 import { formatDate, formatTime } from "@/utils/datetime";
@@ -53,6 +54,11 @@ export default defineComponent({
       return moment(date).format("YYYY-MM-DD hh:mm");
     },
   },
+  computed: {
+    sanitizedInput() {
+      return sanitize(this.description);
+    },
+  },
 });
 </script>
 
@@ -64,7 +70,7 @@ export default defineComponent({
       <h2>{{ name }}</h2>
       <div class="bg-yellow-100 border-round-xl p-3">
         <h4>Description:</h4>
-        <div v-html="description"></div>
+        <div v-html="sanitizedInput"></div>
       </div>
       <p>Due date: {{ this.formatDate(dueDate) }}</p>
     </div>
