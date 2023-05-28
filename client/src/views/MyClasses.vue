@@ -3,7 +3,7 @@ import { reactive, defineProps, onBeforeMount, ref } from "vue";
 import { useAuthStore } from "@/stores/auth";
 import axios from "axios";
 import { API_URL } from "@/utils/config";
-import CourseCard from "@/components/Card/CoursesCard.vue";
+import CourseCard from "@/components/Card/CourseCard.vue";
 import CreateCourseForm from "@/components/Form/CreateCourseForm.vue";
 import { useToast } from "primevue/usetoast";
 

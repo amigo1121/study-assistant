@@ -3,7 +3,7 @@ import { reactive, defineProps, onBeforeMount, ref, nextTick } from "vue";
 import { useAuthStore } from "@/stores/auth";
 import { API_URL } from "@/utils/config";
 import axios from "axios";
-import CourseCard from "@/components/Card/CoursesCard.vue";
+import CourseCard from "@/components/Card/CourseCard.vue";
 import CourseCardMenu from "./CourseCardMenu.vue";
 import router from "@/router";
 import { useToast } from "primevue/usetoast";
@@ -161,11 +161,9 @@ onBeforeMount(async () => {
 });
 
 const watchCourse = async (code) => {
-  await router
-    .push({ path: `/registered-courses/${code}` })
-    .catch((error) => {
-      console.error("Navigation error:", error);
-    });
+  await router.push({ path: `/registered-courses/${code}` }).catch((error) => {
+    console.error("Navigation error:", error);
+  });
 };
 </script>
 <style scoped></style>
