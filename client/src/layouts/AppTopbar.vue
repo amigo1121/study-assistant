@@ -11,7 +11,7 @@ const nestedMenuItem = ref([
   {
     // label: 'Dashboard',
     icon: "pi pi-home",
-    to: "/dashboard",
+    to: "/",
   },
   // {
   //     label: 'Chats',
