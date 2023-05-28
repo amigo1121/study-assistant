@@ -12,14 +12,7 @@ const nestedMenuItem = ref([
     // label: 'Dashboard',
     icon: "pi pi-home",
     to: "/",
-  },
-  // {
-  //     label: 'Chats',
-  //     to: '/home/todos'
-  // },
-  // {
-  //     label: 'Groups'
-  // }
+  }
 ]);
 const userMenu = ref();
 const userMenuItems = ref([
