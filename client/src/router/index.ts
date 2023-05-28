@@ -13,7 +13,7 @@ const router = createRouter({
       path: "/",
       name: "root",
       component: AppLayout,
-      redirect: {name: "dashboard"},
+      redirect: { name: "dashboard" },
       meta: { requiresAuth: true },
       children: [
         {

@@ -126,7 +126,7 @@ const submit = async () => {
         class="flex max-w-min"
         severity="secondary"
         label="Cancle"
-        @click="router.push({name:'dashboard'})"
+        @click="router.push({ name: 'dashboard' })"
       />
       <Button
         class="flex max-w-min"

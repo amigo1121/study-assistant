@@ -2,7 +2,7 @@
 import { reactive, defineProps, onBeforeMount, ref, nextTick } from "vue";
 import { API_URL } from "@/utils/config";
 import axios from "axios";
-import CourseCard from "@/components/Card/CoursesCard.vue";
+import CourseCard from "@/components/Card/CourseCard.vue";
 import { useAuthStore } from "@/stores/auth";
 import { useToast } from "primevue/usetoast";
 import { useConfirm } from "primevue/useconfirm";
