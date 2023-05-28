@@ -14,6 +14,8 @@ class Settings(BaseSettings):
         "http://localhost:3000",
     ]
 
+    ADMIN_CODE = ["ADMIN", "TEACHER"]
+
     class Config:
         case_sensitive = True
 

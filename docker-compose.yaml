@@ -7,8 +7,6 @@ services:
       - POSTGRES_USER=${POSTGRES_USER:?err}
       - POSTGRES_PASSWORD=${POSTGRES_PASSWORD:?err}
       - POSTGRES_DB=${POSTGRES_DB:?err}
-    ports:
-      - '5433:5432'
 
   server:
     build: ./server/app

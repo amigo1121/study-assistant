@@ -13,11 +13,11 @@ const router = createRouter({
       path: "/",
       name: "root",
       component: AppLayout,
-      redirect: "/dashboard",
+      redirect: {name: "dashboard"},
       meta: { requiresAuth: true },
       children: [
         {
-          path: "dashboard",
+          path: "/",
           name: "dashboard",
           redirect: { name: "welcome" },
           component: () => import("@/views/Dashboard.vue"),
@@ -73,12 +73,12 @@ const router = createRouter({
               component: () => import("@/views/RegisteredCourses.vue"),
             },
             {
-              path: "/home/dashboard/my-classes/:coursecode",
+              path: "/my-classes/:coursecode",
               name: "class",
               component: () => import("@/views/Class.vue"),
             },
             {
-              path: "/dashboard/registered-courses/:coursecode",
+              path: "/registered-courses/:coursecode",
               name: "course-detail",
               component: () => import("@/views/CourseDetail.vue"),
             },

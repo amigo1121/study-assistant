@@ -162,7 +162,7 @@ onBeforeMount(async () => {
 
 const watchCourse = async (code) => {
   await router
-    .push({ path: `/dashboard/registered-courses/${code}` })
+    .push({ path: `/registered-courses/${code}` })
     .catch((error) => {
       console.error("Navigation error:", error);
     });

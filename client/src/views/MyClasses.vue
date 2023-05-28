@@ -15,7 +15,7 @@ const props = defineProps<{}>();
 const courses = ref([]);
 const openAddCourseDialog = ref(false);
 const watchCourse = (code) => {
-  router.push({ path: `/home/dashboard/my-classes/${code}` });
+  router.push({ path: `/my-classes/${code}` });
 };
 onBeforeMount(async () => {
   let config = {

@@ -24,7 +24,7 @@ ul {
 <template>
   <ul class="font-medium text-xl">
     <template v-for="(item, index) in model" :key="index">
-      <router-link :to="'/dashboard/' + item.name" class="text-50">
+      <router-link :to="'/' + item.name" class="text-50">
         <li>{{ item.label }}</li>
       </router-link>
     </template>

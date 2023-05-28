@@ -1,5 +1,5 @@
 <script lang="ts" setup>
-import DashboardSidebar from "@/layouts/DashboardSidebar.vue";
+import AppSidebar from "@/layouts/AppSidebar.vue";
 import { ref, onBeforeMount, onMounted } from "vue";
 import { useAuthStore } from "@/stores/auth";
 
@@ -85,7 +85,7 @@ onMounted(() => {
 <template>
   <div class="dashboard">
     <div class="dashboard__sidebar bg-primary" ref="sidebar">
-      <DashboardSidebar :model="sidebarItems" />
+      <AppSidebar :model="sidebarItems" />
     </div>
     <div class="dashboard__content" ref="content">
       <router-view></router-view>

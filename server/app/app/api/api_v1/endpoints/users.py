@@ -7,6 +7,7 @@ from app import schemas
 from app.core import security
 from app.utils.commons import UserType
 from .security import get_current_user
+from app.core.config import settings
 
 router = APIRouter()
 
@@ -29,12 +30,12 @@ def register(user: schemas.UserCreate, db: Session = Depends(deps.get_db)):
     if db_user:
         raise HTTPException(status_code=400, detail="Username already registered")
 
-    if user.code != "" and user.code != "ADMIN":
+    if user.code != "" and not user.code in settings.ADMIN_CODE:
         raise HTTPException(
             status_code=status.HTTP_400_BAD_REQUEST,
             detail="Administrator code is not correct",
         )
-    if user.code == "ADMIN":
+    if user.code in settings.ADMIN_CODE:
         user.role = UserType.TEACHER
     return crud_user.create_user(db=db, user=user)
 
