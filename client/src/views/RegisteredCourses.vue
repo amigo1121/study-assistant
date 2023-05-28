@@ -4,7 +4,7 @@ import { useAuthStore } from "@/stores/auth";
 import { API_URL } from "@/utils/config";
 import axios from "axios";
 import CourseCard from "@/components/Card/CourseCard.vue";
-import CourseCardMenu from "./CourseCardMenu.vue";
+import CourseCardMenu from "@/components/CourseCardMenu.vue";
 import router from "@/router";
 import { useToast } from "primevue/usetoast";
 import { useConfirm } from "primevue/useconfirm";
