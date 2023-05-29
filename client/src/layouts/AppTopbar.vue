@@ -12,7 +12,7 @@ const nestedMenuItem = ref([
     // label: 'Dashboard',
     icon: "pi pi-home",
     to: "/",
-  }
+  },
 ]);
 const userMenu = ref();
 const userMenuItems = ref([
