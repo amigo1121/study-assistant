@@ -1,6 +1,5 @@
 <script setup lang="ts">
 import { ref, onMounted, onBeforeMount, computed, nextTick } from "vue";
-import { useTasksStore } from "@/stores/tasks";
 import { useAuthStore } from "@/stores/auth";
 import Chart from "primevue/chart";
 import Diagram from "@/components/Diagram.vue";
