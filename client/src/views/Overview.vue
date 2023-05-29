@@ -151,6 +151,7 @@ onBeforeMount(async () => {
       e.status =
         e.status[0] + e.status.slice(1).replace("_", " ").toLowerCase();
     });
+    tasks.value = tasks.value.filter((e) => e.status !== "Complete");
   } catch (err) {
     console.log(err);
   }

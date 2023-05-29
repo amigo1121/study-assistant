@@ -43,11 +43,6 @@ const router = createRouter({
               component: () => import("@/views/Assignments.vue"),
             },
             {
-              path: "groups",
-              name: "groups",
-              component: () => import("@/views/Groups.vue"),
-            },
-            {
               path: "my-day",
               name: "my-day",
               component: () => import("@/views/MyDay.vue"),
