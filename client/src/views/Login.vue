@@ -21,7 +21,7 @@ const error = reactive({
 const validate = () => {
   error.identifier = identifier.value === "";
   error.password = password.value === "";
-  return !(error.username || error.password);
+  return !(error.identifier || error.password);
 };
 
 const login = () => {
